@@ -32,4 +32,8 @@ export const routes: Routes = [
     path: 'freelancer/add-gig',
     loadComponent: () => import('./pages/freelancer/add-gig/add-gig.page').then( m => m.AddGigPage)
   },
+  {
+  path: 'freelancer/add-gig',
+  loadComponent: () => import('./pages/freelancer/add-gig/add-gig.page').then(m => m.AddGigPage)
+},
 ];

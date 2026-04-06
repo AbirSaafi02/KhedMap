@@ -1,13 +1,92 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>add-gig</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="page">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">add-gig</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <!-- Header -->
+    <div class="top-bar">
+      <div class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </div>
+      <span class="top-title">Add a Gig</span>
+      <div></div>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-card" *ngIf="submitted">
+      <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+      <h2>Gig Created! 🎉</h2>
+      <p>Your gig is now live. Clients can find your service. Redirecting...</p>
+    </div>
+
+    <!-- Form -->
+    <div class="form" *ngIf="!submitted">
+
+      <!-- Title -->
+      <div class="field">
+        <label>Gig Title</label>
+        <input
+          [(ngModel)]="gig.title"
+          type="text"
+          placeholder="e.g. I will design a modern mobile UI"
+          class="input" />
+      </div>
+
+      <!-- Category -->
+      <div class="field">
+        <label>Category</label>
+        <div class="chips-select">
+          <div *ngFor="let cat of categories"
+               class="chip-option"
+               [class.selected]="selectedCategory === cat"
+               (click)="selectedCategory = cat">
+            {{ cat }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="field">
+        <label>Price (DT)</label>
+        <input
+          [(ngModel)]="gig.price"
+          type="number"
+          placeholder="e.g. 150"
+          class="input" />
+      </div>
+
+      <!-- Delivery time -->
+      <div class="field">
+        <label>Delivery Time</label>
+        <div class="chips-select">
+          <div *ngFor="let d of deliveryOptions"
+               class="chip-option"
+               [class.selected]="selectedDelivery === d"
+               (click)="selectedDelivery = d">
+            {{ d }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="field">
+        <label>Description</label>
+        <textarea
+          [(ngModel)]="gig.description"
+          placeholder="Describe what you offer, what the client will get, and your experience..."
+          class="textarea"
+          rows="6">
+        </textarea>
+      </div>
+
+    </div>
+
+  </div>
 </ion-content>
+
+<!-- Submit button -->
+<div class="bottom-action" *ngIf="!submitted">
+  <div class="submit-btn"
+       (click)="submit()"
+       [class.disabled]="!gig.title || !selectedCategory || !gig.price || !selectedDelivery">
+    Create Gig
+  </div>
+</div>
