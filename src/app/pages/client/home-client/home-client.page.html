@@ -1,0 +1,107 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <p class="greeting">Hello Client 👋</p>
+        <h1 class="discover">Discover</h1>
+      </div>
+      <div class="header-right">
+        <div class="notif-btn">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </div>
+        <div class="add-btn" (click)="goTo('/client/add-job')">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input type="text" placeholder="Search freelancers..." />
+    </div>
+
+    <!-- Freelancers horizontal scroll -->
+    <div class="section-header">
+      <h2>Freelancers</h2>
+      <span class="see-all">See All</span>
+    </div>
+
+    <div class="freelancer-scroll">
+      <div class="freelancer-card" *ngFor="let f of freelancers">
+        <div class="avatar">{{ f.name[0] }}</div>
+        <p class="fname">{{ f.name }}</p>
+        <p class="fjob">{{ f.job }}</p>
+      </div>
+    </div>
+
+    <!-- Category filters -->
+    <div class="section-header">
+      <h2>Recommendation</h2>
+      <span class="see-all">See All</span>
+    </div>
+
+    <div class="categories">
+      <div
+        *ngFor="let cat of categories"
+        class="cat-chip"
+        [class.active]="activeCategory === cat"
+        (click)="setCategory(cat)">
+        {{ cat }}
+      </div>
+    </div>
+
+    <!-- Freelancer recommendation cards -->
+    <div class="rec-list">
+      <div class="rec-card" *ngFor="let r of recommendations">
+        <div class="rec-avatar">{{ r.name[0] }}</div>
+        <div class="rec-info">
+          <div class="rec-top">
+            <div>
+              <span class="rec-name">{{ r.name }}</span>
+              <span class="rec-title"> · {{ r.title }}</span>
+            </div>
+            <div class="rating">
+              ⭐ {{ r.rating }}
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag" *ngFor="let tag of r.tags">{{ tag }}</span>
+          </div>
+          <p class="rec-bio">{{ r.bio }}</p>
+        </div>
+        <div class="rec-actions">
+          <ion-icon name="heart-outline" class="heart"></ion-icon>
+          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item" [class.active]="activeTab === 'home'"
+       (click)="setTab('home'); goTo('/client/home')">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </div>
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
+       (click)="setTab('store'); goTo('/store')">
+    <ion-icon name="storefront-outline"></ion-icon>
+    <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'messages'"
+       (click)="setTab('messages'); goTo('/client/messages')">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span>Messages</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'profile'"
+       (click)="setTab('profile'); goTo('/client/profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </div>
+</div>

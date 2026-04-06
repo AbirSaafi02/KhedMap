@@ -1,0 +1,117 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1 class="title">My Gigs</h1>
+        <p class="subtitle">{{ gigs.length }} services listed</p>
+      </div>
+      <div class="add-btn" (click)="goTo('/freelancer/add-gig')">
+        <ion-icon name="add-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-value">{{ gigs.length }}</span>
+        <span class="stat-label">Total Gigs</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">25</span>
+        <span class="stat-label">Total Orders</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">4.9 ⭐</span>
+        <span class="stat-label">Avg Rating</span>
+      </div>
+    </div>
+
+    <!-- Gigs list -->
+    <div class="gigs-list">
+      <div class="gig-card" *ngFor="let gig of gigs">
+
+        <!-- Gig header -->
+        <div class="gig-top">
+          <div class="gig-icon">
+            <ion-icon name="briefcase-outline"></ion-icon>
+          </div>
+          <div class="gig-info">
+            <p class="gig-title">{{ gig.title }}</p>
+            <span class="gig-category">{{ gig.category }}</span>
+          </div>
+          <!-- Toggle active -->
+          <div class="toggle" [class.active]="gig.active" (click)="toggleGig(gig)">
+            <div class="toggle-circle"></div>
+          </div>
+        </div>
+
+        <!-- Gig stats -->
+        <div class="gig-stats">
+          <div class="gig-stat">
+            <ion-icon name="cash-outline"></ion-icon>
+            <span>{{ gig.price }}</span>
+          </div>
+          <div class="gig-stat">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ gig.delivery }}</span>
+          </div>
+          <div class="gig-stat">
+            <ion-icon name="star-outline"></ion-icon>
+            <span>{{ gig.rating }}</span>
+          </div>
+          <div class="gig-stat">
+            <span class="orders">{{ gig.orders }} orders</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="gig-actions">
+          <div class="action-btn edit">
+            <ion-icon name="create-outline"></ion-icon>
+            <span>Edit</span>
+          </div>
+          <div class="action-btn delete">
+            <ion-icon name="trash-outline"></ion-icon>
+            <span>Delete</span>
+          </div>
+          <div class="status-badge" [class.active]="gig.active">
+            {{ gig.active ? 'Active' : 'Paused' }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item" [class.active]="activeTab === 'home'"
+       (click)="setTab('home'); goTo('/freelancer/home')">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </div>
+  <div class="nav-item active" [class.active]="activeTab === 'gigs'"
+       (click)="setTab('gigs'); goTo('/freelancer/my-gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>My Gigs</span>
+  </div>
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
+       (click)="setTab('store'); goTo('/store')">
+    <ion-icon name="storefront-outline"></ion-icon>
+    <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'messages'"
+       (click)="setTab('messages'); goTo('/freelancer/messages')">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span>Messages</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'profile'"
+       (click)="setTab('profile'); goTo('/freelancer/profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </div>
+</div>

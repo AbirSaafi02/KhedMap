@@ -1,0 +1,29 @@
+<ion-content>
+  <div class="container">
+    <h1 class="logo">khedMAP</h1>
+    <h2 class="title">Which fields are you interested in?</h2>
+
+    <div class="fields-grid">
+      <div
+        *ngFor="let field of fields"
+        class="field-chip"
+        [class.selected]="isSelected(field)"
+        (click)="toggleField(field)">
+        {{ field }}
+      </div>
+    </div>
+
+    <ion-button
+      expand="block"
+      (click)="choose()"
+      class="main-btn"
+      [disabled]="selectedFields.length === 0">
+      Continue
+    </ion-button>
+
+    <p class="link">
+      Have an account ?
+      <span class="accent" (click)="goToLogin()">sign in</span>
+    </p>
+  </div>
+</ion-content>

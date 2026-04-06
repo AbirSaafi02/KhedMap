@@ -1,0 +1,82 @@
+ion-content {
+  --background: #f0e0c8;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 24px;
+}
+
+.logo-section {
+  text-align: center;
+  margin-top: 60px;
+  margin-bottom: 30px;
+
+  .logo {
+    font-size: 48px;
+    font-weight: 900;
+    font-style: italic;
+    color: #5b5bd6;
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0 4px;
+    color: #1a1a1a;
+  }
+
+  .subtitle {
+    color: #e07b20;
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-item {
+  --background: white;
+  --border-radius: 14px;
+  --padding-start: 16px;
+  --color: #1a1a1a;
+  --placeholder-color: #999;
+  --placeholder-opacity: 1;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  margin-bottom: 4px;
+}
+
+ion-input {
+  --color: #1a1a1a;
+  --placeholder-color: #999;
+}
+
+.main-btn {
+  --background: #5b5bd6;
+  --border-radius: 14px;
+  height: 54px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.link {
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.accent {
+  color: #e07b20;
+  cursor: pointer;
+  font-weight: 500;
+}

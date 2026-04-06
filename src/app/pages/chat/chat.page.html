@@ -1,0 +1,49 @@
+<div class="chat-wrapper">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="back-btn" (click)="goBack()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </div>
+    <div class="contact-info">
+      <div class="contact-avatar">R</div>
+      <div>
+        <p class="contact-name">Rachid</p>
+        <p class="contact-status">Online</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <ion-icon name="call-outline"></ion-icon>
+      <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Messages scrollable area -->
+  <div class="messages-area" #messagesArea>
+
+    <div class="date-sep">Today</div>
+
+    <div *ngFor="let m of messages"
+         class="message-row"
+         [class.mine]="m.mine">
+      <div class="bubble" [class.mine]="m.mine" [class.theirs]="!m.mine">
+        <p>{{ m.text }}</p>
+        <span class="time">{{ m.time }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <input
+      [(ngModel)]="message"
+      type="text"
+      placeholder="Type a message..."
+      (keypress)="onKeyPress($event)" />
+    <div class="send-btn" (click)="sendMessage()" [class.active]="message.trim()">
+      <ion-icon name="send-outline"></ion-icon>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,131 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Top curved background -->
+    <div class="top-bg">
+      <div class="avatar-circle">
+        <span>M</span>
+      </div>
+    </div>
+
+    <!-- Profile info -->
+    <div class="profile-info">
+      <h1 class="name">{{ profile.name }}</h1>
+      <p class="title">{{ profile.title }}</p>
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat">
+          <span class="stat-value">{{ profile.jobs }}</span>
+          <span class="stat-label">Jobs Done</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-value">{{ profile.rating }}</span>
+          <span class="stat-label">Rating</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-value">{{ profile.reviews }}</span>
+          <span class="stat-label">Reviews</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIO section -->
+    <div class="section">
+      <h2 class="section-title">BIO</h2>
+      <div class="bio-card">
+        <p>{{ profile.bio }}</p>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions">
+
+      <div class="action-card" (click)="goTo('/freelancer/my-gigs')">
+        <div class="action-left">
+          <div class="action-icon purple">
+            <ion-icon name="briefcase-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="action-title">My Gigs</p>
+            <p class="action-sub">Manage your services</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </div>
+
+      <div class="action-card">
+        <div class="action-left">
+          <div class="action-icon orange">
+            <ion-icon name="create-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="action-title">Edit your Profile</p>
+            <p class="action-sub">Update and modify your profile</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </div>
+
+      <div class="action-card">
+        <div class="action-left">
+          <div class="action-icon yellow">
+            <ion-icon name="star-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="action-title">Reviews</p>
+            <p class="action-sub">See what clients say about you</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </div>
+
+      <!-- Logout -->
+      <div class="action-card logout-card" (click)="logout()">
+        <div class="action-left">
+          <div class="action-icon red">
+            <ion-icon name="log-out-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="action-title logout-text">Logout</p>
+            <p class="action-sub">Sign out of your account</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item" [class.active]="activeTab === 'home'"
+       (click)="setTab('home'); goTo('/freelancer/home')">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'gigs'"
+       (click)="setTab('gigs'); goTo('/freelancer/my-gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>My Gigs</span>
+  </div>
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
+       (click)="setTab('store'); goTo('/store')">
+    <ion-icon name="storefront-outline"></ion-icon>
+    <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'messages'"
+       (click)="setTab('messages'); goTo('/freelancer/messages')">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span>Messages</span>
+  </div>
+  <div class="nav-item active" [class.active]="activeTab === 'profile'"
+       (click)="setTab('profile'); goTo('/freelancer/profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </div>
+</div>

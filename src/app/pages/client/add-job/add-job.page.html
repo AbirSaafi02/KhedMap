@@ -1,0 +1,102 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="top-bar">
+      <div class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </div>
+      <span class="top-title">Add a Job</span>
+      <div></div>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-card" *ngIf="submitted">
+      <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+      <h2>Job Posted! 🎉</h2>
+      <p>Your job is now live. Freelancers can apply. Redirecting...</p>
+    </div>
+
+    <!-- Form -->
+    <div class="form" *ngIf="!submitted">
+
+      <!-- Title -->
+      <div class="field">
+        <label>Job Title</label>
+        <input
+          [(ngModel)]="job.title"
+          type="text"
+          placeholder="e.g. UI/UX Designer Needed"
+          class="input" />
+      </div>
+
+      <!-- Job Type -->
+      <div class="field">
+        <label>Type of Job</label>
+        <div class="chips-select">
+          <div *ngFor="let t of jobTypes"
+               class="chip-option"
+               [class.selected]="selectedType === t"
+               (click)="selectedType = t">
+            {{ t }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Employment Type -->
+      <div class="field">
+        <label>Employment Type</label>
+        <div class="chips-select">
+          <div *ngFor="let e of employmentTypes"
+               class="chip-option"
+               [class.selected]="selectedEmployment === e"
+               (click)="selectedEmployment = e">
+            {{ e }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Salary -->
+      <div class="field">
+        <label>Salary <span class="optional">(optional)</span></label>
+        <input
+          [(ngModel)]="job.salary"
+          type="text"
+          placeholder="e.g. 1500 DT / month"
+          class="input" />
+      </div>
+
+      <!-- Tag -->
+      <div class="field">
+        <label>Tag <span class="optional">(optional)</span></label>
+        <input
+          [(ngModel)]="job.tag"
+          type="text"
+          placeholder="e.g. Figma, React, Mobile..."
+          class="input" />
+      </div>
+
+      <!-- Description -->
+      <div class="field">
+        <label>Job Description</label>
+        <textarea
+          [(ngModel)]="job.bio"
+          placeholder="Describe the job, requirements, and what you are looking for..."
+          class="textarea"
+          rows="6">
+        </textarea>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Submit button -->
+<div class="bottom-action" *ngIf="!submitted">
+  <div class="submit-btn"
+       (click)="submit()"
+       [class.disabled]="!job.title || !selectedType || !selectedEmployment">
+    Post Job
+  </div>
+</div>

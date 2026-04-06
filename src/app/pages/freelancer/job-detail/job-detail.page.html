@@ -1,0 +1,70 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="top-bar">
+      <div class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </div>
+      <span class="top-title">Job Description</span>
+      <div class="bookmark-btn">
+        <ion-icon name="bookmark-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Client card -->
+    <div class="client-card">
+      <div class="client-avatar">{{ job.client[0] }}</div>
+      <div class="client-info">
+        <h2 class="job-title">{{ job.title }}</h2>
+        <p class="client-name">{{ job.client }}</p>
+      </div>
+    </div>
+
+    <!-- Job info chips -->
+    <div class="info-chips">
+      <div class="chip">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ job.location }}</span>
+      </div>
+      <div class="chip">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ job.type }}</span>
+      </div>
+      <div class="chip">
+        <ion-icon name="cash-outline"></ion-icon>
+        <span>{{ job.salary }}</span>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="tags">
+      <span class="tag" *ngFor="let tag of job.tags">{{ tag }}</span>
+    </div>
+
+    <!-- Description -->
+    <div class="section">
+      <h3 class="section-title">Job Description</h3>
+      <p class="desc-text">{{ job.description }}</p>
+    </div>
+
+    <!-- Requirements -->
+    <div class="section">
+      <h3 class="section-title">Requirements</h3>
+      <div class="req-list">
+        <div class="req-item" *ngFor="let req of job.requirements">
+          <div class="req-dot"></div>
+          <p>{{ req }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Apply button -->
+<div class="bottom-action">
+  <ion-button expand="block" class="apply-btn" (click)="applyJob()">
+    Apply for this Job
+  </ion-button>
+</div>

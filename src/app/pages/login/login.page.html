@@ -1,0 +1,39 @@
+<ion-content>
+  <div class="container">
+    <div class="logo-section">
+      <h1 class="logo">khedMAP</h1>
+      <h2>Sign In</h2>
+      <p class="subtitle">Welcome back !</p>
+    </div>
+
+    <div class="form-section">
+      <ion-item lines="none" class="input-item">
+        <ion-input [(ngModel)]="email" type="email" placeholder="Email"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="input-item">
+        <ion-input [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'" placeholder="Password"></ion-input>
+        <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (click)="showPassword = !showPassword"></ion-icon>
+      </ion-item>
+    <!-- Role selector -->
+    <div class="role-toggle">
+      <div class="role-option"
+          [class.active]="selectedRole === 'freelancer'"
+          (click)="selectedRole = 'freelancer'">
+        Freelancer
+      </div>
+      <div class="role-option"
+          [class.active]="selectedRole === 'client'"
+          (click)="selectedRole = 'client'">
+        Client
+      </div>
+    </div>
+      <ion-button expand="block" (click)="login()" class="main-btn">Sign in</ion-button>
+
+      <p class="link accent">Forget password</p>
+      <p class="link">Don't have an account ?
+        <span class="accent" (click)="goToRegister()">sign up</span>
+      </p>
+    </div>
+  </div>
+</ion-content>

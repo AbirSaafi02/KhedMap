@@ -1,0 +1,75 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="top-bar">
+      <div class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </div>
+      <span class="top-title">Apply for Job</span>
+      <div></div>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-card" *ngIf="submitted">
+      <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+      <h2>Application Sent!</h2>
+      <p>Your application has been submitted successfully. Redirecting...</p>
+    </div>
+
+    <!-- Form -->
+    <div class="form" *ngIf="!submitted">
+
+      <!-- Name field -->
+      <div class="field">
+        <label>Full Name</label>
+        <input
+          [(ngModel)]="name"
+          type="text"
+          placeholder="Enter your full name"
+          class="input" />
+      </div>
+
+      <!-- CV Upload -->
+      <div class="field">
+        <label>CV</label>
+        <div class="upload-box" (click)="triggerFileInput()">
+          <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+          <p *ngIf="!cvFileName">Click to upload your CV</p>
+          <p *ngIf="cvFileName" class="file-name">✅ {{ cvFileName }}</p>
+          <span>PDF, DOC up to 5MB</span>
+        </div>
+        <input
+          id="cvInput"
+          type="file"
+          accept=".pdf,.doc,.docx"
+          style="display:none"
+          (change)="onFileSelected($event)" />
+      </div>
+
+      <!-- Description field -->
+      <div class="field">
+        <label>Cover Letter <span class="optional">(optional)</span></label>
+        <textarea
+          [(ngModel)]="description"
+          placeholder="Tell the client why you are the best fit for this job..."
+          class="textarea"
+          rows="6">
+        </textarea>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Submit button -->
+<div class="bottom-action" *ngIf="!submitted">
+  <ion-button
+    expand="block"
+    class="submit-btn"
+    (click)="submit()"
+    [disabled]="!name">
+    Submit Application
+  </ion-button>
+</div>

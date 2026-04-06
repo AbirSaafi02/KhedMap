@@ -1,0 +1,230 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1 class="title">Store</h1>
+        <p class="subtitle">Digital products & assets</p>
+      </div>
+      <div class="header-right">
+        <!-- Sell button only for freelancers -->
+        <div class="sell-btn" *ngIf="role === 'freelancer'" (click)="showSellModal = true">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>Sell</span>
+        </div>
+        <div class="cart-btn">
+          <ion-icon name="cart-outline"></ion-icon>
+          <div class="cart-badge">3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input type="text" placeholder="Search products..." />
+    </div>
+
+    <!-- Featured section -->
+    <div class="section-header">
+      <h2>Featured</h2>
+      <span class="see-all">See All</span>
+    </div>
+
+    <div class="featured-scroll">
+      <div class="featured-card" *ngFor="let f of featured">
+        <div class="featured-bg">
+          <div class="featured-icon">🎨</div>
+        </div>
+        <div class="featured-info">
+          <p class="featured-title">{{ f.title }}</p>
+          <p class="featured-seller">by {{ f.seller }}</p>
+          <div class="featured-bottom">
+            <span class="featured-price">{{ f.price }}</span>
+            <span class="featured-rating">⭐ {{ f.rating }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="section-header">
+      <h2>Products</h2>
+    </div>
+
+    <div class="categories">
+      <div
+        *ngFor="let cat of categories"
+        class="cat-chip"
+        [class.active]="activeCategory === cat"
+        (click)="setCategory(cat)">
+        {{ cat }}
+      </div>
+    </div>
+
+    <!-- Products grid -->
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let p of filteredProducts">
+        <div class="product-img">
+          <div class="product-emoji">
+            {{ p.category === 'UI Kits' ? '📱' :
+               p.category === 'Logos' ? '✏️' :
+               p.category === 'Templates' ? '🖥️' :
+               p.category === 'Photos' ? '📸' : '🎬' }}
+          </div>
+          <div class="heart-btn">
+            <ion-icon name="heart-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="product-info">
+          <p class="product-title">{{ p.title }}</p>
+          <p class="product-seller">by {{ p.seller }}</p>
+          <div class="product-bottom">
+            <span class="product-price">{{ p.price }}</span>
+            <span class="product-rating">⭐ {{ p.rating }}</span>
+          </div>
+          <div class="product-sales">{{ p.sales }} sales</div>
+          <div class="buy-btn">Buy Now</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- SELL MODAL -->
+<div class="modal-overlay" *ngIf="showSellModal" (click)="showSellModal = false">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <!-- Success state -->
+    <div class="success-card" *ngIf="sellSubmitted">
+      <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+      <h2>Product Listed! 🎉</h2>
+      <p>Your product is now live on the store.</p>
+    </div>
+
+    <!-- Form -->
+    <div *ngIf="!sellSubmitted">
+      <div class="modal-header">
+        <h2>Sell a Product</h2>
+        <div class="close-btn" (click)="showSellModal = false">
+          <ion-icon name="close-outline"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Commission info -->
+      <div class="commission-info">
+        <span>💡 KhedMAP takes <strong>15%</strong> commission on every sale</span>
+      </div>
+
+      <!-- Title -->
+      <div class="field">
+        <label>Product Title</label>
+        <input [(ngModel)]="newProduct.title"
+               type="text"
+               placeholder="e.g. Mobile UI Kit Pro"
+               class="input" />
+      </div>
+
+      <!-- Category -->
+      <div class="field">
+        <label>Category</label>
+        <div class="cat-select">
+          <div *ngFor="let cat of productCategories"
+               class="cat-option"
+               [class.selected]="newProduct.category === cat"
+               (click)="newProduct.category = cat">
+            {{ cat }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="field">
+        <label>Price (DT)</label>
+        <input [(ngModel)]="newProduct.price"
+               type="number"
+               placeholder="e.g. 50"
+               class="input" />
+      </div>
+
+      <!-- Earnings preview -->
+      <div class="earnings-preview" *ngIf="newProduct.price">
+        <div class="earning-row">
+          <span>Your price</span>
+          <span class="bold">{{ newProduct.price }} DT</span>
+        </div>
+        <div class="earning-row">
+          <span>KhedMAP (15%)</span>
+          <span class="red">- {{ getCommission() }}</span>
+        </div>
+        <div class="earning-row total">
+          <span>You earn</span>
+          <span class="green">{{ getEarnings() }}</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="field">
+        <label>Description <span class="optional">(optional)</span></label>
+        <textarea [(ngModel)]="newProduct.description"
+                  placeholder="Describe your product..."
+                  class="textarea"
+                  rows="3">
+        </textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-btn"
+           (click)="submitProduct()"
+           [class.disabled]="!newProduct.title || !newProduct.price">
+        List Product on Store
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav" *ngIf="role === 'freelancer'">
+  <div class="nav-item" (click)="goTo('/freelancer/home')">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" (click)="goTo('/freelancer/my-gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>My Gigs</span>
+  </div>
+  <div class="nav-item active store-btn">
+    <ion-icon name="storefront-outline"></ion-icon>
+    <span>Store</span>
+  </div>
+  <div class="nav-item" (click)="goTo('/freelancer/messages')">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span>Messages</span>
+  </div>
+  <div class="nav-item" (click)="goTo('/freelancer/profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </div>
+</div>
+
+<div class="bottom-nav" *ngIf="role === 'client'">
+  <div class="nav-item" (click)="goTo('/client/home')">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </div>
+  <div class="nav-item active store-btn">
+    <ion-icon name="storefront-outline"></ion-icon>
+    <span>Store</span>
+  </div>
+  <div class="nav-item" (click)="goTo('/client/messages')">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span>Messages</span>
+  </div>
+  <div class="nav-item" (click)="goTo('/client/profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </div>
+</div>

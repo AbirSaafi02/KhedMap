@@ -1,0 +1,40 @@
+<ion-content [fullscreen]="true">
+  <div class="onboarding">
+
+    <!-- Illustration top half -->
+    <div class="illustration-area">
+      <span class="skip" (click)="skip()" *ngIf="currentSlide < 2">Skip</span>
+          <img *ngIf="currentSlide === 0" src="/assets/icon/working.svg" class="illus-img" />
+          <img *ngIf="currentSlide === 1" src="/assets/icon/social.svg" class="illus-img" />
+          <img *ngIf="currentSlide === 2" src="/assets/icon/resume.svg" class="illus-img" />
+    </div>
+
+    <!-- White card bottom half -->
+    <div class="card">
+      <h1 class="title">{{ slides[currentSlide].title }}</h1>
+      <p class="desc">{{ slides[currentSlide].description }}</p>
+
+      <!-- Navigation row -->
+      <div class="nav-row">
+
+        <!-- Back button -->
+        <div class="back-btn" (click)="prev()" *ngIf="currentSlide > 0">←</div>
+        <div *ngIf="currentSlide === 0"></div>
+
+        <!-- Dots -->
+        <div class="dots">
+          <div *ngFor="let s of slides; let i = index"
+               class="dot" [class.active]="currentSlide === i">
+          </div>
+        </div>
+
+        <!-- Next / Finish / Get Started button -->
+        <div class="next-btn" (click)="currentSlide < 2 ? next() : finish()">
+          {{ slides[currentSlide].btn }}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ion-content>
