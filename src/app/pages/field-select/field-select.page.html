@@ -1,7 +1,8 @@
 <ion-content>
   <div class="container">
-    <h1 class="logo">khedMAP</h1>
-    <h2 class="title">Which fields are you interested in?</h2>
+    <h1 class="logo">KhedMap</h1>
+    <h2 class="title">Tell us what you do</h2>
+    <p class="subtitle">We will prefill your recommendations, gigs ideas, and store items based on these fields.</p>
 
     <div class="fields-grid">
       <div
@@ -13,17 +14,21 @@
       </div>
     </div>
 
+    <div class="hint">
+      You can change fields anytime from your profile. Admins see these to approve the right projects for you.
+    </div>
+
     <ion-button
       expand="block"
       (click)="choose()"
       class="main-btn"
       [disabled]="selectedFields.length === 0">
-      Continue
+      Continue to dashboard
     </ion-button>
 
     <p class="link">
-      Have an account ?
-      <span class="accent" (click)="goToLogin()">sign in</span>
+      Have an account?
+      <span class="accent" (click)="goToLogin()">Sign in</span>
     </p>
   </div>
 </ion-content>

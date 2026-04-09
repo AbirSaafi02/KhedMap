@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { JobService } from '../../../services/job.service';
 
 @Component({
   selector: 'app-add-job',
@@ -31,7 +32,7 @@ export class AddJobPage {
   selectedEmployment = '';
   selectedType = '';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private jobs: JobService) {
     addIcons({ arrowBackOutline, checkmarkCircleOutline });
   }
 
@@ -39,6 +40,16 @@ export class AddJobPage {
 
   submit() {
     if (this.job.title && this.selectedType && this.selectedEmployment) {
+      this.jobs.addJob({
+        id: `job-${Date.now()}`,
+        title: this.job.title,
+        status: 'open',
+        posted: 'Today',
+        budget: this.job.salary || 'N/A',
+        applicants: 0,
+        shortlisted: 0,
+        notes: this.job.bio || 'New job posted by client',
+      });
       this.submitted = true;
       setTimeout(() => {
         this.router.navigate(['/client/home']);

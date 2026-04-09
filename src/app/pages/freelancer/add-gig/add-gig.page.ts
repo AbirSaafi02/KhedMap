@@ -21,6 +21,8 @@ export class AddGigPage {
     description: '',
     price: '',
     delivery: '',
+    inStore: true,
+    allowMessaging: true,
   };
 
   categories = ['Design', 'Development', 'Marketing', 'Video Editing', 'Translation', 'DevOps', 'Content Writing', 'Tech & AI'];
@@ -28,12 +30,19 @@ export class AddGigPage {
 
   selectedCategory = '';
   selectedDelivery = '';
+  attachmentNames: string[] = [];
 
   constructor(private router: Router) {
     addIcons({ arrowBackOutline, checkmarkCircleOutline });
   }
 
   goBack() { this.router.navigate(['/freelancer/my-gigs']); }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    this.attachmentNames = files.map(f => f.name);
+  }
 
   submit() {
     if (this.gig.title && this.selectedCategory && this.gig.price && this.selectedDelivery) {

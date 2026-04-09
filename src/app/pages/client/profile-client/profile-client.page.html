@@ -24,13 +24,22 @@
           <span class="stat-value">{{ profile.spent }}</span>
           <span class="stat-label">Total Spent</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-value">{{ profile.reviews }}</span>
-          <span class="stat-label">Reviews</span>
-        </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">{{ profile.reviews }}</span>
+        <span class="stat-label">Reviews</span>
       </div>
     </div>
+
+    <div class="status-card">
+      <div>
+        <p class="status-label">Account status</p>
+        <p class="status-value">{{ profile.status }}</p>
+        <p class="status-hint">We will email {{ profile.email }} once an admin approves your account.</p>
+      </div>
+      <span class="pill">15% platform fee visible at checkout</span>
+    </div>
+  </div>
 
     <!-- Action buttons -->
     <div class="actions">
@@ -56,6 +65,19 @@
           <div>
             <p class="action-title">Edit Profile</p>
             <p class="action-sub">Update your information</p>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </div>
+
+      <div class="action-card" (click)="openNotifications()">
+        <div class="action-left">
+          <div class="action-icon yellow">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <div>
+            <p class="action-title">Notifications</p>
+            <p class="action-sub">Approvals, payments, store</p>
           </div>
         </div>
         <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
@@ -100,10 +122,20 @@
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
   </div>
+  <div class="nav-item" [class.active]="activeTab === 'gigs'"
+       (click)="setTab('gigs'); goTo('/client/gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>Gigs</span>
+  </div>
   <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
        (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'messages'"
        (click)="setTab('messages'); goTo('/client/messages')">

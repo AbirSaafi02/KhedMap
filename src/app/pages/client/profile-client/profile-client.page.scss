@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f0e0c8;
+  --background: var(--khed-surface);
 }
 
 .page {
@@ -89,6 +89,22 @@ ion-content {
   }
 }
 
+.status-card {
+  margin: 0 24px 18px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+
+  .status-label { margin: 0; font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.4px; }
+  .status-value { margin: 2px 0; font-weight: 900; color: #0f172a; }
+  .status-hint { margin: 0; color: #6b7280; font-size: 13px; }
+  .pill { background: #eef2ff; color: #4338ca; padding: 8px 10px; border-radius: 12px; font-weight: 800; height: fit-content; }
+}
+
 .actions {
   padding: 0 24px;
   display: flex;
@@ -162,10 +178,10 @@ ion-content {
   left: 0;
   right: 0;
   background: white;
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
   align-items: center;
-  padding: 10px 0 20px;
+  padding: 10px 0 16px;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
   z-index: 100;
 
@@ -175,16 +191,16 @@ ion-content {
     align-items: center;
     gap: 4px;
     cursor: pointer;
-    padding: 4px 12px;
+    padding: 4px 4px;
     border-radius: 12px;
     transition: all 0.2s;
 
-    ion-icon { font-size: 24px; color: #bbb; }
-    span { font-size: 10px; color: #bbb; font-weight: 500; }
+    ion-icon { font-size: 22px; color: #bbb; }
+    span { font-size: 10px; color: #bbb; font-weight: 600; }
 
     &.active {
-      ion-icon { color: #5b5bd6; }
-      span { color: #5b5bd6; font-weight: bold; }
+      ion-icon { color: var(--khed-primary); }
+      span { color: var(--khed-primary); font-weight: 800; }
     }
 
     &.store-btn {

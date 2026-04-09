@@ -1,8 +1,8 @@
 <ion-content>
   <div class="container">
-    <h1 class="logo">khedMAP</h1>
-    <h2 class="title">Who are you ?</h2>
-    <p class="subtitle">Choose your role to begin your journey</p>
+    <h1 class="logo">KhedMap</h1>
+    <h2 class="title">Pick your cockpit</h2>
+    <p class="subtitle">We will email you as soon as your account is reviewed by the admin team.</p>
 
     <div class="cards">
       <div class="card" [class.selected]="selectedRole === 'freelancer'"
@@ -11,7 +11,8 @@
           <ion-icon name="briefcase"></ion-icon>
         </div>
         <h3>Freelancer</h3>
-        <p>I am seeking for a job</p>
+        <p>Create a profile with photo, CV and gigs. See recommendations by field and manage notifications.</p>
+        <span class="tag">Needs admin approval</span>
       </div>
 
       <div class="card" [class.selected]="selectedRole === 'client'"
@@ -20,7 +21,8 @@
           <ion-icon name="person"></ion-icon>
         </div>
         <h3>Client</h3>
-        <p>I want to find a freelancer</p>
+        <p>Post jobs, chat with freelancers and buy gigs with a transparent 15% platform fee.</p>
+        <span class="tag">Email sent when active</span>
       </div>
 
       <div class="card center" [class.selected]="selectedRole === 'admin'"
@@ -29,17 +31,22 @@
           <ion-icon name="shield"></ion-icon>
         </div>
         <h3>Admin</h3>
-        <p>I am an admin</p>
+        <p>Validate users, gigs, store items and track the commission pipeline.</p>
+        <span class="tag ghost">Internal</span>
       </div>
     </div>
 
     <ion-button expand="block" (click)="choose()" class="main-btn"
                 [disabled]="!selectedRole">
-      Choose
+      Continue
     </ion-button>
 
-    <p class="link">Have an account ?
-      <span class="accent" (click)="goToLogin()">sign in</span>
+    <div class="note">
+      KhedMap keeps 15% per service to cover payment, support and dispute handling.
+    </div>
+
+    <p class="link">Already have an account?
+      <span class="accent" (click)="goToLogin()">Sign in</span>
     </p>
   </div>
 </ion-content>

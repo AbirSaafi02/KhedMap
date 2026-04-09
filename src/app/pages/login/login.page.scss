@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f0e0c8;
+  --background: var(--khed-surface);
 }
 
 .container {
@@ -18,7 +18,7 @@ ion-content {
     font-size: 48px;
     font-weight: 900;
     font-style: italic;
-    color: #5b5bd6;
+    color: var(--khed-primary);
     margin: 0;
   }
 
@@ -30,7 +30,7 @@ ion-content {
   }
 
   .subtitle {
-    color: #e07b20;
+    color: var(--khed-accent);
     font-size: 16px;
     margin: 0;
   }
@@ -60,7 +60,7 @@ ion-input {
 }
 
 .main-btn {
-  --background: #5b5bd6;
+  --background: var(--khed-primary);
   --border-radius: 14px;
   height: 54px;
   font-size: 18px;
@@ -76,7 +76,7 @@ ion-input {
 }
 
 .accent {
-  color: #e07b20;
+  color: var(--khed-accent);
   cursor: pointer;
   font-weight: 500;
 }

@@ -5,7 +5,7 @@ import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   homeOutline, chatbubbleOutline, personOutline,
-  storefrontOutline, briefcaseOutline, searchOutline
+  storefrontOutline, briefcaseOutline, searchOutline, notificationsOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -30,13 +30,15 @@ export class MessagesFreelancerPage {
   constructor(private router: Router) {
     addIcons({
       homeOutline, chatbubbleOutline, personOutline,
-      storefrontOutline, briefcaseOutline, searchOutline
+      storefrontOutline, briefcaseOutline, searchOutline, notificationsOutline
     });
   }
 
   goTo(page: string) {
     if (page === '/store') {
       this.router.navigate(['/store'], { queryParams: { role: 'freelancer' } });
+    } else if (page === '/notifications') {
+      this.router.navigate(['/notifications'], { queryParams: { role: 'freelancer' } });
     } else {
       this.router.navigate([page]);
     }

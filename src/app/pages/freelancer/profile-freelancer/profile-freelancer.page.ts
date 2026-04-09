@@ -6,7 +6,7 @@ import { addIcons } from 'ionicons';
 import {
   homeOutline, chatbubbleOutline, personOutline,
   storefrontOutline, briefcaseOutline, createOutline,
-  starOutline, chevronForwardOutline, logOutOutline
+  starOutline, chevronForwardOutline, logOutOutline, notificationsOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -21,24 +21,40 @@ export class ProfileFreelancerPage {
 
   profile = {
     name: 'Mayssa Sayah',
-    title: 'UI UX Designer',
+    title: 'UI/UX Designer',
     bio: 'Passionate UI/UX designer with 3 years of experience creating intuitive and engaging digital experiences. Specialized in mobile and web design.',
     rating: '4.9',
     jobs: '23',
-    reviews: '18'
+    reviews: '18',
+    status: 'Pending admin review',
+    fields: ['Design', 'Product', 'Motion'],
+    cvUrl: 'cv-mayssa.pdf',
+    email: 'mayssa@khedmap.tn'
   };
+
+  verifications = [
+    { label: 'Identity check', status: 'Pending', action: 'Upload ID' },
+    { label: 'Portfolio link', status: 'Submitted', action: 'Edit' },
+    { label: 'Store seller mode', status: 'Enabled', action: 'View guidelines' },
+  ];
 
   constructor(private router: Router) {
     addIcons({
       homeOutline, chatbubbleOutline, personOutline,
       storefrontOutline, briefcaseOutline, createOutline,
-      starOutline, chevronForwardOutline, logOutOutline
+      starOutline, chevronForwardOutline, logOutOutline, notificationsOutline
     });
+  }
+
+  openNotifications() {
+    this.router.navigate(['/notifications'], { queryParams: { role: 'freelancer' } });
   }
 
   goTo(page: string) {
     if (page === '/store') {
       this.router.navigate(['/store'], { queryParams: { role: 'freelancer' } });
+    } else if (page === '/notifications') {
+      this.openNotifications();
     } else {
       this.router.navigate([page]);
     }

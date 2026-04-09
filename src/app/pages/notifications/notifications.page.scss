@@ -1,0 +1,102 @@
+ion-content {
+  --background: var(--khed-surface);
+}
+
+.page {
+  padding: 42px 18px 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  h1 { margin: 2px 0 0; font-size: 26px; font-weight: 900; color: #0f172a; }
+  .eyebrow { margin: 0; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+}
+
+.alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.left {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+.icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #f1f5f9;
+  color: #0f172a;
+
+  &.pending { background: #fff7ed; color: #c2410c; }
+  &.approved { background: #e8f7f0; color: #15803d; }
+  &.rejected { background: #fef2f2; color: #b91c1c; }
+}
+
+.title { margin: 0 0 2px; font-weight: 800; color: #0f172a; }
+.message { margin: 0; color: #475569; font-size: 13px; line-height: 1.4; }
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+
+  .tag {
+    background: #f0eeff;
+    color: var(--khed-primary);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .date {
+    font-size: 11px;
+    color: #94a3b8;
+  }
+}
+
+.status {
+  text-transform: capitalize;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #475569;
+
+  &.pending { background: #fff7ed; color: #c2410c; }
+  &.approved { background: #e8f7f0; color: #15803d; }
+  &.rejected { background: #fef2f2; color: #b91c1c; }
+}
+
+.pill-btn {
+  background: #f0eeff;
+  color: var(--khed-primary);
+  border: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}

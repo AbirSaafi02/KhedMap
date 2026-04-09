@@ -1,16 +1,25 @@
 ion-content {
-  --background: #f0e0c8;
+  --background: var(--khed-surface);
 }
 
 .onboarding {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  position: relative;
+}
+
+.brand-badge .dot {
+  width: 10px;
+  height: 10px;
+  background: var(--khed-primary);
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .illustration-area {
   flex: 1.2;
-  background: #f0e0c8;
+  background: radial-gradient(circle at 20% 20%, #fff 0, #fff6ec 45%, #f5eadd 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,57 +29,73 @@ ion-content {
     position: absolute;
     top: 52px;
     right: 24px;
-    color: #888;
+    color: var(--khed-muted);
     font-size: 15px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .illus-img {
     width: 85%;
     max-height: 300px;
     object-fit: contain;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.08));
   }
 }
 
 .card {
-  background: white;
+  background: #ffffff;
   border-radius: 32px 32px 0 0;
   padding: 36px 28px 48px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 -4px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.06);
+
+  .eyebrow {
+    margin: 0 0 6px;
+    font-size: 12px;
+    letter-spacing: 0.6px;
+    color: var(--khed-muted);
+    text-transform: uppercase;
+  }
 
   .title {
     font-size: 32px;
     font-weight: 900;
-    color: #5b5bd6;
-    margin: 0 0 16px;
+    color: var(--khed-primary);
+    margin: 0 0 12px;
     line-height: 1.2;
   }
 
   .desc {
-    font-size: 14px;
-    color: #666;
-    line-height: 1.8;
-    margin: 0;
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.7;
+    margin: 0 0 18px;
     flex: 1;
   }
+}
+
+.pill-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
 }
 
 .nav-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 32px;
+  margin-top: 26px;
 }
 
 .back-btn {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  border: 2px solid #ddd;
+  border-radius: 14px;
+  border: 2px solid #ececec;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,7 +117,7 @@ ion-content {
     transition: all 0.3s;
 
     &.active {
-      background: #5b5bd6;
+      background: var(--khed-primary);
       width: 24px;
       border-radius: 4px;
     }
@@ -100,14 +125,14 @@ ion-content {
 }
 
 .next-btn {
-  background: #5b5bd6;
+  background: var(--khed-primary);
   color: white;
   border-radius: 14px;
   padding: 14px 24px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(91,91,214,0.3);
+  box-shadow: 0 4px 15px rgba(91,91,214,0.28);
   transition: transform 0.15s;
   text-transform: lowercase;
 

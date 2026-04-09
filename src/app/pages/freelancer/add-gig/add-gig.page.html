@@ -6,31 +6,25 @@
       <div class="back-btn" (click)="goBack()">
         <ion-icon name="arrow-back-outline"></ion-icon>
       </div>
-      <span class="top-title">Add a Gig</span>
-      <div></div>
+      <span class="top-title">New gig</span>
+      <div class="status-pill">15% fee auto-applied</div>
     </div>
 
     <!-- Success state -->
     <div class="success-card" *ngIf="submitted">
       <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
-      <h2>Gig Created! 🎉</h2>
-      <p>Your gig is now live. Clients can find your service. Redirecting...</p>
+      <h2>Submitted for review</h2>
+      <p>Admins validate gigs before they go live. You will receive an email + in-app notification.</p>
     </div>
 
     <!-- Form -->
     <div class="form" *ngIf="!submitted">
 
-      <!-- Title -->
       <div class="field">
         <label>Gig Title</label>
-        <input
-          [(ngModel)]="gig.title"
-          type="text"
-          placeholder="e.g. I will design a modern mobile UI"
-          class="input" />
+        <input [(ngModel)]="gig.title" type="text" placeholder="e.g. I will design a modern mobile UI" class="input" />
       </div>
 
-      <!-- Category -->
       <div class="field">
         <label>Category</label>
         <div class="chips-select">
@@ -43,38 +37,57 @@
         </div>
       </div>
 
-      <!-- Price -->
-      <div class="field">
-        <label>Price (DT)</label>
-        <input
-          [(ngModel)]="gig.price"
-          type="number"
-          placeholder="e.g. 150"
-          class="input" />
-      </div>
-
-      <!-- Delivery time -->
-      <div class="field">
-        <label>Delivery Time</label>
-        <div class="chips-select">
-          <div *ngFor="let d of deliveryOptions"
-               class="chip-option"
-               [class.selected]="selectedDelivery === d"
-               (click)="selectedDelivery = d">
-            {{ d }}
+      <div class="field grid">
+        <div>
+          <label>Price (DT)</label>
+          <input [(ngModel)]="gig.price" type="number" placeholder="e.g. 150" class="input" />
+        </div>
+        <div>
+          <label>Delivery Time</label>
+          <div class="chips-select">
+            <div *ngFor="let d of deliveryOptions"
+                 class="chip-option"
+                 [class.selected]="selectedDelivery === d"
+                 (click)="selectedDelivery = d">
+              {{ d }}
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Description -->
       <div class="field">
-        <label>Description</label>
-        <textarea
-          [(ngModel)]="gig.description"
-          placeholder="Describe what you offer, what the client will get, and your experience..."
-          class="textarea"
-          rows="6">
-        </textarea>
+        <label>Short Description</label>
+        <textarea [(ngModel)]="gig.description" class="textarea" rows="4" placeholder="Describe deliverables, tools, and what the client receives"></textarea>
+      </div>
+
+      <div class="field attachments">
+        <label>Attachments</label>
+        <label class="upload-pill">
+          <input type="file" multiple (change)="onFileSelected($event)" hidden />
+          <span>{{ attachmentNames.length ? attachmentNames.join(', ') : 'Upload mockups, CV, PDFs' }}</span>
+        </label>
+        <p class="hint">Required: portfolio link or PDF. Optional: source files, licence info.</p>
+      </div>
+
+      <div class="toggles">
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="gig.inStore" />
+          <div>
+            <p class="t-title">List in Store</p>
+            <p class="t-sub">Sell templates or digital files. Admin will verify licences.</p>
+          </div>
+        </label>
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="gig.allowMessaging" />
+          <div>
+            <p class="t-title">Allow quick chat</p>
+            <p class="t-sub">Let clients message before ordering.</p>
+          </div>
+        </label>
+      </div>
+
+      <div class="info-card">
+        15% KhedMap fee applies to every order. The price above is what clients see; your payout will show the net amount.
       </div>
 
     </div>
@@ -87,6 +100,6 @@
   <div class="submit-btn"
        (click)="submit()"
        [class.disabled]="!gig.title || !selectedCategory || !gig.price || !selectedDelivery">
-    Create Gig
+    Submit for approval
   </div>
 </div>

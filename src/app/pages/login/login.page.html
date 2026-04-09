@@ -27,6 +27,11 @@
           (click)="selectedRole = 'client'">
         Client
       </div>
+      <div class="role-option"
+          [class.active]="selectedRole === 'admin'"
+          (click)="selectedRole = 'admin'">
+        Admin
+      </div>
     </div>
       <ion-button expand="block" (click)="login()" class="main-btn">Sign in</ion-button>
 

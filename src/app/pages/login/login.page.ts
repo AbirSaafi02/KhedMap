@@ -17,17 +17,22 @@ export class LoginPage {
   email = '';
   password = '';
   showPassword = false;
+  selectedRole: 'freelancer' | 'client' | 'admin' = 'freelancer';
 
   constructor(private router: Router) {
     addIcons({ eye, eyeOff });
   }
-selectedRole = 'freelancer';
 
 login() {
+  if (!this.email || !this.password) return;
+  localStorage.setItem('currentRole', this.selectedRole);
+
   if (this.selectedRole === 'freelancer') {
     this.router.navigate(['/freelancer/home']);
-  } else {
+  } else if (this.selectedRole === 'client') {
     this.router.navigate(['/client/home']);
+  } else {
+    this.router.navigate(['/admin/dashboard']);
   }
 }
   goToRegister() { this.router.navigate(['/register']); }}

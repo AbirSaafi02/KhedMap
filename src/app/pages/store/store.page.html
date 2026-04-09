@@ -85,7 +85,7 @@
             <span class="product-rating">⭐ {{ p.rating }}</span>
           </div>
           <div class="product-sales">{{ p.sales }} sales</div>
-          <div class="buy-btn">Buy Now</div>
+          <div class="buy-btn" (click)="openBuy(p)">Buy Now</div>
         </div>
       </div>
     </div>
@@ -186,6 +186,48 @@
   </div>
 </div>
 
+<!-- BUY MODAL -->
+<div class="modal-overlay" *ngIf="showBuyModal" (click)="showBuyModal = false">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <div class="success-card" *ngIf="buySubmitted">
+      <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+      <h2>Téléchargement prêt</h2>
+      <p>Le fichier est ajouté à vos achats.</p>
+    </div>
+
+    <div *ngIf="!buySubmitted && selectedProduct">
+      <div class="modal-header">
+        <h2>{{ selectedProduct.title }}</h2>
+        <div class="close-btn" (click)="showBuyModal = false">
+          <ion-icon name="close-outline"></ion-icon>
+        </div>
+      </div>
+
+      <div class="buy-summary">
+        <div class="row">
+          <span>Prix</span>
+          <strong>{{ selectedProduct.price }}</strong>
+        </div>
+        <div class="row">
+          <span>Licence</span>
+          <strong>Usage personnel</strong>
+        </div>
+        <div class="row">
+          <span>Version</span>
+          <strong>v1.0</strong>
+        </div>
+      </div>
+
+      <div class="submit-btn"
+           (click)="confirmBuy()"
+           [class.disabled]="buySubmitted">
+        Confirmer & Télécharger
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Bottom Nav -->
 <div class="bottom-nav" *ngIf="role === 'freelancer'">
   <div class="nav-item" (click)="goTo('/freelancer/home')">
@@ -214,6 +256,10 @@
   <div class="nav-item" (click)="goTo('/client/home')">
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
+  </div>
+  <div class="nav-item" (click)="goTo('/client/gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>Gigs</span>
   </div>
   <div class="nav-item active store-btn">
     <ion-icon name="storefront-outline"></ion-icon>

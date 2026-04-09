@@ -1,17 +1,32 @@
 <ion-content>
   <div class="container">
     <div class="logo-section">
-      <h1 class="logo">khedMAP</h1>
+      <h1 class="logo">KhedMap</h1>
       <h2>Create your account</h2>
-      <p class="subtitle">Pleasure to meet you !</p>
+      <p class="subtitle">We will email you once an admin approves your profile.</p>
+    </div>
+
+    <div class="role-toggle">
+      <div class="role-option" [class.active]="selectedRole === 'freelancer'" (click)="selectedRole = 'freelancer'">
+        Freelancer
+        <small>Show your work, get matched</small>
+      </div>
+      <div class="role-option" [class.active]="selectedRole === 'client'" (click)="selectedRole = 'client'">
+        Client
+        <small>Post needs, hire fast</small>
+      </div>
+      <div class="role-option" [class.active]="selectedRole === 'admin'" (click)="selectedRole = 'admin'">
+        Admin
+        <small>Review & approve</small>
+      </div>
     </div>
 
     <div class="form-section">
       <ion-item lines="none" class="input-item">
-        <ion-input [(ngModel)]="name" type="text" placeholder="Name"></ion-input>
+        <ion-input [(ngModel)]="name" type="text" placeholder="Full name"></ion-input>
       </ion-item>
 
-      <ion-item lines="none" class="input-item">
+      <ion-item lines="none" class="input-item" *ngIf="!isAdmin">
         <ion-input [(ngModel)]="phone" type="tel" placeholder="Phone"></ion-input>
       </ion-item>
 
@@ -20,14 +35,47 @@
       </ion-item>
 
       <ion-item lines="none" class="input-item">
-        <ion-input [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'" placeholder="Password"></ion-input>
+        <ion-input [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'" placeholder="Password (min 8 chars)"></ion-input>
         <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (click)="showPassword = !showPassword"></ion-icon>
       </ion-item>
 
-      <ion-button expand="block" (click)="register()" class="main-btn">Register</ion-button>
+      <div class="inline-input" *ngIf="!isAdmin">
+        <label class="inline-label">Profile photo</label>
+        <label class="upload-pill">
+          <input type="file" accept="image/*" (change)="onAvatarSelected($event)" hidden />
+          <span>{{ avatarFileName || 'Add image' }}</span>
+        </label>
+      </div>
 
-      <p class="link">Have an account ?
-        <span class="accent" (click)="goToLogin()">sign in</span>
+      <div *ngIf="isFreelancer">
+        <div class="inline-input">
+          <label class="inline-label">CV / Portfolio link</label>
+          <input [(ngModel)]="resumeUrl" type="url" placeholder="https://..." />
+        </div>
+
+        <div class="inline-input">
+          <label class="inline-label">Short bio</label>
+          <textarea [(ngModel)]="bio" rows="3" placeholder="Tell us about your skills and tools"></textarea>
+        </div>
+
+        <div class="info-card">
+          <strong>Visibility tip:</strong> Share clear pricing and past work. Platform fees are shown transparently to clients before checkout.
+        </div>
+      </div>
+
+      <div *ngIf="isAdmin" class="info-card">
+        <strong>Admin accounts</strong> can review profiles, gigs, and store items, and release payouts. Keep credentials safe.
+      </div>
+
+      <label class="agree">
+        <input type="checkbox" [(ngModel)]="agreed" />
+        I agree to receive an email when my account is approved or rejected.
+      </label>
+
+      <ion-button expand="block" (click)="register()" class="main-btn">Continue</ion-button>
+
+      <p class="link">Already registered?
+        <span class="accent" (click)="goToLogin()">Sign in</span>
       </p>
     </div>
   </div>

@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="header">
       <div>
-        <p class="greeting">Hello Client 👋</p>
+        <p class="greeting">Hey, {{ userName }}</p>
         <h1 class="discover">Discover</h1>
       </div>
       <div class="header-right">
@@ -30,12 +30,12 @@
     </div>
 
     <div class="freelancer-scroll">
-      <div class="freelancer-card" *ngFor="let f of freelancers">
-        <div class="avatar">{{ f.name[0] }}</div>
-        <p class="fname">{{ f.name }}</p>
-        <p class="fjob">{{ f.job }}</p>
-      </div>
+    <div class="freelancer-card" *ngFor="let f of freelancers" (click)="openFreelancer(f.id)">
+      <div class="avatar">{{ f.name[0] }}</div>
+      <p class="fname">{{ f.name }}</p>
+      <p class="fjob">{{ f.job }}</p>
     </div>
+  </div>
 
     <!-- Category filters -->
     <div class="section-header">
@@ -55,10 +55,10 @@
 
     <!-- Freelancer recommendation cards -->
     <div class="rec-list">
-      <div class="rec-card" *ngFor="let r of recommendations">
-        <div class="rec-avatar">{{ r.name[0] }}</div>
-        <div class="rec-info">
-          <div class="rec-top">
+  <div class="rec-card" *ngFor="let r of recommendations" (click)="openFreelancer(r.id)">
+    <div class="rec-avatar">{{ r.name[0] }}</div>
+    <div class="rec-info">
+      <div class="rec-top">
             <div>
               <span class="rec-name">{{ r.name }}</span>
               <span class="rec-title"> · {{ r.title }}</span>
@@ -89,6 +89,11 @@
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
   </div>
+  <div class="nav-item" [class.active]="activeTab === 'gigs'"
+       (click)="setTab('gigs'); goTo('/client/gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>Gigs</span>
+  </div>
   <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
        (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
@@ -98,6 +103,11 @@
        (click)="setTab('messages'); goTo('/client/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
     <span>Messages</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'profile'"
        (click)="setTab('profile'); goTo('/client/profile')">

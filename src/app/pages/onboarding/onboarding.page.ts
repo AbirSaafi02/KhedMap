@@ -15,18 +15,18 @@ export class OnboardingPage {
 
   slides = [
     {
-      title: 'Empowerment',
-      description: 'Discover new opportunities and take control of your freelance journey with our powerful search and match capabilities.',
+      title: 'Welcome to KhedMap',
+      description: 'Find vetted talent or land paid work fast. Create a profile, pick your fields, and get a feed that feels tailored from day one.',
       btn: 'next'
     },
     {
-      title: 'Connectivity',
-      description: 'Easily find and communicate with clients, manage projects, and build lasting professional relationships.',
-      btn: 'finish'
+      title: 'Work Runs Smoothly',
+      description: 'Built‑in briefs, chat, milestones, and payouts keep everyone aligned. Less back-and-forth, more shipped work.',
+      btn: 'next'
     },
     {
-      title: 'Start your Career with us',
-      description: 'Start your career with us today. Connect with opportunities and success awaits. Let\'s begin now!',
+      title: 'Quality Checked',
+      description: 'Profiles, gigs, and store items are reviewed by our team. You get notified the moment something goes live.',
       btn: 'get started'
     }
   ];

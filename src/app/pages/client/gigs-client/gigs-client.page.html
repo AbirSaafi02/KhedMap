@@ -1,0 +1,96 @@
+<ion-content>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1 class="title">Browse Gigs</h1>
+        <p class="subtitle">Commandez un service prêt</p>
+      </div>
+      <ion-icon name="briefcase-outline" class="header-icon"></ion-icon>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <input type="text" placeholder="Rechercher un service..." />
+    </div>
+
+    <div class="fee-note">
+      Checkout will add a 15% KhedMap service fee. It is shown transparently before you pay.
+    </div>
+
+    <!-- Gig cards -->
+    <div class="gigs-list">
+      <div class="gig-card" *ngFor="let g of gigs" (click)="openDetail(g)">
+        <div class="gig-top">
+          <div>
+            <p class="gig-title">{{ g.title }}</p>
+            <p class="gig-category">{{ g.category }}</p>
+          </div>
+          <span class="gig-price">{{ g.price }}</span>
+        </div>
+        <div class="gig-meta">
+          <div class="meta-item">
+            <ion-icon name="star-outline"></ion-icon>
+            <span>{{ g.rating }}</span>
+          </div>
+          <div class="meta-item">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ g.delivery }}</span>
+          </div>
+          <div class="meta-item">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>{{ g.owner }}</span>
+          </div>
+        </div>
+        <div class="gig-actions">
+          <div class="order-btn" (click)="order(g); $event.stopPropagation()">Commander</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<ion-toast
+  [isOpen]="showToast"
+  [message]="toastMessage"
+  duration="1200"
+  position="top"
+  (didDismiss)="showToast = false">
+</ion-toast>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item" [class.active]="activeTab === 'home'"
+       (click)="setTab('home'); goTo('/client/home')">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </div>
+  <div class="nav-item active" [class.active]="activeTab === 'gigs'"
+       (click)="setTab('gigs'); goTo('/client/gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>Gigs</span>
+  </div>
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
+       (click)="setTab('store'); goTo('/store')">
+    <ion-icon name="storefront-outline"></ion-icon>
+    <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'messages'"
+       (click)="setTab('messages'); goTo('/client/messages')">
+    <ion-icon name="chatbubble-outline"></ion-icon>
+    <span>Messages</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'profile'"
+       (click)="setTab('profile'); goTo('/client/profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </div>
+</div>

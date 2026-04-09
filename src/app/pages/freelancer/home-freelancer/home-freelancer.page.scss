@@ -1,57 +1,102 @@
 ion-content {
-  --background: #f0e0c8;
+  --background: var(--khed-surface);
 }
 
 .page {
-  padding: 52px 20px 100px;
+  padding: 52px 20px 120px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
 
   .greeting {
-    font-size: 14px;
-    color: #888;
-    margin: 0 0 4px;
-  }
-
-  .discover {
-    font-size: 36px;
-    font-weight: 900;
-    color: #1a1a1a;
+    font-size: 13px;
+    color: var(--khed-muted);
     margin: 0;
   }
 
-  .notif-btn {
-    width: 44px;
-    height: 44px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    cursor: pointer;
-
-    ion-icon {
-      font-size: 22px;
-      color: #1a1a1a;
-    }
+  .discover {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--khed-ink);
+    margin: 2px 0 6px;
   }
+}
+
+.status-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  .chip {
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #475569;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notif-btn {
+  width: 46px;
+  height: 46px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+
+  ion-icon { font-size: 22px; color: var(--khed-primary); }
+
+  .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--khed-accent);
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: #f0e0c8;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: var(--khed-primary);
 }
 
 .search-bar {
   background: white;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  margin-bottom: 28px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+  margin-bottom: 18px;
 
   .search-icon { color: #999; font-size: 20px; }
 
@@ -66,24 +111,109 @@ ion-content {
   }
 }
 
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.qa-card {
+  display: flex;
+  gap: 10px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.1s;
+  &:active { transform: translateY(1px); }
+
+  .qa-title { margin: 0; font-weight: 800; color: #0f172a; }
+  .qa-sub { margin: 0; font-size: 12px; color: #6b7280; }
+}
+
+.icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #f0e0c8;
+  display: grid;
+  place-items: center;
+  ion-icon { color: var(--khed-primary); font-size: 22px; }
+
+  &.orange { background: #fff4e5; ion-icon { color: var(--khed-accent); } }
+  &.purple { background: #f0eeff; ion-icon { color: var(--khed-primary); } }
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin: 12px 0 8px;
 
   h2 {
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 800;
     color: #1a1a1a;
     margin: 0;
   }
 
   .see-all {
     font-size: 13px;
-    color: #e07b20;
+    color: var(--khed-accent);
     cursor: pointer;
   }
+}
+
+.job-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.job-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.job-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  .job-title { margin: 0; font-weight: 800; color: #0f172a; }
+  .job-company { margin: 2px 0 0; font-size: 12px; color: #6b7280; }
+  .job-budget { font-weight: 800; color: var(--khed-primary); }
+}
+
+.job-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 10px;
+  .meta { font-size: 12px; color: #475569; }
+  .dot { color: #d1d5db; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { background: #f0eeff; color: var(--khed-primary); padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+}
+
+.job-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  &.primary { background: var(--khed-primary); color: #fff; }
+  &.ghost { background: #f8fafc; color: #1f2937; }
 }
 
 .freelancer-scroll {
@@ -91,7 +221,7 @@ ion-content {
   gap: 14px;
   overflow-x: auto;
   padding-bottom: 8px;
-  margin-bottom: 28px;
+  margin-bottom: 18px;
   &::-webkit-scrollbar { display: none; }
 
   .client-card {
@@ -99,14 +229,14 @@ ion-content {
     border-radius: 16px;
     padding: 16px;
     min-width: 150px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
     text-align: center;
     flex-shrink: 0;
 
     .avatar {
       width: 50px;
       height: 50px;
-      border-radius: 50%;
+      border-radius: 14px;
       background: #e07b20;
       color: white;
       font-size: 22px;
@@ -137,8 +267,8 @@ ion-content {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 16px;
+  padding-bottom: 6px;
+  margin-left: auto;
   &::-webkit-scrollbar { display: none; }
 
   .cat-chip {
@@ -153,7 +283,7 @@ ion-content {
     transition: all 0.2s;
 
     &.active {
-      background: #5b5bd6;
+      background: var(--khed-primary);
       color: white;
       font-weight: bold;
     }
@@ -173,7 +303,7 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
   cursor: pointer;
   transition: transform 0.15s;
 
@@ -182,8 +312,8 @@ ion-content {
   .rec-avatar {
     width: 46px;
     height: 46px;
-    border-radius: 50%;
-    background: #5b5bd6;
+    border-radius: 14px;
+    background: var(--khed-primary);
     color: white;
     font-size: 18px;
     font-weight: bold;
@@ -214,7 +344,7 @@ ion-content {
 
         .tag {
           background: #f0eeff;
-          color: #5b5bd6;
+          color: var(--khed-primary);
           font-size: 10px;
           padding: 2px 8px;
           border-radius: 10px;
@@ -226,8 +356,15 @@ ion-content {
     .rec-bio {
       font-size: 12px;
       color: #888;
-      margin: 0;
+      margin: 0 0 4px;
       line-height: 1.4;
+    }
+
+    .rec-budget {
+      margin: 0;
+      font-size: 12px;
+      color: #475569;
+      font-weight: 700;
     }
   }
 
@@ -244,10 +381,10 @@ ion-content {
   left: 0;
   right: 0;
   background: white;
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
   align-items: center;
-  padding: 10px 0 20px;
+  padding: 10px 0 16px;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
   z-index: 100;
 
@@ -257,34 +394,34 @@ ion-content {
     align-items: center;
     gap: 4px;
     cursor: pointer;
-    padding: 4px 12px;
+    padding: 4px 4px;
     border-radius: 12px;
     transition: all 0.2s;
 
     ion-icon {
-      font-size: 24px;
+      font-size: 22px;
       color: #bbb;
     }
 
     span {
       font-size: 10px;
       color: #bbb;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     &.active {
-      ion-icon { color: #5b5bd6; }
-      span { color: #5b5bd6; font-weight: bold; }
+      ion-icon { color: var(--khed-primary); }
+      span { color: var(--khed-primary); font-weight: 800; }
     }
 
     &.store-btn {
-      ion-icon { color: #e07b20; }
-      span { color: #e07b20; }
+      ion-icon { color: var(--khed-accent); }
+      span { color: var(--khed-accent); }
 
       &.active {
         background: #fff5ec;
-        ion-icon { color: #e07b20; }
-        span { color: #e07b20; font-weight: bold; }
+        ion-icon { color: var(--khed-accent); }
+        span { color: var(--khed-accent); font-weight: 800; }
       }
     }
   }

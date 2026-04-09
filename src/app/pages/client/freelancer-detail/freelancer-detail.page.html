@@ -1,0 +1,49 @@
+<ion-content>
+  <div class="page">
+    <div class="top-bar">
+      <button class="circle" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <span class="eyebrow">Hey, {{ clientName }} · Discover</span>
+    </div>
+
+    <div class="hero card">
+      <div class="avatar">{{ freelancer.name[0] }}</div>
+      <div class="identity">
+        <h1 class="name">{{ freelancer.name }}</h1>
+        <p class="title">{{ freelancer.title }}</p>
+        <div class="stats">
+          <span><ion-icon name="star-outline"></ion-icon> {{ freelancer.rating }}</span>
+          <span><ion-icon name="briefcase-outline"></ion-icon> {{ freelancer.jobs }} jobs</span>
+        </div>
+        <div class="tags">
+          <span class="tag" *ngFor="let t of freelancer.tags">{{ t }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>What I deliver</h3>
+      <p class="bio">{{ freelancer.bio }}</p>
+      <ul class="bullets">
+        <li *ngFor="let item of highlights">{{ item }}</li>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <button class="primary" (click)="hire()">Request quote</button>
+      <button class="ghost" (click)="contact()">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        Chat
+      </button>
+    </div>
+  </div>
+</ion-content>
+
+<ion-toast
+  [isOpen]="showToast"
+  [message]="toastMessage"
+  duration="1200"
+  position="top"
+  (didDismiss)="showToast = false">
+</ion-toast>

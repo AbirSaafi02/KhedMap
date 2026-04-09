@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
@@ -12,7 +12,7 @@ import {
   checkmarkCircleOutline
 } from 'ionicons/icons';
 
-import { ActivatedRoute } from '@angular/router';
+type Role = 'freelancer' | 'client';
 
 @Component({
   selector: 'app-store',
@@ -26,6 +26,9 @@ export class StorePage {
   activeCategory = 'All';
   showSellModal = false;
   sellSubmitted = false;
+  showBuyModal = false;
+  buySubmitted = false;
+  selectedProduct: any = null;
 
   // New product form
   newProduct = {
@@ -53,12 +56,23 @@ export class StorePage {
     { title: 'E-commerce Template Bundle', price: '75 DT', seller: 'Sara', rating: '4.9' },
   ];
 
-role = 'client';
+  role: Role = 'client';
 
-constructor(private router: Router, private route: ActivatedRoute) {
-  this.route.queryParams.subscribe(params => {
-    this.role = params['role'] || 'client';
-  });
+  constructor(private router: Router, private route: ActivatedRoute) {
+    this.route.queryParams.subscribe(params => {
+      const paramRole = params['role'] as Role | undefined;
+      const storedRole = localStorage.getItem('currentRole') as Role | 'admin' | null;
+
+      if (paramRole) {
+        this.role = paramRole;
+      } else if (storedRole === 'freelancer' || storedRole === 'client') {
+        this.role = storedRole;
+      } else {
+        this.role = 'client';
+      }
+
+      localStorage.setItem('currentRole', this.role);
+    });
     addIcons({
       searchOutline, cartOutline, heartOutline,
       starOutline, homeOutline, storefrontOutline,
@@ -68,7 +82,9 @@ constructor(private router: Router, private route: ActivatedRoute) {
     });
   }
 
-  goTo(page: string) { this.router.navigate([page]); }
+  goTo(page: string) {
+    this.router.navigate([page], { queryParams: { role: this.role } });
+  }
   setTab(tab: string) { this.activeTab = tab; }
   setCategory(cat: string) { this.activeCategory = cat; }
 
@@ -87,6 +103,21 @@ constructor(private router: Router, private route: ActivatedRoute) {
     if (!this.newProduct.price) return '0 DT';
     const price = parseFloat(this.newProduct.price);
     return (price * 0.85).toFixed(2) + ' DT';
+  }
+
+  openBuy(product: any) {
+    this.selectedProduct = product;
+    this.buySubmitted = false;
+    this.showBuyModal = true;
+  }
+
+  confirmBuy() {
+    this.buySubmitted = true;
+    setTimeout(() => {
+      this.showBuyModal = false;
+      this.selectedProduct = null;
+      this.buySubmitted = false;
+    }, 1500);
   }
 
   submitProduct() {

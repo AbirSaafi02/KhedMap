@@ -1,2 +1,41 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+:root {
+  /* Brand */
+  --khed-primary: #5b5bd6;
+  --khed-primary-strong: #3d3db2;
+  --khed-accent: #e07b20;
+  --khed-sand: #f5eadd;
+  --khed-ink: #0f172a;
+  --khed-muted: #6b7280;
+  --khed-card: #ffffff;
+  --khed-success: #2ecc71;
+  --khed-danger: #ef4444;
+  --khed-surface: linear-gradient(180deg, #f7f1e6 0%, #ffffff 60%);
+
+  /* Ionic palette override */
+  --ion-color-primary: var(--khed-primary);
+  --ion-color-primary-rgb: 91, 91, 214;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #4f4fbf;
+  --ion-color-primary-tint: #6d6de5;
+
+  --ion-color-secondary: var(--khed-accent);
+  --ion-color-secondary-rgb: 224, 123, 32;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #c1691c;
+  --ion-color-secondary-tint: #ea8c38;
+
+  --ion-color-tertiary: #f7c948;
+  --ion-color-success: var(--khed-success);
+  --ion-color-warning: #f59e0b;
+  --ion-color-danger: var(--khed-danger);
+
+  --ion-font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--khed-surface);
+  color: var(--khed-ink);
+  font-family: var(--ion-font-family);
+}

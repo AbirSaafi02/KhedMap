@@ -46,10 +46,20 @@
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
   </div>
+  <div class="nav-item" [class.active]="activeTab === 'gigs'"
+       (click)="setTab('gigs'); goTo('/client/gigs')">
+    <ion-icon name="briefcase-outline"></ion-icon>
+    <span>Gigs</span>
+  </div>
   <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
        (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
   </div>
   <div class="nav-item active" [class.active]="activeTab === 'messages'"
        (click)="setTab('messages'); goTo('/client/messages')">

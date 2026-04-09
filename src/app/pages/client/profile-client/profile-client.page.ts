@@ -6,7 +6,7 @@ import { addIcons } from 'ionicons';
 import {
   homeOutline, chatbubbleOutline, personOutline,
   storefrontOutline, createOutline, briefcaseOutline,
-  chevronForwardOutline, logOutOutline, starOutline
+  chevronForwardOutline, logOutOutline, starOutline, notificationsOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -24,20 +24,26 @@ export class ProfileClientPage {
     title: 'Client · Startup Founder',
     jobs: '8',
     spent: '3200 DT',
-    reviews: '12'
+    reviews: '12',
+    status: 'Pending admin approval',
+    email: 'mustapha@startup.tn'
   };
 
   constructor(private router: Router) {
     addIcons({
       homeOutline, chatbubbleOutline, personOutline,
       storefrontOutline, createOutline, briefcaseOutline,
-      chevronForwardOutline, logOutOutline, starOutline
+      chevronForwardOutline, logOutOutline, starOutline, notificationsOutline
     });
   }
+
+  openNotifications() { this.router.navigate(['/notifications'], { queryParams: { role: 'client' } }); }
 
   goTo(page: string) {
     if (page === '/store') {
       this.router.navigate(['/store'], { queryParams: { role: 'client' } });
+    } else if (page === '/notifications') {
+      this.openNotifications();
     } else {
       this.router.navigate([page]);
     }

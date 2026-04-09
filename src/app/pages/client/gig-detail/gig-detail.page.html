@@ -1,0 +1,40 @@
+<ion-content>
+  <div class="page">
+    <div class="header">
+      <h1>{{ gig.title }}</h1>
+      <p class="owner">par {{ gig.owner }}</p>
+    </div>
+
+    <div class="pill-row">
+      <span class="pill"><ion-icon name="cash-outline"></ion-icon> {{ gig.price }}</span>
+      <span class="pill"><ion-icon name="time-outline"></ion-icon> {{ gig.delivery }}</span>
+      <span class="pill"><ion-icon name="star-outline"></ion-icon> {{ gig.rating }}</span>
+    </div>
+
+    <div class="card">
+      <h3>Description</h3>
+      <p>{{ gig.description }}</p>
+    </div>
+
+    <div class="card info-card">
+      <h3>Payment & policy</h3>
+      <p>We add a transparent 15% KhedMap service fee at checkout. You will see the final total before paying.</p>
+    </div>
+
+    <div class="actions">
+      <button class="primary" (click)="order()">Commander</button>
+      <button class="ghost" (click)="message()">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        Messages
+      </button>
+    </div>
+  </div>
+</ion-content>
+
+<ion-toast
+  [isOpen]="showToast"
+  [message]="toastMessage"
+  duration="1200"
+  position="top"
+  (didDismiss)="showToast = false">
+</ion-toast>

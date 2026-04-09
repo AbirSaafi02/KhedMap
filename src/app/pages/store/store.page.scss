@@ -405,6 +405,23 @@ ion-content {
   p { font-size: 14px; color: #888; margin: 0; }
 }
 
+.buy-summary {
+  background: #f8f8ff;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 14px 0;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #666;
+    margin: 6px 0;
+
+    strong { color: #1a1a1a; }
+  }
+}
+
 // Bottom Nav
 .bottom-nav {
   position: fixed;

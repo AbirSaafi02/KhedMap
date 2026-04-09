@@ -1,13 +1,52 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>posted-jobs</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="page">
+    <div class="header">
+      <div class="left">
+        <button class="circle" (click)="goBack()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div>
+          <p class="eyebrow">Client · Posted jobs</p>
+          <h1>My jobs</h1>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="pill" (click)="setFilter('all')" [class.active]="filter === 'all'">All</button>
+        <button class="pill" (click)="setFilter('open')" [class.active]="filter === 'open'">Open</button>
+        <button class="pill" (click)="setFilter('interviewing')" [class.active]="filter === 'interviewing'">Interviewing</button>
+        <button class="pill" (click)="setFilter('closed')" [class.active]="filter === 'closed'">Closed</button>
+      </div>
+    </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">posted-jobs</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div class="list">
+      <div class="job-card" *ngFor="let job of filteredJobs">
+        <div class="row">
+          <div class="icon">
+            <ion-icon name="briefcase-outline"></ion-icon>
+          </div>
+          <div class="info">
+            <p class="title">{{ job.title }}</p>
+            <p class="meta">
+              <span class="badge" [class.open]="job.status === 'open'" [class.interviewing]="job.status === 'interviewing'" [class.closed]="job.status === 'closed'">
+                {{ job.status }}
+              </span>
+              <span class="dot">•</span>
+              <span>{{ job.posted }}</span>
+              <span class="dot">•</span>
+              <span>{{ job.budget }}</span>
+            </p>
+            <p class="notes">{{ job.notes }}</p>
+            <div class="stats">
+              <span><ion-icon name="person-outline"></ion-icon> {{ job.applicants }} applicants</span>
+              <span><ion-icon name="checkmark-circle-outline"></ion-icon> {{ job.shortlisted }} shortlisted</span>
+            </div>
+          </div>
+          <div class="cta">
+            <button class="ghost">View</button>
+            <button class="primary" *ngIf="job.status !== 'closed'">Close job</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

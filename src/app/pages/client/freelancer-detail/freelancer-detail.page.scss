@@ -1,0 +1,91 @@
+.page { padding: 28px 20px 56px; background: linear-gradient(180deg, #f6f3ff 0%, #ffffff 40%); }
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  .eyebrow { color: #6b7280; font-weight: 700; font-size: 12px; letter-spacing: 0.4px; }
+}
+
+.circle {
+  width: 42px; height: 42px; border-radius: 12px;
+  border: 1px solid #e5e7eb; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.hero {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+}
+
+.avatar {
+  min-width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #5b5bd6, #7b7bf0);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.identity { flex: 1; }
+.name { margin: 0; font-size: 22px; font-weight: 900; color: #1f2937; }
+.title { margin: 2px 0 8px; color: #6b7280; font-weight: 700; font-size: 13px; }
+
+.stats {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: #374151;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.tag {
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.bio { margin: 0 0 10px; color: #374151; line-height: 1.6; font-size: 14px; }
+.bullets { margin: 0; padding-left: 18px; color: #4b5563; line-height: 1.6; font-size: 13px; }
+.bullets li + li { margin-top: 4px; }
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.primary, .ghost {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 14px;
+}
+.primary { background: #5b5bd6; color: white; border: none; box-shadow: 0 6px 18px rgba(91,91,214,0.25); }
+.ghost { background: white; color: #5b5bd6; border: 1px solid #5b5bd6; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }

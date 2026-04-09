@@ -4,26 +4,85 @@
     <!-- Header -->
     <div class="header">
       <div>
-        <p class="greeting">Welcome back 👋</p>
+        <p class="greeting">Hey, {{ userName }}</p>
         <h1 class="discover">Discover</h1>
+        <div class="status-row">
+          <span class="chip">Account: {{ status.account }}</span>
+          <span class="chip">Gigs pending: {{ status.gigsPending }}</span>
+          <span class="chip">Unread: {{ status.unread }}</span>
+        </div>
       </div>
-      <div class="notif-btn">
-        <ion-icon name="notifications-outline"></ion-icon>
+      <div class="header-actions">
+        <div class="notif-btn" (click)="openNotifications()">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <span class="badge" *ngIf="notificationsCount">{{ notificationsCount }}</span>
+        </div>
+        <div class="avatar">M</div>
       </div>
     </div>
 
     <!-- Search bar -->
     <div class="search-bar">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input type="text" placeholder="Search jobs, clients..." />
+      <input type="text" placeholder="Search jobs, clients, gigs..." />
+    </div>
+
+    <!-- Quick actions -->
+    <div class="quick-actions">
+      <div class="qa-card" (click)="openGigComposer()">
+        <div class="icon-circle"><ion-icon name="briefcase-outline"></ion-icon></div>
+        <div>
+          <p class="qa-title">Publish a gig</p>
+          <p class="qa-sub">Set scope, price, timeline</p>
+        </div>
+      </div>
+      <div class="qa-card" (click)="openJob()">
+        <div class="icon-circle orange"><ion-icon name="search-outline"></ion-icon></div>
+        <div>
+          <p class="qa-title">Apply to jobs</p>
+          <p class="qa-sub">Based on your fields</p>
+        </div>
+      </div>
+      <div class="qa-card" (click)="openNotifications()">
+        <div class="icon-circle purple"><ion-icon name="notifications-outline"></ion-icon></div>
+        <div>
+          <p class="qa-title">Notifications</p>
+          <p class="qa-sub">Approvals & payouts</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job board -->
+    <div class="section-header">
+      <h2>Job board</h2>
+      <span class="see-all" (click)="openApply()">See all</span>
+    </div>
+    <div class="job-board">
+      <div class="job-card" *ngFor="let job of jobBoard" (click)="openJob()">
+        <div class="job-top">
+          <div>
+            <p class="job-title">{{ job.title }}</p>
+            <p class="job-company">{{ job.notes }}</p>
+          </div>
+          <span class="job-budget">{{ job.budget }}</span>
+        </div>
+        <div class="job-meta">
+          <div class="tags">
+            <span class="tag" *ngFor="let tag of [job.status]">{{ tag }}</span>
+          </div>
+        </div>
+        <div class="job-actions">
+          <button class="btn ghost" (click)="openApply(); $event.stopPropagation()">Apply</button>
+          <button class="btn primary" (click)="openJob(); $event.stopPropagation()">View brief</button>
+        </div>
+      </div>
     </div>
 
     <!-- Clients section -->
     <div class="section-header">
-      <h2>Clients</h2>
-      <span class="see-all">See All</span>
+      <h2>Clients looking now</h2>
+      <span class="see-all">See all</span>
     </div>
-
     <div class="freelancer-scroll">
       <div class="client-card" *ngFor="let c of clients">
         <div class="avatar">{{ c.name[0] }}</div>
@@ -32,26 +91,22 @@
       </div>
     </div>
 
-    <!-- Category filters -->
+    <!-- Recommendation -->
     <div class="section-header">
-      <h2>Recommendation</h2>
-      <span class="see-all">See All</span>
-    </div>
-
-    <div class="categories">
-      <div
-        *ngFor="let cat of categories"
-        class="cat-chip"
-        [class.active]="activeCategory === cat"
-        (click)="setCategory(cat)">
-        {{ cat }}
+      <h2>Recommendations</h2>
+      <div class="categories">
+        <div
+          *ngFor="let cat of categories"
+          class="cat-chip"
+          [class.active]="activeCategory === cat"
+          (click)="setCategory(cat)">
+          {{ cat }}
+        </div>
       </div>
     </div>
 
-    <!-- Job cards -->
     <div class="rec-list">
-      <div class="rec-card" *ngFor="let r of recommendations"
-           (click)="goTo('/freelancer/job-detail')">
+      <div class="rec-card" *ngFor="let r of recommendations" (click)="openJob()">
         <div class="rec-avatar">{{ r.name[0] }}</div>
         <div class="rec-info">
           <div class="rec-top">
@@ -61,6 +116,7 @@
             </div>
           </div>
           <p class="rec-bio">{{ r.bio }}</p>
+          <p class="rec-budget">Budget: {{ r.budget }}</p>
         </div>
         <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
       </div>
@@ -79,7 +135,7 @@
   <div class="nav-item" [class.active]="activeTab === 'gigs'"
        (click)="setTab('gigs'); goTo('/freelancer/my-gigs')">
     <ion-icon name="briefcase-outline"></ion-icon>
-    <span>My Gigs</span>
+    <span>Gigs</span>
   </div>
   <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
        (click)="setTab('store'); goTo('/store')">
@@ -90,6 +146,11 @@
        (click)="setTab('messages'); goTo('/freelancer/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
     <span>Messages</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'profile'"
        (click)="setTab('profile'); goTo('/freelancer/profile')">

@@ -5,7 +5,7 @@
     <div class="header">
       <div>
         <h1 class="title">My Gigs</h1>
-        <p class="subtitle">{{ gigs.length }} services listed</p>
+        <p class="subtitle">{{ gigs.length }} services</p>
       </div>
       <div class="add-btn" (click)="goTo('/freelancer/add-gig')">
         <ion-icon name="add-outline"></ion-icon>
@@ -16,53 +16,74 @@
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-value">{{ gigs.length }}</span>
-        <span class="stat-label">Total Gigs</span>
+        <span class="stat-label">Gigs</span>
       </div>
       <div class="stat-card">
         <span class="stat-value">25</span>
-        <span class="stat-label">Total Orders</span>
+        <span class="stat-label">Commandes</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value">4.9 ⭐</span>
+        <span class="stat-value">4.9 ★</span>
         <span class="stat-label">Avg Rating</span>
       </div>
+</div>
+
+    <div class="note-card">
+      Platform fee: 15% is shown to clients and mirrored in your payouts and admin reports.
     </div>
 
     <!-- Gigs list -->
     <div class="gigs-list">
       <div class="gig-card" *ngFor="let gig of gigs">
 
-        <!-- Gig header -->
         <div class="gig-top">
-          <div class="gig-icon">
-            <ion-icon name="briefcase-outline"></ion-icon>
-          </div>
+          <div class="gig-icon"><ion-icon name="briefcase-outline"></ion-icon></div>
           <div class="gig-info">
             <p class="gig-title">{{ gig.title }}</p>
             <span class="gig-category">{{ gig.category }}</span>
           </div>
-          <!-- Toggle active -->
-          <div class="toggle" [class.active]="gig.active" (click)="toggleGig(gig)">
-            <div class="toggle-circle"></div>
-          </div>
+          <div class="orders-badge" *ngIf="gig.ordersList?.length">{{ gig.ordersList.length }} new</div>
         </div>
 
-        <!-- Gig stats -->
-        <div class="gig-stats">
-          <div class="gig-stat">
-            <ion-icon name="cash-outline"></ion-icon>
-            <span>{{ gig.price }}</span>
-          </div>
-          <div class="gig-stat">
-            <ion-icon name="time-outline"></ion-icon>
-            <span>{{ gig.delivery }}</span>
-          </div>
-          <div class="gig-stat">
-            <ion-icon name="star-outline"></ion-icon>
-            <span>{{ gig.rating }}</span>
-          </div>
-          <div class="gig-stat">
-            <span class="orders">{{ gig.orders }} orders</span>
+        <div class="gig-meta">
+          <span class="meta">{{ gig.price }}</span>
+          <span class="dot">•</span>
+          <span class="meta">{{ gig.delivery }}</span>
+          <span class="dot">•</span>
+          <span class="meta">★ {{ gig.rating }}</span>
+        </div>
+
+        <!-- Orders -->
+        <div class="orders" *ngIf="gig.ordersList?.length">
+          <div class="orders-header">Commandes reçues</div>
+          <div class="order-card" *ngFor="let o of gig.ordersList">
+            <div class="order-top">
+              <div class="client-avatar">{{ o.client[0] }}</div>
+              <div class="order-info">
+                <p class="client-name">{{ o.client }}</p>
+                <p class="order-msg">{{ o.message }}</p>
+              </div>
+              <span class="status"
+                    [class.pending]="o.status === 'Pending'"
+                    [class.progress]="o.status === 'In Progress'"
+                    [class.done]="o.status === 'Completed'"
+                    [class.refused]="o.status === 'Refused'">
+                {{ o.status }}
+              </span>
+            </div>
+            <div class="order-meta">
+              <span>{{ o.price }}</span>
+              <span class="dot">•</span>
+              <span>{{ o.delivery }}</span>
+            </div>
+            <div class="order-actions" *ngIf="o.status === 'Pending'">
+              <button class="btn accept" (click)="accept(o)">Accepter</button>
+              <button class="btn refuse" (click)="refuse(o)">Refuser</button>
+              <button class="btn chat" (click)="openChat(o)">Messages</button>
+            </div>
+            <div class="order-actions" *ngIf="o.status !== 'Pending'">
+              <button class="btn chat full" (click)="openChat(o)">Continuer les messages</button>
+            </div>
           </div>
         </div>
 
@@ -76,9 +97,6 @@
             <ion-icon name="trash-outline"></ion-icon>
             <span>Delete</span>
           </div>
-          <div class="status-badge" [class.active]="gig.active">
-            {{ gig.active ? 'Active' : 'Paused' }}
-          </div>
         </div>
 
       </div>
@@ -86,6 +104,14 @@
 
   </div>
 </ion-content>
+
+<ion-toast
+  [isOpen]="showToast"
+  [message]="toastMessage"
+  duration="1200"
+  position="top"
+  (didDismiss)="showToast = false">
+</ion-toast>
 
 <!-- Bottom Nav -->
 <div class="bottom-nav">
@@ -103,6 +129,11 @@
        (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'messages'"
        (click)="setTab('messages'); goTo('/freelancer/messages')">

@@ -6,12 +6,16 @@
       <div class="avatar-circle">
         <span>M</span>
       </div>
+      <div class="status-chip">{{ profile.status }}</div>
     </div>
 
     <!-- Profile info -->
     <div class="profile-info">
       <h1 class="name">{{ profile.name }}</h1>
       <p class="title">{{ profile.title }}</p>
+      <div class="field-chips">
+        <span class="chip" *ngFor="let f of profile.fields">{{ f }}</span>
+      </div>
 
       <!-- Stats row -->
       <div class="stats-row">
@@ -34,9 +38,28 @@
 
     <!-- BIO section -->
     <div class="section">
-      <h2 class="section-title">BIO</h2>
+      <h2 class="section-title">About</h2>
       <div class="bio-card">
         <p>{{ profile.bio }}</p>
+        <div class="inline-info">
+          <span>Email: {{ profile.email }}</span>
+          <span>CV: {{ profile.cvUrl }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verification & compliance -->
+    <div class="section">
+      <h2 class="section-title">Checks & documents</h2>
+      <div class="verification-card" *ngFor="let v of verifications">
+        <div>
+          <p class="v-label">{{ v.label }}</p>
+          <p class="v-status">{{ v.status }}</p>
+        </div>
+        <button class="pill-btn">{{ v.action }}</button>
+      </div>
+      <div class="fee-note">
+        KhedMap keeps a 15% fee on every service. It is visible to clients at checkout and to you in payouts.
       </div>
     </div>
 
@@ -56,27 +79,27 @@
         <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
       </div>
 
-      <div class="action-card">
+      <div class="action-card" (click)="goTo('/freelancer/add-gig')">
         <div class="action-left">
           <div class="action-icon orange">
             <ion-icon name="create-outline"></ion-icon>
           </div>
           <div>
-            <p class="action-title">Edit your Profile</p>
-            <p class="action-sub">Update and modify your profile</p>
+            <p class="action-title">Edit profile</p>
+            <p class="action-sub">Update CV, photo, fields</p>
           </div>
         </div>
         <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
       </div>
 
-      <div class="action-card">
+      <div class="action-card" (click)="openNotifications()">
         <div class="action-left">
           <div class="action-icon yellow">
-            <ion-icon name="star-outline"></ion-icon>
+            <ion-icon name="notifications-outline"></ion-icon>
           </div>
           <div>
-            <p class="action-title">Reviews</p>
-            <p class="action-sub">See what clients say about you</p>
+            <p class="action-title">Notifications</p>
+            <p class="action-sub">Approvals & payouts</p>
           </div>
         </div>
         <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
@@ -117,6 +140,11 @@
        (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
+  </div>
+  <div class="nav-item" [class.active]="activeTab === 'alerts'"
+       (click)="setTab('alerts'); goTo('/notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alerts</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'messages'"
        (click)="setTab('messages'); goTo('/freelancer/messages')">

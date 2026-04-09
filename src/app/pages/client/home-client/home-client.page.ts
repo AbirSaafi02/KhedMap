@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
@@ -6,7 +6,8 @@ import { addIcons } from 'ionicons';
 import { 
   homeOutline, chatbubbleOutline, personOutline,
   storefrontOutline, addCircleOutline, notificationsOutline,
-  searchOutline, chevronForwardOutline, heartOutline
+  searchOutline, chevronForwardOutline, heartOutline,
+  briefcaseOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -18,17 +19,18 @@ import {
 })
 export class HomeClientPage {
   activeTab = 'home';
+  userName = 'Mustapha';
 
   freelancers = [
-    { name: 'Adam', job: 'UI/UX Designer · 2 years exp' },
-    { name: 'Arwa', job: 'Backend Developer' },
-    { name: 'Mariem', job: 'Mobile Developer' },
+    { id: 'freelancer-1', name: 'Adam', job: 'UI/UX Designer · 2 years exp' },
+    { id: 'freelancer-2', name: 'Arwa', job: 'Backend Developer' },
+    { id: 'freelancer-3', name: 'Mariem', job: 'Mobile Developer' },
   ];
 
   recommendations = [
-    { name: 'Ala', title: 'UI/UX Designer', bio: 'Passionate about creating intuitive and engaging user experiences', tags: ['Design'], rating: '4.9' },
-    { name: 'Moataz', title: 'Translator', bio: 'Professional translator german, spanish and arabic with 3 years exp', tags: ['Translator'], rating: '4.7' },
-    { name: 'Sarra', title: 'Developer', bio: 'Full stack developer specialized in mobile and web apps', tags: ['Dev'], rating: '4.8' },
+    { id: 'freelancer-4', name: 'Ala', title: 'UI/UX Designer', bio: 'Passionate about creating intuitive and engaging user experiences', tags: ['Design'], rating: '4.9' },
+    { id: 'freelancer-5', name: 'Moataz', title: 'Translator', bio: 'Professional translator german, spanish and arabic with 3 years exp', tags: ['Translator'], rating: '4.7' },
+    { id: 'freelancer-6', name: 'Sarra', title: 'Developer', bio: 'Full stack developer specialized in mobile and web apps', tags: ['Dev'], rating: '4.8' },
   ];
 
   categories = ['All', 'Design', 'Web Dev', 'Video Editor', 'Marketing'];
@@ -38,16 +40,26 @@ export class HomeClientPage {
     addIcons({ 
       homeOutline, chatbubbleOutline, personOutline,
       storefrontOutline, addCircleOutline, notificationsOutline,
-      searchOutline, chevronForwardOutline, heartOutline
+      searchOutline, chevronForwardOutline, heartOutline,
+      briefcaseOutline
     });
+  }
+
+  openNotifications() {
+    this.router.navigate(['/notifications'], { queryParams: { role: 'client' } });
   }
 
   goTo(page: string) {
     if (page === '/store') {
       this.router.navigate(['/store'], { queryParams: { role: 'client' } });
+    } else if (page === '/notifications') {
+      this.openNotifications();
     } else {
       this.router.navigate([page]);
     }
+  }
+  openFreelancer(id: string) {
+    this.router.navigate(['/client/freelancer', id]);
   }
   setTab(tab: string) { this.activeTab = tab; }
   setCategory(cat: string) { this.activeCategory = cat; }

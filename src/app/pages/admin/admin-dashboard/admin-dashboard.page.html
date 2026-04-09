@@ -1,13 +1,133 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>admin-dashboard</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="page">
+    <div class="header">
+      <div>
+        <p class="eyebrow">Admin space</p>
+        <h1>Dashboard</h1>
+      </div>
+      <div class="header-actions">
+        <div class="badge">KhedMap · Admin</div>
+        <button class="logout" (click)="logout()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          Logout
+        </button>
+      </div>
+    </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">admin-dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div class="info-banner">
+      Approve new profiles, gigs, and store items. Platform earnings reflect the 15% fee once orders are released.
+    </div>
+
+    <!-- Summary cards -->
+    <div class="cards">
+      <div class="card">
+        <ion-icon name="person-outline"></ion-icon>
+        <div>
+          <p class="label">Accounts pending</p>
+          <p class="value">{{ pendingFreelancersCount }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <ion-icon name="briefcase-outline"></ion-icon>
+        <div>
+          <p class="label">Gigs to review</p>
+          <p class="value">{{ pendingGigsCount }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <ion-icon name="storefront-outline"></ion-icon>
+        <div>
+          <p class="label">Store items</p>
+          <p class="value">{{ pendingProductsCount }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <ion-icon name="warning-outline"></ion-icon>
+        <div>
+          <p class="label">Reports</p>
+          <p class="value">{{ reports.length }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commission -->
+    <div class="commission">
+      <div>
+        <p class="kpi-label">Platform earnings today</p>
+        <p class="kpi-value">{{ commission.today }}</p>
+      </div>
+      <div>
+        <p class="kpi-label">This month</p>
+        <p class="kpi-value">{{ commission.month }}</p>
+      </div>
+      <div>
+        <p class="kpi-label">Payouts queued</p>
+        <p class="kpi-value">{{ commission.pendingPayouts }}</p>
+      </div>
+      <span class="pill">Fee auto-applied to every service</span>
+    </div>
+
+    <!-- Pending lists -->
+    <div class="section">
+      <h2>Freelancers</h2>
+      <div class="list-card" *ngFor="let f of freelancers">
+        <div>
+          <p class="item-title">{{ f.name }}</p>
+          <p class="item-sub">{{ f.field }}</p>
+        </div>
+        <div class="actions">
+          <button class="approve" (click)="approve(f)">Approve</button>
+          <button class="reject" (click)="reject(f)">Reject</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Gigs</h2>
+      <div class="list-card" *ngFor="let g of gigs">
+        <div>
+          <p class="item-title">{{ g.title }}</p>
+          <p class="item-sub">by {{ g.owner }} · {{ g.price }}</p>
+        </div>
+        <div class="actions">
+          <button class="approve" (click)="approve(g)">Approve</button>
+          <button class="reject" (click)="reject(g)">Reject</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Store</h2>
+      <div class="list-card" *ngFor="let p of products">
+        <div>
+          <p class="item-title">{{ p.title }}</p>
+          <p class="item-sub">by {{ p.seller }} · {{ p.price }}</p>
+        </div>
+        <div class="actions">
+          <button class="approve" (click)="approve(p)">Approve</button>
+          <button class="reject" (click)="reject(p)">Reject</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Reports</h2>
+      <div class="list-card" *ngFor="let r of reports">
+        <div>
+          <p class="item-title">{{ r.about }}</p>
+          <p class="item-sub">by {{ r.from }} · {{ r.reason }}</p>
+        </div>
+        <div class="actions">
+          <button class="reject" (click)="reject(r)">Mark reviewed</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Categories / Tags</h2>
+      <div class="chips">
+        <span class="chip" *ngFor="let c of categories">{{ c }}</span>
+      </div>
+    </div>
+  </div>
 </ion-content>
