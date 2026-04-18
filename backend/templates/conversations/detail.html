@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Conversation{% endblock %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <p class="eyebrow">Direct messages</p>
+      <h1>Conversation with {{ partner.name }}</h1>
+      <p class="muted">{{ partner.title }}</p>
+    </div>
+    <a class="ghost-link" href="{{ url_for('web.dashboard') }}">Back to dashboard</a>
+  </section>
+
+  <section class="panel conversation-panel">
+    <div class="message-stack">
+      {% for message in conversation.messages %}
+        <article class="message-bubble {% if message.sender_id == current_user.id %}mine{% endif %}">
+          <p>{{ message.content }}</p>
+          <small>{{ message.created_at|friendly_date }}</small>
+        </article>
+      {% else %}
+        <p class="muted">No messages yet. Start the conversation below.</p>
+      {% endfor %}
+    </div>
+
+    <form class="message-form" method="post">
+      <textarea name="content" rows="3" placeholder="Write your message"></textarea>
+      <button type="submit">Send message</button>
+    </form>
+  </section>
+{% endblock %}

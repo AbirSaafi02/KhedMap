@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Freelancer Dashboard{% endblock %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <p class="eyebrow">Freelancer dashboard</p>
+      <h1>Manage gigs, apply to jobs, and keep orders moving.</h1>
+    </div>
+    <div class="chip-row">
+      <span class="chip">Active gigs {{ dashboard.stats.active_gigs }}</span>
+      <span class="chip">Applications {{ dashboard.stats.submitted_applications }}</span>
+      <span class="chip">Open orders {{ dashboard.stats.open_orders }}</span>
+      <span class="chip">Earnings {{ dashboard.stats.earnings|money }}</span>
+    </div>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Create a gig</h2>
+      <form class="form-grid" method="post" action="{{ url_for('web.create_gig') }}">
+        <label>
+          <span>Title</span>
+          <input name="title" type="text" placeholder="I will design a launch-ready dashboard" required>
+        </label>
+        <label>
+          <span>Category</span>
+          <select name="category">
+            {% for category in gig_categories %}
+              <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Price</span>
+          <input name="price" type="text" placeholder="150">
+        </label>
+        <label>
+          <span>Delivery</span>
+          <input name="delivery" type="text" placeholder="3 days">
+        </label>
+        <label class="full-width">
+          <span>Description</span>
+          <textarea name="description" rows="4" placeholder="Describe what the client receives"></textarea>
+        </label>
+        <label class="checkbox-row">
+          <input name="in_store" type="checkbox" checked>
+          <span>Show this gig in the marketplace</span>
+        </label>
+        <label class="checkbox-row">
+          <input name="allow_messaging" type="checkbox" checked>
+          <span>Allow direct messaging</span>
+        </label>
+        <button type="submit">Submit gig</button>
+      </form>
+    </article>
+
+    <article class="panel">
+      <h2>Create a store product</h2>
+      <form class="form-grid" method="post" action="{{ url_for('web.create_product') }}">
+        <label>
+          <span>Title</span>
+          <input name="title" type="text" placeholder="Figma UI kit" required>
+        </label>
+        <label>
+          <span>Category</span>
+          <select name="category">
+            {% for category in product_categories %}
+              <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Price</span>
+          <input name="price" type="text" placeholder="60">
+        </label>
+        <label class="full-width">
+          <span>Description</span>
+          <textarea name="description" rows="4" placeholder="Describe what is included"></textarea>
+        </label>
+        <button type="submit">Submit product</button>
+      </form>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Open job board</h2>
+      <div class="stack-list">
+        {% for job in dashboard.open_jobs %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ job.title }}</strong>
+              <p class="muted">{{ job.category }} · {{ job.budget|money(job.currency) }} · {{ job.client.name if job.client else "Unknown client" }}</p>
+              <p class="muted">{{ job.description }}</p>
+            </div>
+            <form class="compact-form" method="post" action="{{ url_for('web.apply_to_job', job_id=job.id) }}">
+              <input name="full_name" type="hidden" value="{{ current_user.name }}">
+              <input name="cv_filename" type="hidden" value="{{ current_user.resume_url or 'resume.pdf' }}">
+              <textarea name="cover_letter" rows="2" placeholder="Quick pitch"></textarea>
+              <button type="submit">Apply</button>
+            </form>
+          </div>
+        {% else %}
+          <p class="muted">No open jobs yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Your applications</h2>
+      <div class="stack-list">
+        {% for application in dashboard.applications %}
+          <div class="list-card">
+            <div>
+              <strong>{{ application.job.title if application.job else "Job removed" }}</strong>
+              <p class="muted">{{ application.client.name if application.client else "Unknown client" }}</p>
+              <p class="muted">{{ application.cover_letter }}</p>
+            </div>
+            <span class="status status-{{ application.status }}">{{ application.status }}</span>
+          </div>
+        {% else %}
+          <p class="muted">No applications yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Your gigs</h2>
+      <div class="stack-list">
+        {% for gig in dashboard.gigs %}
+          <div class="list-card">
+            <div>
+              <strong>{{ gig.title }}</strong>
+              <p class="muted">{{ gig.category }} · {{ gig.price|money(gig.currency) }} · {{ gig.delivery }}</p>
+            </div>
+            <span class="status status-{{ gig.status }}">{{ gig.status }}</span>
+          </div>
+        {% else %}
+          <p class="muted">No gigs submitted yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Your product submissions</h2>
+      <div class="stack-list">
+        {% for product in dashboard.products %}
+          <div class="list-card">
+            <div>
+              <strong>{{ product.title }}</strong>
+              <p class="muted">{{ product.category }} · {{ product.price|money(product.currency) }}</p>
+            </div>
+            <span class="status status-{{ product.status }}">{{ product.status }}</span>
+          </div>
+        {% else %}
+          <p class="muted">No products submitted yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Client orders</h2>
+      <div class="stack-list">
+        {% for order in dashboard.orders %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ order.title }}</strong>
+              <p class="muted">{{ order.client.name if order.client else "Unknown client" }} · {{ order.price|money(order.currency) }}</p>
+              <p class="muted">{{ order.message }}</p>
+            </div>
+            <div class="action-column">
+              <form method="post" action="{{ url_for('web.update_order_status', order_id=order.id) }}">
+                <select name="status">
+                  {% for status in dashboard.order_statuses %}
+                    <option value="{{ status }}" {% if status == order.status %}selected{% endif %}>{{ status }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit">Update</button>
+              </form>
+              {% if order.client %}
+                <a class="ghost-link" href="{{ url_for('web.conversation_detail', partner_id=order.client.id) }}">Message client</a>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No orders yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Messages and notifications</h2>
+      <div class="stack-list compact">
+        {% for conversation in dashboard.conversations %}
+          <a class="list-card link-card" href="{{ url_for('web.conversation_detail', partner_id=conversation.partner.id) if conversation.partner else '#' }}">
+            <div>
+              <strong>{{ conversation.partner.name if conversation.partner else "Conversation" }}</strong>
+              <p class="muted">{{ conversation.last_message or "No messages yet" }}</p>
+            </div>
+            <small>{{ conversation.updated_at|friendly_date }}</small>
+          </a>
+        {% else %}
+          <p class="muted">No active chats yet.</p>
+        {% endfor %}
+        {% for note in dashboard.notifications %}
+          <div class="list-card">
+            <div>
+              <strong>{{ note.title }}</strong>
+              <p class="muted">{{ note.message }}</p>
+            </div>
+            <span class="status status-{{ note.status }}">{{ note.status }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <form class="form-grid report-form" method="post" action="{{ url_for('web.create_report') }}">
+        <input name="target_type" type="hidden" value="general">
+        <label>
+          <span>Report issue</span>
+          <input name="target_label" type="text" placeholder="Order, client, or listing">
+        </label>
+        <label>
+          <span>Reason</span>
+          <textarea name="reason" rows="3" placeholder="Explain the issue"></textarea>
+        </label>
+        <button type="submit">Send report</button>
+      </form>
+    </article>
+  </section>
+{% endblock %}

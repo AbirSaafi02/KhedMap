@@ -22,6 +22,14 @@ def coerce_float(value) -> float:
         return 0.0
 
 
+def coerce_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
 def format_money(value, currency: str = "DT") -> str:
     amount = coerce_float(value)
     formatted = f"{amount:,.2f}".replace(",", " ")

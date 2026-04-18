@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <section class="auth-layout">
+    <article class="panel auth-panel">
+      <p class="eyebrow">Sign in</p>
+      <h1>Access the backend dashboard</h1>
+      <form class="form-grid" method="post">
+        <label>
+          <span>Email</span>
+          <input name="email" type="email" placeholder="client@khedmap.local" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input name="password" type="password" placeholder="demo1234" required>
+        </label>
+        <button type="submit">Login</button>
+      </form>
+    </article>
+
+    <article class="panel auth-side">
+      <h2>Quick demo</h2>
+      <ul class="plain-list">
+        <li><strong>Admin:</strong> admin@khedmap.local</li>
+        <li><strong>Client:</strong> client@khedmap.local</li>
+        <li><strong>Freelancer:</strong> freelancer@khedmap.local</li>
+      </ul>
+      <p>Password for all demo users: <strong>demo1234</strong></p>
+      <a class="ghost-link" href="{{ url_for('web.register') }}">Need a fresh account?</a>
+    </article>
+  </section>
+{% endblock %}

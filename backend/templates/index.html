@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}KhedMAP Backend{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Marketplace backend starter</p>
+      <h1>Simple dashboard, full Flask architecture, MongoDB-ready flows.</h1>
+      <p class="hero-copy">
+        This backend mirrors the marketplace features already present in your Ionic frontend:
+        auth, jobs, gigs, store products, orders, messages, notifications, and admin review.
+      </p>
+      <div class="hero-actions">
+        <a class="button-link" href="{{ url_for('web.login') }}">Open demo</a>
+        <a class="ghost-link" href="{{ url_for('web.register') }}">Create a new account</a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <h2>Demo accounts</h2>
+      <ul class="plain-list">
+        <li><strong>Admin:</strong> `admin@khedmap.local`</li>
+        <li><strong>Client:</strong> `client@khedmap.local`</li>
+        <li><strong>Freelancer:</strong> `freelancer@khedmap.local`</li>
+      </ul>
+      <p><strong>Password:</strong> {{ demo_password }}</p>
+      <p class="muted">API health check: <code>/api/health</code></p>
+    </div>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>What is included</h2>
+      <ul class="plain-list">
+        <li>Role-based dashboards for client, freelancer, and admin</li>
+        <li>REST API endpoints for Angular or mobile integration</li>
+        <li>MongoDB repositories for jobs, gigs, orders, chat, and reports</li>
+        <li>Seeded demo data so the flows are usable immediately</li>
+      </ul>
+    </article>
+
+    <article class="panel">
+      <h2>Main feature map</h2>
+      <div class="chip-row">
+        <span class="chip">Auth</span>
+        <span class="chip">Profiles</span>
+        <span class="chip">Jobs</span>
+        <span class="chip">Applications</span>
+        <span class="chip">Gigs</span>
+        <span class="chip">Store</span>
+        <span class="chip">Orders</span>
+        <span class="chip">Messages</span>
+        <span class="chip">Notifications</span>
+        <span class="chip">Admin review</span>
+      </div>
+    </article>
+  </section>
+{% endblock %}

@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from pymongo import ASCENDING, DESCENDING
 
 from app.extensions import get_db
-from app.utils.formatting import coerce_float
+from app.utils.formatting import coerce_bool, coerce_float
 from app.utils.serialization import object_id_from_string, serialize_document
 
 COLLECTION = "gigs"
@@ -31,8 +31,8 @@ def create_gig(freelancer_id: str, payload: dict):
         "status": payload.get("status", "pending"),
         "rating": coerce_float(payload.get("rating")),
         "order_count": int(payload.get("order_count", 0)),
-        "in_store": bool(payload.get("in_store", True)),
-        "allow_messaging": bool(payload.get("allow_messaging", True)),
+        "in_store": coerce_bool(payload.get("in_store", True)),
+        "allow_messaging": coerce_bool(payload.get("allow_messaging", True)),
         "created_at": now,
         "updated_at": now,
     }

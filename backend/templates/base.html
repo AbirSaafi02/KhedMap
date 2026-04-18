@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}KhedMAP Backend{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('web.index') }}">
+        <span class="brand-mark">KM</span>
+        <span>
+          <strong>KhedMAP</strong>
+          <small>Flask + MongoDB</small>
+        </span>
+      </a>
+
+      <nav class="nav-links">
+        {% if current_user %}
+          <a href="{{ url_for('web.dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('web.notification_center') }}">Notifications</a>
+          <form method="post" action="{{ url_for('web.logout') }}">
+            <button class="ghost-button" type="submit">Logout</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('web.login') }}">Login</a>
+          <a class="button-link" href="{{ url_for('web.register') }}">Create account</a>
+        {% endif %}
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      {% include "partials/flashes.html" %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+  </html>

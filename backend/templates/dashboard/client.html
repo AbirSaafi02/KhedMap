@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Client Dashboard{% endblock %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <p class="eyebrow">Client dashboard</p>
+      <h1>Hiring, orders, and marketplace activity in one place.</h1>
+    </div>
+    <div class="chip-row">
+      <span class="chip">Jobs {{ dashboard.stats.active_jobs }}</span>
+      <span class="chip">Applicants {{ dashboard.stats.total_applicants }}</span>
+      <span class="chip">Spend {{ dashboard.stats.spend|money }}</span>
+      <span class="chip">Unread {{ dashboard.stats.unread_notifications }}</span>
+    </div>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Post a job</h2>
+      <form class="form-grid" method="post" action="{{ url_for('web.create_job') }}">
+        <label>
+          <span>Title</span>
+          <input name="title" type="text" placeholder="Need a SaaS onboarding redesign" required>
+        </label>
+        <label>
+          <span>Category</span>
+          <select name="category">
+            {% for category in job_categories %}
+              <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Employment</span>
+          <select name="employment_type">
+            {% for employment in employment_types %}
+              <option value="{{ employment }}">{{ employment }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Budget</span>
+          <input name="budget" type="text" placeholder="1200">
+        </label>
+        <label class="full-width">
+          <span>Description</span>
+          <textarea name="description" rows="4" placeholder="Describe the scope, delivery, and preferred profile"></textarea>
+        </label>
+        <button type="submit">Publish job</button>
+      </form>
+    </article>
+
+    <article class="panel">
+      <h2>Your posted jobs</h2>
+      <div class="stack-list">
+        {% for job in dashboard.jobs %}
+          <div class="list-card">
+            <div>
+              <strong>{{ job.title }}</strong>
+              <p class="muted">{{ job.category }} · {{ job.employment_type }} · {{ job.created_at|friendly_date }}</p>
+            </div>
+            <div class="meta-column">
+              <span class="status status-{{ job.status }}">{{ job.status }}</span>
+              <small>{{ job.applicant_count }} applicants</small>
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No jobs posted yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Approved gigs</h2>
+      <div class="stack-list">
+        {% for gig in dashboard.gigs %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ gig.title }}</strong>
+              <p class="muted">{{ gig.category }} · {{ gig.price|money(gig.currency) }} · {{ gig.delivery }}</p>
+              <p class="muted">By {{ gig.owner.name if gig.owner else "Unknown freelancer" }}</p>
+            </div>
+            <div class="action-row">
+              <form method="post" action="{{ url_for('web.order_gig', gig_id=gig.id) }}">
+                <input name="message" type="hidden" value="New order from dashboard">
+                <button type="submit">Order</button>
+              </form>
+              {% if gig.owner %}
+                <a class="ghost-link" href="{{ url_for('web.conversation_detail', partner_id=gig.owner.id) }}">Message</a>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No approved gigs yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Digital store</h2>
+      <div class="stack-list">
+        {% for product in dashboard.products %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ product.title }}</strong>
+              <p class="muted">{{ product.category }} · {{ product.price|money(product.currency) }}</p>
+              <p class="muted">Seller: {{ product.seller.name if product.seller else "Unknown seller" }}</p>
+            </div>
+            <div class="action-row">
+              <form method="post" action="{{ url_for('web.buy_product', product_id=product.id) }}">
+                <button type="submit">Buy now</button>
+              </form>
+              {% if product.seller %}
+                <a class="ghost-link" href="{{ url_for('web.conversation_detail', partner_id=product.seller.id) }}">Message</a>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No products available yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Recommended freelancers</h2>
+      <div class="stack-list">
+        {% for freelancer in dashboard.freelancers %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ freelancer.name }}</strong>
+              <p class="muted">{{ freelancer.title }}</p>
+              <p class="muted">{{ freelancer.specialties|join(", ") }}</p>
+            </div>
+            <a class="ghost-link" href="{{ url_for('web.conversation_detail', partner_id=freelancer.id) }}">Start chat</a>
+          </div>
+        {% else %}
+          <p class="muted">No freelancers yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Recent orders</h2>
+      <div class="stack-list">
+        {% for order in dashboard.orders %}
+          <div class="list-card">
+            <div>
+              <strong>{{ order.title }}</strong>
+              <p class="muted">{{ order.source_type|title }} · {{ order.price|money(order.currency) }}</p>
+              <p class="muted">Seller: {{ order.seller.name if order.seller else "Unknown" }}</p>
+            </div>
+            <span class="status status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
+          </div>
+        {% else %}
+          <p class="muted">No orders yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Messages</h2>
+      <div class="stack-list">
+        {% for conversation in dashboard.conversations %}
+          <a class="list-card link-card" href="{{ url_for('web.conversation_detail', partner_id=conversation.partner.id) if conversation.partner else '#' }}">
+            <div>
+              <strong>{{ conversation.partner.name if conversation.partner else "Conversation" }}</strong>
+              <p class="muted">{{ conversation.last_message or "No messages yet" }}</p>
+            </div>
+            <small>{{ conversation.updated_at|friendly_date }}</small>
+          </a>
+        {% else %}
+          <p class="muted">No conversations yet.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Notifications and reports</h2>
+      <div class="stack-list compact">
+        {% for note in dashboard.notifications %}
+          <div class="list-card">
+            <div>
+              <strong>{{ note.title }}</strong>
+              <p class="muted">{{ note.message }}</p>
+            </div>
+            <span class="status status-{{ note.status }}">{{ note.status }}</span>
+          </div>
+        {% else %}
+          <p class="muted">No notifications yet.</p>
+        {% endfor %}
+      </div>
+      <form class="form-grid report-form" method="post" action="{{ url_for('web.create_report') }}">
+        <input name="target_type" type="hidden" value="general">
+        <label>
+          <span>Report issue</span>
+          <input name="target_label" type="text" placeholder="Gig title, order, or user">
+        </label>
+        <label>
+          <span>Reason</span>
+          <textarea name="reason" rows="3" placeholder="Explain the issue"></textarea>
+        </label>
+        <button type="submit">Send report</button>
+      </form>
+    </article>
+  </section>
+{% endblock %}

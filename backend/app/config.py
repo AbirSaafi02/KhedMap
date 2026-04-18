@@ -3,7 +3,7 @@ import os
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-khedmap-secret")
-    MONGO_URI = os.getenv("MONGO_URI", "mongodb://127.0.0.1:27017/")
+    MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://saafiabir15_db_user:saafiabir15_db_user@cluster0.c6vacyx.mongodb.net/?appName=Cluster0saafiabir15_db_user")
     MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "khedmap")
     MONGO_TIMEOUT_MS = int(os.getenv("MONGO_TIMEOUT_MS", "2000"))
     SESSION_COOKIE_NAME = os.getenv("SESSION_COOKIE_NAME", "khedmap_session")

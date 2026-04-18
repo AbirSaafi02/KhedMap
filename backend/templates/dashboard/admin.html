@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <p class="eyebrow">Admin dashboard</p>
+      <h1>Review platform activity and clear pending items fast.</h1>
+    </div>
+    <div class="chip-row">
+      <span class="chip">Accounts {{ dashboard.stats.pending_accounts }}</span>
+      <span class="chip">Gigs {{ dashboard.stats.pending_gigs }}</span>
+      <span class="chip">Products {{ dashboard.stats.pending_products }}</span>
+      <span class="chip">Reports {{ dashboard.stats.open_reports }}</span>
+      <span class="chip">Revenue {{ dashboard.stats.estimated_revenue|money }}</span>
+    </div>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Pending accounts</h2>
+      <div class="stack-list">
+        {% for user in dashboard.pending_accounts %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ user.name }}</strong>
+              <p class="muted">{{ user.role|title }} · {{ user.title }}</p>
+              <p class="muted">{{ user.email }}</p>
+            </div>
+            <div class="action-row">
+              <form method="post" action="{{ url_for('web.review_item', item_type='user', item_id=user.id) }}">
+                <input name="action" type="hidden" value="approved">
+                <button type="submit">Approve</button>
+              </form>
+              <form method="post" action="{{ url_for('web.review_item', item_type='user', item_id=user.id) }}">
+                <input name="action" type="hidden" value="rejected">
+                <button class="danger-button" type="submit">Reject</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No pending accounts.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Pending gigs</h2>
+      <div class="stack-list">
+        {% for gig in dashboard.pending_gigs %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ gig.title }}</strong>
+              <p class="muted">{{ gig.owner.name if gig.owner else "Unknown owner" }} · {{ gig.price|money(gig.currency) }}</p>
+              <p class="muted">{{ gig.description }}</p>
+            </div>
+            <div class="action-row">
+              <form method="post" action="{{ url_for('web.review_item', item_type='gig', item_id=gig.id) }}">
+                <input name="action" type="hidden" value="approved">
+                <button type="submit">Approve</button>
+              </form>
+              <form method="post" action="{{ url_for('web.review_item', item_type='gig', item_id=gig.id) }}">
+                <input name="action" type="hidden" value="rejected">
+                <button class="danger-button" type="submit">Reject</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No pending gigs.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Pending store products</h2>
+      <div class="stack-list">
+        {% for product in dashboard.pending_products %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ product.title }}</strong>
+              <p class="muted">{{ product.seller.name if product.seller else "Unknown seller" }} · {{ product.price|money(product.currency) }}</p>
+              <p class="muted">{{ product.description }}</p>
+            </div>
+            <div class="action-row">
+              <form method="post" action="{{ url_for('web.review_item', item_type='product', item_id=product.id) }}">
+                <input name="action" type="hidden" value="approved">
+                <button type="submit">Approve</button>
+              </form>
+              <form method="post" action="{{ url_for('web.review_item', item_type='product', item_id=product.id) }}">
+                <input name="action" type="hidden" value="rejected">
+                <button class="danger-button" type="submit">Reject</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No pending products.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Open reports</h2>
+      <div class="stack-list">
+        {% for report in dashboard.reports %}
+          <div class="list-card stretch">
+            <div>
+              <strong>{{ report.target_label or report.target_type|title }}</strong>
+              <p class="muted">From {{ report.reporter.name if report.reporter else "Unknown reporter" }}</p>
+              <p class="muted">{{ report.reason }}</p>
+            </div>
+            <div class="action-row">
+              <form method="post" action="{{ url_for('web.review_item', item_type='report', item_id=report.id) }}">
+                <input name="action" type="hidden" value="approved">
+                <button type="submit">Resolve</button>
+              </form>
+              <form method="post" action="{{ url_for('web.review_item', item_type='report', item_id=report.id) }}">
+                <input name="action" type="hidden" value="rejected">
+                <button class="danger-button" type="submit">Dismiss</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <p class="muted">No open reports.</p>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+
+  <section class="grid two-up">
+    <article class="panel">
+      <h2>Recent orders</h2>
+      <div class="stack-list">
+        {% for order in dashboard.recent_orders %}
+          <div class="list-card">
+            <div>
+              <strong>{{ order.title }}</strong>
+              <p class="muted">{{ order.client.name if order.client else "Unknown client" }} to {{ order.seller.name if order.seller else "Unknown seller" }}</p>
+            </div>
+            <span class="status status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
+          </div>
+        {% else %}
+          <p class="muted">No recent orders.</p>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>User overview</h2>
+      <div class="chip-row">
+        <span class="chip">Freelancers {{ dashboard.user_counts.freelancer }}</span>
+        <span class="chip">Clients {{ dashboard.user_counts.client }}</span>
+        <span class="chip">Admins {{ dashboard.user_counts.admin }}</span>
+      </div>
+      <div class="stack-list">
+        {% for user in dashboard.recent_users %}
+          <div class="list-card">
+            <div>
+              <strong>{{ user.name }}</strong>
+              <p class="muted">{{ user.role|title }} · {{ user.email }}</p>
+            </div>
+            <span class="status status-{{ user.status }}">{{ user.status }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+{% endblock %}

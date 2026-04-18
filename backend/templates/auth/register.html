@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+  <section class="auth-layout">
+    <article class="panel auth-panel wide">
+      <p class="eyebrow">Create account</p>
+      <h1>Register as client or freelancer</h1>
+      <form class="form-grid two-columns" method="post">
+        <label>
+          <span>Name</span>
+          <input name="name" type="text" required>
+        </label>
+        <label>
+          <span>Email</span>
+          <input name="email" type="email" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input name="password" type="password" required>
+        </label>
+        <label>
+          <span>Phone</span>
+          <input name="phone" type="text" placeholder="+216">
+        </label>
+        <label>
+          <span>Role</span>
+          <select name="role">
+            <option value="freelancer">Freelancer</option>
+            <option value="client">Client</option>
+          </select>
+        </label>
+        <label>
+          <span>Title</span>
+          <input name="title" type="text" placeholder="UI/UX Designer or Startup Founder">
+        </label>
+        <label class="full-width">
+          <span>Bio</span>
+          <textarea name="bio" rows="4" placeholder="Short summary for your dashboard profile"></textarea>
+        </label>
+        <label class="full-width">
+          <span>Specialties</span>
+          <input name="specialties" type="text" placeholder="Design, Figma, Product">
+        </label>
+        <button class="full-width" type="submit">Create account</button>
+      </form>
+    </article>
+  </section>
+{% endblock %}

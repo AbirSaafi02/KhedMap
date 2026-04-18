@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <p class="eyebrow">Notification center</p>
+      <h1>Recent updates</h1>
+    </div>
+    <form method="post" action="{{ url_for('web.mark_notifications_read') }}">
+      <button type="submit">Mark all as read</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="stack-list">
+      {% for note in notifications %}
+        <div class="list-card">
+          <div>
+            <strong>{{ note.title }}</strong>
+            <p class="muted">{{ note.message }}</p>
+            <small>{{ note.created_at|friendly_date }}</small>
+          </div>
+          <span class="status status-{{ note.status }}">{{ note.status }}</span>
+        </div>
+      {% else %}
+        <p class="muted">No notifications yet.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
