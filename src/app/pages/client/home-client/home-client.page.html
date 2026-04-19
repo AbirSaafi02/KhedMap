@@ -1,14 +1,12 @@
 <ion-content>
   <div class="page">
-
-    <!-- Header -->
     <div class="header">
       <div>
         <p class="greeting">Hey, {{ userName }}</p>
         <h1 class="discover">Discover</h1>
       </div>
       <div class="header-right">
-        <div class="notif-btn">
+        <div class="notif-btn" (click)="openNotifications()">
           <ion-icon name="notifications-outline"></ion-icon>
         </div>
         <div class="add-btn" (click)="goTo('/client/add-job')">
@@ -17,27 +15,24 @@
       </div>
     </div>
 
-    <!-- Search bar -->
     <div class="search-bar">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
       <input type="text" placeholder="Search freelancers..." />
     </div>
 
-    <!-- Freelancers horizontal scroll -->
     <div class="section-header">
       <h2>Freelancers</h2>
       <span class="see-all">See All</span>
     </div>
 
     <div class="freelancer-scroll">
-    <div class="freelancer-card" *ngFor="let f of freelancers" (click)="openFreelancer(f.id)">
-      <div class="avatar">{{ f.name[0] }}</div>
-      <p class="fname">{{ f.name }}</p>
-      <p class="fjob">{{ f.job }}</p>
+      <div class="freelancer-card" *ngFor="let freelancer of freelancers" (click)="openFreelancer(freelancer.id)">
+        <div class="avatar">{{ freelancer.name[0] }}</div>
+        <p class="fname">{{ freelancer.name }}</p>
+        <p class="fjob">{{ freelancer.job }}</p>
+      </div>
     </div>
-  </div>
 
-    <!-- Category filters -->
     <div class="section-header">
       <h2>Recommendation</h2>
       <span class="see-all">See All</span>
@@ -45,32 +40,29 @@
 
     <div class="categories">
       <div
-        *ngFor="let cat of categories"
+        *ngFor="let category of categories"
         class="cat-chip"
-        [class.active]="activeCategory === cat"
-        (click)="setCategory(cat)">
-        {{ cat }}
+        [class.active]="activeCategory === category"
+        (click)="setCategory(category)">
+        {{ category }}
       </div>
     </div>
 
-    <!-- Freelancer recommendation cards -->
     <div class="rec-list">
-  <div class="rec-card" *ngFor="let r of recommendations" (click)="openFreelancer(r.id)">
-    <div class="rec-avatar">{{ r.name[0] }}</div>
-    <div class="rec-info">
-      <div class="rec-top">
+      <div class="rec-card" *ngFor="let recommendation of filteredRecommendations" (click)="openFreelancer(recommendation.id)">
+        <div class="rec-avatar">{{ recommendation.name[0] }}</div>
+        <div class="rec-info">
+          <div class="rec-top">
             <div>
-              <span class="rec-name">{{ r.name }}</span>
-              <span class="rec-title"> · {{ r.title }}</span>
+              <span class="rec-name">{{ recommendation.name }}</span>
+              <span class="rec-title"> · {{ recommendation.title }}</span>
             </div>
-            <div class="rating">
-              ⭐ {{ r.rating }}
-            </div>
+            <div class="rating">{{ recommendation.rating }}</div>
           </div>
           <div class="tags">
-            <span class="tag" *ngFor="let tag of r.tags">{{ tag }}</span>
+            <span class="tag" *ngFor="let tag of recommendation.tags">{{ tag }}</span>
           </div>
-          <p class="rec-bio">{{ r.bio }}</p>
+          <p class="rec-bio">{{ recommendation.bio }}</p>
         </div>
         <div class="rec-actions">
           <ion-icon name="heart-outline" class="heart"></ion-icon>
@@ -78,39 +70,31 @@
         </div>
       </div>
     </div>
-
   </div>
 </ion-content>
 
-<!-- Bottom Nav -->
 <div class="bottom-nav">
-  <div class="nav-item" [class.active]="activeTab === 'home'"
-       (click)="setTab('home'); goTo('/client/home')">
+  <div class="nav-item" [class.active]="activeTab === 'home'" (click)="setTab('home'); goTo('/client/home')">
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'gigs'"
-       (click)="setTab('gigs'); goTo('/client/gigs')">
+  <div class="nav-item" [class.active]="activeTab === 'gigs'" (click)="setTab('gigs'); goTo('/client/gigs')">
     <ion-icon name="briefcase-outline"></ion-icon>
     <span>Gigs</span>
   </div>
-  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
-       (click)="setTab('store'); goTo('/store')">
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'" (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'messages'"
-       (click)="setTab('messages'); goTo('/client/messages')">
+  <div class="nav-item" [class.active]="activeTab === 'messages'" (click)="setTab('messages'); goTo('/client/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
     <span>Messages</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'alerts'"
-       (click)="setTab('alerts'); goTo('/notifications')">
+  <div class="nav-item" [class.active]="activeTab === 'alerts'" (click)="setTab('alerts'); goTo('/notifications')">
     <ion-icon name="notifications-outline"></ion-icon>
     <span>Alerts</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'profile'"
-       (click)="setTab('profile'); goTo('/client/profile')">
+  <div class="nav-item" [class.active]="activeTab === 'profile'" (click)="setTab('profile'); goTo('/client/profile')">
     <ion-icon name="person-outline"></ion-icon>
     <span>Profile</span>
   </div>

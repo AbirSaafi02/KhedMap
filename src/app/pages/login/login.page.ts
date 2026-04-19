@@ -6,6 +6,8 @@ import { IonContent, IonButton, IonInput, IonItem, IonIcon } from '@ionic/angula
 import { addIcons } from 'ionicons';
 import { eye, eyeOff } from 'ionicons/icons';
 
+import { Auth } from '../../services/auth';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -18,21 +20,37 @@ export class LoginPage {
   password = '';
   showPassword = false;
   selectedRole: 'freelancer' | 'client' | 'admin' = 'freelancer';
+  errorMessage = '';
+  submitting = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private auth: Auth) {
     addIcons({ eye, eyeOff });
   }
 
-login() {
-  if (!this.email || !this.password) return;
-  localStorage.setItem('currentRole', this.selectedRole);
+  login() {
+    if (!this.email || !this.password || this.submitting) {
+      return;
+    }
 
-  if (this.selectedRole === 'freelancer') {
-    this.router.navigate(['/freelancer/home']);
-  } else if (this.selectedRole === 'client') {
-    this.router.navigate(['/client/home']);
-  } else {
-    this.router.navigate(['/admin/dashboard']);
+    this.errorMessage = '';
+    this.submitting = true;
+
+    this.auth.login({
+      email: this.email.trim(),
+      password: this.password,
+    }).subscribe({
+      next: user => {
+        this.submitting = false;
+        this.router.navigate([this.auth.routeForRole(user.role)]);
+      },
+      error: error => {
+        this.submitting = false;
+        this.errorMessage = this.auth.errorMessage(error);
+      },
+    });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }
-  goToRegister() { this.router.navigate(['/register']); }}

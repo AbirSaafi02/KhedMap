@@ -1,13 +1,19 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {
-  arrowBackOutline, sendOutline,
-  ellipsisVerticalOutline, callOutline
-} from 'ionicons/icons';
+import { arrowBackOutline, callOutline, ellipsisVerticalOutline, sendOutline } from 'ionicons/icons';
+
+import { ConversationService } from '../../services/conversation.service';
+import { Auth } from '../../services/auth';
+
+type ChatMessage = {
+  text: string;
+  mine: boolean;
+  time: string;
+};
 
 @Component({
   selector: 'app-chat',
@@ -18,41 +24,81 @@ import {
 })
 export class ChatPage {
   @ViewChild('messagesArea') messagesArea!: ElementRef;
+
+  partnerId = '';
+  contactName = 'Chat';
   message = '';
+  messages: ChatMessage[] = [];
 
-  messages = [
-    { text: 'Hello! I saw your job posting and I am very interested.', mine: false, time: '10:00' },
-    { text: 'Great! Can you tell me more about your experience?', mine: true, time: '10:02' },
-    { text: 'I have 3 years of experience in UI/UX design. I worked on several mobile apps.', mine: false, time: '10:04' },
-    { text: 'That sounds perfect! Can you share your portfolio?', mine: true, time: '10:05' },
-    { text: 'Of course! Here is my Behance link: behance.net/mayssa', mine: false, time: '10:07' },
-    { text: 'Impressive work! When can you start?', mine: true, time: '10:10' },
-    { text: 'I can start next week if that works for you 😊', mine: false, time: '10:12' },
-  ];
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly auth: Auth,
+    private readonly conversations: ConversationService,
+  ) {
+    addIcons({ arrowBackOutline, callOutline, ellipsisVerticalOutline, sendOutline });
 
-  constructor(private router: Router) {
-    addIcons({ arrowBackOutline, sendOutline, ellipsisVerticalOutline, callOutline });
+    this.route.queryParams.subscribe(params => {
+      this.partnerId = String(params['partnerId'] || '');
+      this.contactName = String(params['partnerName'] || 'Chat');
+      if (this.partnerId) {
+        this.loadConversation();
+      }
+    });
   }
 
-  goBack() { history.back(); }
+  goBack() {
+    history.back();
+  }
 
   sendMessage() {
-    if (this.message.trim()) {
-      this.messages.push({
-        text: this.message.trim(),
-        mine: true,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-      this.message = '';
-      setTimeout(() => {
-        if (this.messagesArea) {
-          this.messagesArea.nativeElement.scrollTop = this.messagesArea.nativeElement.scrollHeight;
-        }
-      }, 100);
+    const content = this.message.trim();
+    if (!content || !this.partnerId) {
+      return;
+    }
+
+    this.conversations.sendMessage(this.partnerId, content).subscribe({
+      next: conversation => {
+        this.message = '';
+        this.contactName = conversation.partner?.name || this.contactName;
+        this.messages = conversation.messages.map(item => ({
+          text: item.content,
+          mine: item.sender_id === this.auth.currentUser?.id,
+          time: this.timeOnly(item.created_at),
+        }));
+        this.scrollToBottom();
+      },
+    });
+  }
+
+  onKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.sendMessage();
     }
   }
 
-  onKeyPress(event: any) {
-    if (event.key === 'Enter') this.sendMessage();
+  private loadConversation(): void {
+    this.conversations.getConversation(this.partnerId).subscribe({
+      next: conversation => {
+        this.contactName = conversation.partner?.name || this.contactName;
+        this.messages = conversation.messages.map(item => ({
+          text: item.content,
+          mine: item.sender_id === this.auth.currentUser?.id,
+          time: this.timeOnly(item.created_at),
+        }));
+        this.scrollToBottom();
+      },
+    });
+  }
+
+  private timeOnly(value: string): string {
+    return new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      if (this.messagesArea?.nativeElement) {
+        this.messagesArea.nativeElement.scrollTop = this.messagesArea.nativeElement.scrollHeight;
+      }
+    }, 50);
   }
 }

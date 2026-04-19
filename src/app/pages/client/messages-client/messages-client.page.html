@@ -14,8 +14,7 @@
 
     <!-- Conversations list -->
     <div class="conv-list">
-      <div class="conv-item" *ngFor="let c of conversations"
-           (click)="goTo('/chat')">
+      <div class="conv-item" *ngFor="let c of conversations" (click)="openConversation(c)">
 
         <div class="avatar" [class.unread-avatar]="c.unread">
           {{ c.name[0] }}

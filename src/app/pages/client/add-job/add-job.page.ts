@@ -16,6 +16,7 @@ import { JobService } from '../../../services/job.service';
 })
 export class AddJobPage {
   submitted = false;
+  errorMessage = '';
 
   job = {
     title: '',
@@ -40,20 +41,25 @@ export class AddJobPage {
 
   submit() {
     if (this.job.title && this.selectedType && this.selectedEmployment) {
-      this.jobs.addJob({
-        id: `job-${Date.now()}`,
+      this.jobs.createJob({
         title: this.job.title,
-        status: 'open',
-        posted: 'Today',
-        budget: this.job.salary || 'N/A',
-        applicants: 0,
-        shortlisted: 0,
-        notes: this.job.bio || 'New job posted by client',
+        category: this.selectedType,
+        employment_type: this.selectedEmployment,
+        budget: this.job.salary || 0,
+        description: this.job.bio || 'New job posted by client',
+        currency: 'DT',
+      }).subscribe({
+        next: () => {
+          this.errorMessage = '';
+          this.submitted = true;
+          setTimeout(() => {
+            this.router.navigate(['/client/home']);
+          }, 2000);
+        },
+        error: () => {
+          this.errorMessage = 'Unable to publish this job right now.';
+        },
       });
-      this.submitted = true;
-      setTimeout(() => {
-        this.router.navigate(['/client/home']);
-      }, 2000);
     }
   }
 }

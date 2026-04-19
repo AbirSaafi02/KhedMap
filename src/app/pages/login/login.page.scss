@@ -75,6 +75,17 @@ ion-input {
   margin-top: 12px;
 }
 
+.status-message {
+  text-align: center;
+  color: #475569;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.error-message {
+  color: #b42318;
+}
+
 .accent {
   color: var(--khed-accent);
   cursor: pointer;

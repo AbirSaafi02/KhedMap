@@ -34,6 +34,8 @@
       </div>
     </div>
       <ion-button expand="block" (click)="login()" class="main-btn">Sign in</ion-button>
+      <p class="status-message error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="status-message" *ngIf="submitting">Checking your account...</p>
 
       <p class="link accent">Forget password</p>
       <p class="link">Don't have an account ?

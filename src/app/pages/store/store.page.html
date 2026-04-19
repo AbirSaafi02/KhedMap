@@ -1,54 +1,49 @@
 <ion-content>
   <div class="page">
 
-    <!-- Header -->
     <div class="header">
       <div>
         <h1 class="title">Store</h1>
-        <p class="subtitle">Digital products & assets</p>
+        <p class="subtitle">Digital products and assets</p>
       </div>
       <div class="header-right">
-        <!-- Sell button only for freelancers -->
         <div class="sell-btn" *ngIf="role === 'freelancer'" (click)="showSellModal = true">
           <ion-icon name="add-outline"></ion-icon>
           <span>Sell</span>
         </div>
         <div class="cart-btn">
           <ion-icon name="cart-outline"></ion-icon>
-          <div class="cart-badge">3</div>
+          <div class="cart-badge">{{ cartCount }}</div>
         </div>
       </div>
     </div>
 
-    <!-- Search bar -->
     <div class="search-bar">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input type="text" placeholder="Search products..." />
+      <input [(ngModel)]="searchTerm" type="text" placeholder="Search products..." />
     </div>
 
-    <!-- Featured section -->
     <div class="section-header">
       <h2>Featured</h2>
-      <span class="see-all">See All</span>
+      <span class="see-all">Top picks</span>
     </div>
 
     <div class="featured-scroll">
       <div class="featured-card" *ngFor="let f of featured">
         <div class="featured-bg">
-          <div class="featured-icon">🎨</div>
+          <div class="featured-icon">*</div>
         </div>
         <div class="featured-info">
           <p class="featured-title">{{ f.title }}</p>
           <p class="featured-seller">by {{ f.seller }}</p>
           <div class="featured-bottom">
             <span class="featured-price">{{ f.price }}</span>
-            <span class="featured-rating">⭐ {{ f.rating }}</span>
+            <span class="featured-rating">* {{ f.rating }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Categories -->
     <div class="section-header">
       <h2>Products</h2>
     </div>
@@ -63,15 +58,14 @@
       </div>
     </div>
 
-    <!-- Products grid -->
     <div class="products-grid">
       <div class="product-card" *ngFor="let p of filteredProducts">
         <div class="product-img">
           <div class="product-emoji">
-            {{ p.category === 'UI Kits' ? '📱' :
-               p.category === 'Logos' ? '✏️' :
-               p.category === 'Templates' ? '🖥️' :
-               p.category === 'Photos' ? '📸' : '🎬' }}
+            {{ p.category === 'UI Kits' ? 'UI' :
+               p.category === 'Logos' ? 'LG' :
+               p.category === 'Templates' ? 'TP' :
+               p.category === 'Photos' ? 'PH' : 'VD' }}
           </div>
           <div class="heart-btn">
             <ion-icon name="heart-outline"></ion-icon>
@@ -82,7 +76,7 @@
           <p class="product-seller">by {{ p.seller }}</p>
           <div class="product-bottom">
             <span class="product-price">{{ p.price }}</span>
-            <span class="product-rating">⭐ {{ p.rating }}</span>
+            <span class="product-rating">* {{ p.rating }}</span>
           </div>
           <div class="product-sales">{{ p.sales }} sales</div>
           <div class="buy-btn" (click)="openBuy(p)">Buy Now</div>
@@ -93,18 +87,14 @@
   </div>
 </ion-content>
 
-<!-- SELL MODAL -->
 <div class="modal-overlay" *ngIf="showSellModal" (click)="showSellModal = false">
   <div class="modal" (click)="$event.stopPropagation()">
-
-    <!-- Success state -->
     <div class="success-card" *ngIf="sellSubmitted">
       <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
-      <h2>Product Listed! 🎉</h2>
-      <p>Your product is now live on the store.</p>
+      <h2>Product Listed</h2>
+      <p>Your product is now in the review queue.</p>
     </div>
 
-    <!-- Form -->
     <div *ngIf="!sellSubmitted">
       <div class="modal-header">
         <h2>Sell a Product</h2>
@@ -113,43 +103,33 @@
         </div>
       </div>
 
-      <!-- Commission info -->
       <div class="commission-info">
-        <span>💡 KhedMAP takes <strong>15%</strong> commission on every sale</span>
+        <span>KhedMAP takes <strong>15%</strong> commission on every sale</span>
       </div>
 
-      <!-- Title -->
       <div class="field">
         <label>Product Title</label>
-        <input [(ngModel)]="newProduct.title"
-               type="text"
-               placeholder="e.g. Mobile UI Kit Pro"
-               class="input" />
+        <input [(ngModel)]="newProduct.title" type="text" placeholder="e.g. Mobile UI Kit Pro" class="input" />
       </div>
 
-      <!-- Category -->
       <div class="field">
         <label>Category</label>
         <div class="cat-select">
-          <div *ngFor="let cat of productCategories"
-               class="cat-option"
-               [class.selected]="newProduct.category === cat"
-               (click)="newProduct.category = cat">
+          <div
+            *ngFor="let cat of productCategories"
+            class="cat-option"
+            [class.selected]="newProduct.category === cat"
+            (click)="newProduct.category = cat">
             {{ cat }}
           </div>
         </div>
       </div>
 
-      <!-- Price -->
       <div class="field">
         <label>Price (DT)</label>
-        <input [(ngModel)]="newProduct.price"
-               type="number"
-               placeholder="e.g. 50"
-               class="input" />
+        <input [(ngModel)]="newProduct.price" type="number" placeholder="e.g. 50" class="input" />
       </div>
 
-      <!-- Earnings preview -->
       <div class="earnings-preview" *ngIf="newProduct.price">
         <div class="earning-row">
           <span>Your price</span>
@@ -165,35 +145,24 @@
         </div>
       </div>
 
-      <!-- Description -->
       <div class="field">
         <label>Description <span class="optional">(optional)</span></label>
-        <textarea [(ngModel)]="newProduct.description"
-                  placeholder="Describe your product..."
-                  class="textarea"
-                  rows="3">
-        </textarea>
+        <textarea [(ngModel)]="newProduct.description" placeholder="Describe your product..." class="textarea" rows="3"></textarea>
       </div>
 
-      <!-- Submit -->
-      <div class="submit-btn"
-           (click)="submitProduct()"
-           [class.disabled]="!newProduct.title || !newProduct.price">
+      <div class="submit-btn" (click)="submitProduct()" [class.disabled]="!newProduct.title || !newProduct.price">
         List Product on Store
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- BUY MODAL -->
 <div class="modal-overlay" *ngIf="showBuyModal" (click)="showBuyModal = false">
   <div class="modal" (click)="$event.stopPropagation()">
-
     <div class="success-card" *ngIf="buySubmitted">
       <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
-      <h2>Téléchargement prêt</h2>
-      <p>Le fichier est ajouté à vos achats.</p>
+      <h2>Download Ready</h2>
+      <p>The file has been added to your purchases.</p>
     </div>
 
     <div *ngIf="!buySubmitted && selectedProduct">
@@ -206,12 +175,12 @@
 
       <div class="buy-summary">
         <div class="row">
-          <span>Prix</span>
+          <span>Price</span>
           <strong>{{ selectedProduct.price }}</strong>
         </div>
         <div class="row">
           <span>Licence</span>
-          <strong>Usage personnel</strong>
+          <strong>Personal use</strong>
         </div>
         <div class="row">
           <span>Version</span>
@@ -219,16 +188,13 @@
         </div>
       </div>
 
-      <div class="submit-btn"
-           (click)="confirmBuy()"
-           [class.disabled]="buySubmitted">
-        Confirmer & Télécharger
+      <div class="submit-btn" (click)="confirmBuy()" [class.disabled]="buySubmitted">
+        Confirm and Download
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bottom Nav -->
 <div class="bottom-nav" *ngIf="role === 'freelancer'">
   <div class="nav-item" (click)="goTo('/freelancer/home')">
     <ion-icon name="home-outline"></ion-icon>

@@ -13,6 +13,13 @@ def collection():
     return get_db()[COLLECTION]
 
 
+def _serialize_user(document):
+    user = serialize_document(document)
+    if user:
+        user.pop("password_hash", None)
+    return user
+
+
 def ensure_indexes() -> None:
     collection().create_index([("email", ASCENDING)], unique=True)
     collection().create_index([("role", ASCENDING), ("status", ASCENDING)])
@@ -43,14 +50,14 @@ def create_user(payload: dict):
 def find_user_by_email(email: str):
     if not email:
         return None
-    return serialize_document(collection().find_one({"email": email.strip().lower()}))
+    return _serialize_user(collection().find_one({"email": email.strip().lower()}))
 
 
 def find_user_by_id(user_id):
     object_id = object_id_from_string(user_id)
     if not object_id:
         return None
-    return serialize_document(collection().find_one({"_id": object_id}))
+    return _serialize_user(collection().find_one({"_id": object_id}))
 
 
 def find_users_by_ids(user_ids: list[str]):
@@ -59,7 +66,7 @@ def find_users_by_ids(user_ids: list[str]):
     if not object_ids:
         return []
     cursor = collection().find({"_id": {"$in": object_ids}})
-    return [serialize_document(document) for document in cursor]
+    return [_serialize_user(document) for document in cursor]
 
 
 def authenticate(email: str, password: str):
@@ -69,7 +76,7 @@ def authenticate(email: str, password: str):
 
     stored = collection().find_one({"_id": object_id_from_string(user["id"])})
     if stored and check_password_hash(stored["password_hash"], password):
-        return serialize_document(stored)
+        return _serialize_user(stored)
     return None
 
 
@@ -110,7 +117,7 @@ def list_freelancers(limit: int = 12, status: str | None = "approved"):
     if status:
         query["status"] = status
     cursor = collection().find(query).sort("created_at", DESCENDING).limit(limit)
-    return [serialize_document(document) for document in cursor]
+    return [_serialize_user(document) for document in cursor]
 
 
 def list_users_by_status(status: str, roles: tuple[str, ...] | None = None, limit: int = 20):
@@ -118,12 +125,12 @@ def list_users_by_status(status: str, roles: tuple[str, ...] | None = None, limi
     if roles:
         query["role"] = {"$in": list(roles)}
     cursor = collection().find(query).sort("created_at", DESCENDING).limit(limit)
-    return [serialize_document(document) for document in cursor]
+    return [_serialize_user(document) for document in cursor]
 
 
 def list_recent_users(limit: int = 8):
     cursor = collection().find().sort("created_at", DESCENDING).limit(limit)
-    return [serialize_document(document) for document in cursor]
+    return [_serialize_user(document) for document in cursor]
 
 
 def count_by_role() -> dict:

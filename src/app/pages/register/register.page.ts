@@ -6,6 +6,8 @@ import { IonContent, IonButton, IonInput, IonItem, IonIcon } from '@ionic/angula
 import { addIcons } from 'ionicons';
 import { eye, eyeOff } from 'ionicons/icons';
 
+import { Auth } from '../../services/auth';
+
 type Role = 'freelancer' | 'client' | 'admin';
 
 @Component({
@@ -26,8 +28,10 @@ export class RegisterPage {
   avatarFileName = '';
   agreed = true;
   showPassword = false;
+  errorMessage = '';
+  submitting = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private auth: Auth) {
     addIcons({ eye, eyeOff });
   }
 
@@ -42,17 +46,44 @@ export class RegisterPage {
   }
 
   register() {
-    if (!this.name || !this.email || !this.password || !this.agreed) return;
-
-    localStorage.setItem('currentRole', this.selectedRole);
-
-    if (this.selectedRole === 'freelancer') {
-      this.router.navigate(['/field-select']);
-    } else if (this.selectedRole === 'client') {
-      this.router.navigate(['/client/home']);
-    } else {
-      this.router.navigate(['/admin/dashboard']);
+    if (!this.name || !this.email || !this.password || !this.agreed || this.submitting) {
+      return;
     }
+
+    if (this.selectedRole === 'admin') {
+      this.errorMessage = 'Admin accounts are created separately. Use the seeded admin login for the demo.';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.submitting = true;
+
+    this.auth.register({
+      name: this.name.trim(),
+      email: this.email.trim(),
+      password: this.password,
+      role: this.selectedRole,
+      phone: this.phone.trim(),
+      bio: this.bio.trim(),
+      resume_url: this.resumeUrl.trim(),
+    }).subscribe({
+      next: user => {
+        this.submitting = false;
+
+        if (user.role === 'freelancer') {
+          this.router.navigate(['/field-select'], {
+            queryParams: { role: user.role },
+          });
+          return;
+        }
+
+        this.router.navigate([this.auth.routeForRole(user.role)]);
+      },
+      error: error => {
+        this.submitting = false;
+        this.errorMessage = this.auth.errorMessage(error);
+      },
+    });
   }
 
   goToLogin() { this.router.navigate(['/login']); }

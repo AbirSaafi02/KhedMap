@@ -8,7 +8,7 @@
       <button class="pill-btn" (click)="goHome()">Back to {{ role }} dashboard</button>
     </div>
     <div class="alerts">
-      <div class="alert-card" *ngFor="let a of filteredAlerts">
+      <div class="alert-card" *ngFor="let a of alerts">
         <div class="left">
           <div class="icon-circle" [class.pending]="a.status === 'pending'" [class.approved]="a.status === 'approved'" [class.rejected]="a.status === 'rejected'">
             <ion-icon [name]="a.status === 'approved' ? 'checkmark-circle-outline' : a.status === 'rejected' ? 'close-circle-outline' : 'time-outline'"></ion-icon>

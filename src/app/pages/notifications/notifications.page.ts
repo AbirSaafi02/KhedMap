@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  notificationsOutline,
+  alertCircleOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
+  notificationsOutline,
   timeOutline,
-  alertCircleOutline
 } from 'ionicons/icons';
+
+import { Auth } from '../../services/auth';
+import { AppNotification, NotificationService } from '../../services/notification.service';
 
 type Role = 'freelancer' | 'client' | 'admin';
 type Status = 'pending' | 'approved' | 'rejected';
@@ -20,7 +23,6 @@ interface AlertItem {
   status: Status;
   type: string;
   date: string;
-  role: Role;
 }
 
 @Component({
@@ -32,47 +34,59 @@ interface AlertItem {
 })
 export class NotificationsPage implements OnInit {
   role: Role = 'freelancer';
+  alerts: AlertItem[] = [];
 
-  alerts: AlertItem[] = [
-    { title: 'Account review', message: 'Your freelancer profile is pending admin review. We will email you soon.', status: 'pending', type: 'account', date: 'Today', role: 'freelancer' },
-    { title: 'Gig approved', message: 'UI Kit Revamp was approved and is now visible in the marketplace.', status: 'approved', type: 'gig', date: 'Today', role: 'freelancer' },
-    { title: 'Store item rejected', message: 'Thumbnail pack needs clearer licensing details.', status: 'rejected', type: 'store', date: 'Yesterday', role: 'freelancer' },
-    { title: 'Payment in progress', message: 'Order #1045 is released minus 15% fee. Expect funds in 24h.', status: 'approved', type: 'payout', date: 'Yesterday', role: 'freelancer' },
-    { title: 'Account approved', message: 'Welcome! You can now post jobs and buy gigs.', status: 'approved', type: 'account', date: 'Today', role: 'client' },
-    { title: 'Gig purchase', message: 'You bought “Brand identity starter”. 15% platform fee applied.', status: 'approved', type: 'order', date: 'Today', role: 'client' },
-    { title: 'Verification required', message: 'Please upload your company info to keep hiring safely.', status: 'pending', type: 'compliance', date: 'Yesterday', role: 'client' },
-    { title: 'New report', message: 'User flagged Gig #220. Please review.', status: 'pending', type: 'report', date: 'Today', role: 'admin' },
-    { title: 'Payout queue', message: '12 withdrawals ready. 15% commission already deducted.', status: 'approved', type: 'finance', date: 'Today', role: 'admin' },
-  ];
-
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly auth: Auth,
+    private readonly notifications: NotificationService,
+  ) {
     addIcons({
-      notificationsOutline,
+      alertCircleOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
+      notificationsOutline,
       timeOutline,
-      alertCircleOutline
     });
   }
 
   ngOnInit() {
     const roleParam = this.route.snapshot.queryParamMap.get('role') as Role | null;
+    const currentRole = this.auth.currentUser?.role;
     const storedRole = localStorage.getItem('currentRole') as Role | null;
-    if (roleParam) {
-      this.role = roleParam;
-      localStorage.setItem('currentRole', this.role);
-    } else if (storedRole) {
-      this.role = storedRole;
-    }
-  }
+    this.role = roleParam || (currentRole as Role) || storedRole || 'freelancer';
 
-  get filteredAlerts() {
-    return this.alerts.filter(a => a.role === this.role);
+    this.notifications.listNotifications().subscribe({
+      next: notifications => {
+        this.alerts = notifications.map((item: AppNotification) => ({
+          title: item.title,
+          message: item.message,
+          status: this.normalizeStatus(item.status),
+          type: item.kind,
+          date: this.relativeDate(item.created_at),
+        }));
+      },
+    });
   }
 
   goHome() {
     if (this.role === 'client') this.router.navigate(['/client/home']);
     else if (this.role === 'admin') this.router.navigate(['/admin/dashboard']);
     else this.router.navigate(['/freelancer/home']);
+  }
+
+  private normalizeStatus(status: string): Status {
+    if (status === 'rejected') return 'rejected';
+    if (status === 'approved' || status === 'info') return 'approved';
+    return 'pending';
+  }
+
+  private relativeDate(value: string): string {
+    const date = new Date(value);
+    const diffHours = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60));
+    if (diffHours < 24) return 'Today';
+    if (diffHours < 48) return 'Yesterday';
+    return `${Math.floor(diffHours / 24)} days ago`;
   }
 }

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon, IonToast } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { timeOutline, cashOutline, starOutline, personOutline, chatbubbleOutline } from 'ionicons/icons';
-import { OrderService } from '../../../services/order.service';
+import { cashOutline, chatbubbleOutline, personOutline, starOutline, timeOutline } from 'ionicons/icons';
+
+import { MarketplaceService } from '../../../services/marketplace.service';
 
 @Component({
   selector: 'app-gig-detail',
@@ -16,6 +17,7 @@ import { OrderService } from '../../../services/order.service';
 export class GigDetailPage {
   gig = {
     id: '',
+    ownerId: '',
     title: 'Gig',
     owner: 'Freelancer',
     price: '0 DT',
@@ -26,34 +28,43 @@ export class GigDetailPage {
   showToast = false;
   toastMessage = '';
 
-  constructor(private route: ActivatedRoute, private orders: OrderService, private router: Router) {
-    addIcons({ timeOutline, cashOutline, starOutline, personOutline, chatbubbleOutline });
-    const id = this.route.snapshot.paramMap.get('id') || 'gig-1';
-    this.gig = {
-      id,
-      title: 'Modern mobile UI design',
-      owner: 'Mayssa',
-      price: '150 DT',
-      delivery: '3 days',
-      rating: '4.9',
-      description: 'Design complet d’app mobile avec flows, styleguide et prototypage Figma.',
-    };
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly marketplace: MarketplaceService,
+    private readonly router: Router,
+  ) {
+    addIcons({ cashOutline, chatbubbleOutline, personOutline, starOutline, timeOutline });
+    const id = this.route.snapshot.paramMap.get('id') || '';
+    if (id) {
+      this.marketplace.getGig(id).subscribe({
+        next: gig => {
+          this.gig = {
+            id: gig.id,
+            ownerId: gig.owner?.id || gig.freelancer_id,
+            title: gig.title,
+            owner: gig.owner?.name || 'Freelancer',
+            price: `${gig.price.toLocaleString()} ${gig.currency}`,
+            delivery: gig.delivery,
+            rating: gig.rating ? gig.rating.toFixed(1) : 'New',
+            description: gig.description || 'Description...',
+          };
+        },
+      });
+    }
   }
 
   order() {
-    this.orders.addOrder({
-      gigId: this.gig.id,
-      client: 'Client',
-      message: 'Nouvelle commande',
-      price: this.gig.price,
-      delivery: this.gig.delivery,
-      status: 'Pending'
+    this.marketplace.orderGig(this.gig.id, 'New gig order').subscribe({
+      next: () => {
+        this.toastMessage = 'Commande envoyee';
+        this.showToast = true;
+      },
     });
-    this.toastMessage = 'Commande envoyée';
-    this.showToast = true;
   }
 
   message() {
-    this.router.navigate(['/chat'], { queryParams: { with: this.gig.owner } });
+    this.router.navigate(['/chat'], {
+      queryParams: { partnerId: this.gig.ownerId, partnerName: this.gig.owner },
+    });
   }
 }

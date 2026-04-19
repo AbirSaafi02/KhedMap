@@ -4,7 +4,7 @@
     <!-- Top curved background -->
     <div class="top-bg">
       <div class="avatar-circle">
-        <span>M</span>
+        <span>{{ profile.name[0] || 'C' }}</span>
       </div>
     </div>
 
@@ -35,7 +35,7 @@
       <div>
         <p class="status-label">Account status</p>
         <p class="status-value">{{ profile.status }}</p>
-        <p class="status-hint">We will email {{ profile.email }} once an admin approves your account.</p>
+        <p class="status-hint">We will email {{ profile.email }} with account and order updates.</p>
       </div>
       <span class="pill">15% platform fee visible at checkout</span>
     </div>

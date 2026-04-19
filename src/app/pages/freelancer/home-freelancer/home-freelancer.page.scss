@@ -89,26 +89,7 @@ ion-content {
 }
 
 .search-bar {
-  background: white;
-  border-radius: 16px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
   margin-bottom: 18px;
-
-  .search-icon { color: #999; font-size: 20px; }
-
-  input {
-    border: none;
-    outline: none;
-    font-size: 15px;
-    color: #1a1a1a;
-    background: transparent;
-    width: 100%;
-    &::placeholder { color: #999; }
-  }
 }
 
 .quick-actions {
@@ -147,23 +128,7 @@ ion-content {
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin: 12px 0 8px;
-
-  h2 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #1a1a1a;
-    margin: 0;
-  }
-
-  .see-all {
-    font-size: 13px;
-    color: var(--khed-accent);
-    cursor: pointer;
-  }
 }
 
 .job-board {
@@ -190,12 +155,8 @@ ion-content {
 }
 
 .job-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   margin: 6px 0 10px;
-  .meta { font-size: 12px; color: #475569; }
-  .dot { color: #d1d5db; }
+
   .tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .tag { background: #f0eeff; color: var(--khed-primary); padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
 }
@@ -264,30 +225,8 @@ ion-content {
 }
 
 .categories {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
   padding-bottom: 6px;
   margin-left: auto;
-  &::-webkit-scrollbar { display: none; }
-
-  .cat-chip {
-    background: white;
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 13px;
-    color: #666;
-    white-space: nowrap;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    transition: all 0.2s;
-
-    &.active {
-      background: var(--khed-primary);
-      color: white;
-      font-weight: bold;
-    }
-  }
 }
 
 .rec-list {
@@ -372,57 +311,5 @@ ion-content {
     color: #ccc;
     font-size: 18px;
     flex-shrink: 0;
-  }
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  align-items: center;
-  padding: 10px 0 16px;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
-  z-index: 100;
-
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    padding: 4px 4px;
-    border-radius: 12px;
-    transition: all 0.2s;
-
-    ion-icon {
-      font-size: 22px;
-      color: #bbb;
-    }
-
-    span {
-      font-size: 10px;
-      color: #bbb;
-      font-weight: 600;
-    }
-
-    &.active {
-      ion-icon { color: var(--khed-primary); }
-      span { color: var(--khed-primary); font-weight: 800; }
-    }
-
-    &.store-btn {
-      ion-icon { color: var(--khed-accent); }
-      span { color: var(--khed-accent); }
-
-      &.active {
-        background: #fff5ec;
-        ion-icon { color: var(--khed-accent); }
-        span { color: var(--khed-accent); font-weight: 800; }
-      }
-    }
   }
 }

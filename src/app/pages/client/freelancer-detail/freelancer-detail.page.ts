@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon, IonToast } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { starOutline, briefcaseOutline, chatbubbleOutline, arrowBackOutline } from 'ionicons/icons';
+import { arrowBackOutline, briefcaseOutline, chatbubbleOutline, starOutline } from 'ionicons/icons';
+
+import { Auth } from '../../../services/auth';
+import { MarketplaceService } from '../../../services/marketplace.service';
 
 @Component({
   selector: 'app-freelancer-detail',
@@ -13,34 +16,51 @@ import { starOutline, briefcaseOutline, chatbubbleOutline, arrowBackOutline } fr
   imports: [CommonModule, IonContent, IonIcon, IonToast],
 })
 export class FreelancerDetailPage {
-  clientName = 'Mustapha';
+  clientName = 'Client';
   freelancer = {
     id: '',
     name: 'Freelancer',
-    title: 'UI/UX Designer',
+    title: 'Freelancer',
     rating: '4.9',
-    jobs: 23,
-    bio: 'Designer passionne par les interfaces mobiles et web. Specialiste des maquettes claires, prototypes interactifs et handoffs propres.',
-    tags: ['Design', 'Figma', 'Prototype'],
+    jobs: 0,
+    bio: 'Freelancer profile',
+    tags: [] as string[],
   };
-  highlights: string[] = [
-    'Mobile-first UI, web dashboards, and design systems',
-    'Figma files structured for easy handoff to developers',
-    'Supports briefs, wireframes, UI, prototype, and QA passes',
-  ];
+  highlights: string[] = [];
   showToast = false;
   toastMessage = '';
 
-  constructor(private route: ActivatedRoute, private router: Router) {
-    addIcons({ starOutline, briefcaseOutline, chatbubbleOutline, arrowBackOutline });
-    const id = this.route.snapshot.paramMap.get('id') || 'freelancer-1';
-    this.freelancer = {
-      ...this.freelancer,
-      id,
-      name: 'Mayssa',
-      title: 'UI/UX Designer',
-      bio: '3 years experience, focused on mobile flows and product onboarding. Delivers clean Figma files and clickable prototypes.',
-    };
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly auth: Auth,
+    private readonly marketplace: MarketplaceService,
+  ) {
+    addIcons({ arrowBackOutline, briefcaseOutline, chatbubbleOutline, starOutline });
+    this.clientName = this.auth.currentUser?.name || 'Client';
+
+    const id = this.route.snapshot.paramMap.get('id') || '';
+    if (id) {
+      this.marketplace.getFreelancer(id).subscribe({
+        next: freelancer => {
+          const specialties = freelancer.specialties || [];
+          this.freelancer = {
+            id: freelancer.id,
+            name: freelancer.name,
+            title: freelancer.title || 'Freelancer',
+            rating: '4.9',
+            jobs: specialties.length || 1,
+            bio: freelancer.bio || 'Available for new projects.',
+            tags: specialties.length ? specialties : ['General'],
+          };
+          this.highlights = [
+            `${freelancer.name} works in ${this.freelancer.tags.join(', ')}`,
+            freelancer.resume_url ? `Resume on file: ${freelancer.resume_url}` : 'Resume available on request',
+            freelancer.phone ? `Direct contact: ${freelancer.phone}` : 'Messaging available through KhedMap',
+          ];
+        },
+      });
+    }
   }
 
   goBack() {
@@ -48,11 +68,12 @@ export class FreelancerDetailPage {
   }
 
   contact() {
-    this.router.navigate(['/chat'], { queryParams: { with: this.freelancer.name } });
+    this.router.navigate(['/chat'], {
+      queryParams: { partnerId: this.freelancer.id, partnerName: this.freelancer.name },
+    });
   }
 
   hire() {
-    this.toastMessage = 'Demande envoyée';
-    this.showToast = true;
+    this.contact();
   }
 }

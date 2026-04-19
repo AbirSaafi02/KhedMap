@@ -73,6 +73,8 @@
       </label>
 
       <ion-button expand="block" (click)="register()" class="main-btn">Continue</ion-button>
+      <p class="status-message error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="status-message" *ngIf="submitting">Creating your account...</p>
 
       <p class="link">Already registered?
         <span class="accent" (click)="goToLogin()">Sign in</span>

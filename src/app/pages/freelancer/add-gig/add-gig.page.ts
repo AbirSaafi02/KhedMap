@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { MarketplaceService } from '../../../services/marketplace.service';
 
 @Component({
   selector: 'app-add-gig',
@@ -15,6 +16,7 @@ import { arrowBackOutline, checkmarkCircleOutline } from 'ionicons/icons';
 })
 export class AddGigPage {
   submitted = false;
+  errorMessage = '';
 
   gig = {
     title: '',
@@ -32,7 +34,7 @@ export class AddGigPage {
   selectedDelivery = '';
   attachmentNames: string[] = [];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private readonly marketplace: MarketplaceService) {
     addIcons({ arrowBackOutline, checkmarkCircleOutline });
   }
 
@@ -46,10 +48,27 @@ export class AddGigPage {
 
   submit() {
     if (this.gig.title && this.selectedCategory && this.gig.price && this.selectedDelivery) {
-      this.submitted = true;
-      setTimeout(() => {
-        this.router.navigate(['/freelancer/my-gigs']);
-      }, 2000);
+      this.marketplace.createGig({
+        title: this.gig.title,
+        category: this.selectedCategory,
+        description: this.gig.description,
+        price: this.gig.price,
+        delivery: this.selectedDelivery,
+        in_store: this.gig.inStore,
+        allow_messaging: this.gig.allowMessaging,
+        currency: 'DT',
+      }).subscribe({
+        next: () => {
+          this.errorMessage = '';
+          this.submitted = true;
+          setTimeout(() => {
+            this.router.navigate(['/freelancer/my-gigs']);
+          }, 2000);
+        },
+        error: () => {
+          this.errorMessage = 'Unable to publish this gig right now.';
+        },
+      });
     }
   }
 }

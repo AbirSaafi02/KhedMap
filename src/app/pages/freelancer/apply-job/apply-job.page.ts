@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon, IonButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, cloudUploadOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { Auth } from '../../../services/auth';
+import { JobService } from '../../../services/job.service';
 
 @Component({
   selector: 'app-apply-job',
@@ -14,16 +16,20 @@ import { arrowBackOutline, cloudUploadOutline, checkmarkCircleOutline } from 'io
   imports: [CommonModule, FormsModule, IonContent, IonIcon, IonButton],
 })
 export class ApplyJobPage {
+  jobId = '';
   name = '';
   description = '';
   cvFileName = '';
   submitted = false;
+  errorMessage = '';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private route: ActivatedRoute, private auth: Auth, private jobs: JobService) {
     addIcons({ arrowBackOutline, cloudUploadOutline, checkmarkCircleOutline });
+    this.jobId = this.route.snapshot.paramMap.get('id') || '';
+    this.name = this.auth.currentUser?.name || '';
   }
 
-  goBack() { this.router.navigate(['/freelancer/job-detail']); }
+  goBack() { this.router.navigate(['/freelancer/job-detail', this.jobId]); }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -38,11 +44,23 @@ export class ApplyJobPage {
   }
 
   submit() {
-    if (this.name) {
-      this.submitted = true;
-      setTimeout(() => {
-        this.router.navigate(['/freelancer/home']);
-      }, 2000);
+    if (this.name && this.jobId) {
+      this.jobs.applyToJob(this.jobId, {
+        full_name: this.name,
+        cover_letter: this.description,
+        cv_filename: this.cvFileName,
+      }).subscribe({
+        next: () => {
+          this.errorMessage = '';
+          this.submitted = true;
+          setTimeout(() => {
+            this.router.navigate(['/freelancer/home']);
+          }, 2000);
+        },
+        error: () => {
+          this.errorMessage = 'Unable to submit your application right now.';
+        },
+      });
     }
   }
 }

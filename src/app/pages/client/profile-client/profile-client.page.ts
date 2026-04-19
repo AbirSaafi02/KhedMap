@@ -1,13 +1,23 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  homeOutline, chatbubbleOutline, personOutline,
-  storefrontOutline, createOutline, briefcaseOutline,
-  chevronForwardOutline, logOutOutline, starOutline, notificationsOutline
+  briefcaseOutline,
+  chatbubbleOutline,
+  chevronForwardOutline,
+  createOutline,
+  homeOutline,
+  logOutOutline,
+  notificationsOutline,
+  personOutline,
+  starOutline,
+  storefrontOutline,
 } from 'ionicons/icons';
+
+import { Auth } from '../../../services/auth';
+import { ClientDashboard, DashboardService } from '../../../services/dashboard.service';
 
 @Component({
   selector: 'app-profile-client',
@@ -16,28 +26,66 @@ import {
   standalone: true,
   imports: [CommonModule, IonContent, IonIcon],
 })
-export class ProfileClientPage {
+export class ProfileClientPage implements OnInit {
   activeTab = 'profile';
 
   profile = {
-    name: 'Mustapha Ben Ali',
-    title: 'Client · Startup Founder',
-    jobs: '8',
-    spent: '3200 DT',
-    reviews: '12',
-    status: 'Pending admin approval',
-    email: 'mustapha@startup.tn'
+    name: 'Client',
+    title: 'Client',
+    jobs: '0',
+    spent: '0 DT',
+    reviews: '0',
+    status: 'approved',
+    email: '',
   };
 
-  constructor(private router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly auth: Auth,
+    private readonly dashboard: DashboardService,
+  ) {
     addIcons({
-      homeOutline, chatbubbleOutline, personOutline,
-      storefrontOutline, createOutline, briefcaseOutline,
-      chevronForwardOutline, logOutOutline, starOutline, notificationsOutline
+      briefcaseOutline,
+      chatbubbleOutline,
+      chevronForwardOutline,
+      createOutline,
+      homeOutline,
+      logOutOutline,
+      notificationsOutline,
+      personOutline,
+      starOutline,
+      storefrontOutline,
     });
   }
 
-  openNotifications() { this.router.navigate(['/notifications'], { queryParams: { role: 'client' } }); }
+  ngOnInit(): void {
+    this.auth.me().subscribe({
+      next: user => {
+        this.profile = {
+          ...this.profile,
+          name: user.name,
+          title: `${user.role} · ${user.title || 'Client'}`,
+          status: user.status,
+          email: user.email,
+        };
+      },
+    });
+
+    this.dashboard.getDashboard<ClientDashboard>().subscribe({
+      next: data => {
+        this.profile = {
+          ...this.profile,
+          jobs: String(data.jobs.length),
+          spent: `${data.stats.spend.toLocaleString()} DT`,
+          reviews: String(data.orders.length),
+        };
+      },
+    });
+  }
+
+  openNotifications() {
+    this.router.navigate(['/notifications'], { queryParams: { role: 'client' } });
+  }
 
   goTo(page: string) {
     if (page === '/store') {
@@ -48,9 +96,18 @@ export class ProfileClientPage {
       this.router.navigate([page]);
     }
   }
-  setTab(tab: string) { this.activeTab = tab; }
+
+  setTab(tab: string) {
+    this.activeTab = tab;
+  }
 
   logout() {
-    this.router.navigate(['/login']);
+    this.auth.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => {
+        this.auth.clearSession();
+        this.router.navigate(['/login']);
+      },
+    });
   }
 }

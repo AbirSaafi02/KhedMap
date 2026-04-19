@@ -1,14 +1,32 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon, IonToast } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  searchOutline, briefcaseOutline, starOutline,
-  cashOutline, timeOutline, personOutline,
-  homeOutline, storefrontOutline, chatbubbleOutline, notificationsOutline
+  briefcaseOutline,
+  cashOutline,
+  chatbubbleOutline,
+  homeOutline,
+  notificationsOutline,
+  personOutline,
+  searchOutline,
+  starOutline,
+  storefrontOutline,
+  timeOutline,
 } from 'ionicons/icons';
-import { OrderService } from '../../../services/order.service';
+
+import { MarketplaceGig, MarketplaceService } from '../../../services/marketplace.service';
+
+type GigCard = {
+  id: string;
+  title: string;
+  category: string;
+  price: string;
+  delivery: string;
+  rating: string;
+  owner: string;
+};
 
 @Component({
   selector: 'app-gigs-client',
@@ -17,23 +35,40 @@ import { OrderService } from '../../../services/order.service';
   standalone: true,
   imports: [CommonModule, IonContent, IonIcon, IonToast],
 })
-export class GigsClientPage {
+export class GigsClientPage implements OnInit {
   activeTab = 'gigs';
   showToast = false;
   toastMessage = 'Order placed';
+  gigs: GigCard[] = [];
 
-  gigs = [
-    { id: 'gig-1', title: 'Modern mobile UI design', category: 'Design', price: '150 DT', delivery: '3 days', rating: '4.9', owner: 'Mayssa' },
-    { id: 'gig-2', title: 'Figma prototype in 48h', category: 'Design', price: '80 DT', delivery: '2 days', rating: '4.7', owner: 'Yacine' },
-    { id: 'gig-3', title: 'Brand identity package', category: 'Branding', price: '200 DT', delivery: '5 days', rating: '5.0', owner: 'Sara' },
-    { id: 'gig-4', title: 'Full-stack web app', category: 'Web Dev', price: '320 DT', delivery: '7 days', rating: '4.8', owner: 'Adam' },
-  ];
-
-  constructor(private router: Router, private orders: OrderService) {
+  constructor(private readonly router: Router, private readonly marketplace: MarketplaceService) {
     addIcons({
-      searchOutline, briefcaseOutline, starOutline,
-      cashOutline, timeOutline, personOutline,
-      homeOutline, storefrontOutline, chatbubbleOutline, notificationsOutline
+      briefcaseOutline,
+      cashOutline,
+      chatbubbleOutline,
+      homeOutline,
+      notificationsOutline,
+      personOutline,
+      searchOutline,
+      starOutline,
+      storefrontOutline,
+      timeOutline,
+    });
+  }
+
+  ngOnInit(): void {
+    this.marketplace.listGigs({ status: 'approved' }).subscribe({
+      next: gigs => {
+        this.gigs = gigs.map((gig: MarketplaceGig) => ({
+          id: gig.id,
+          title: gig.title,
+          category: gig.category,
+          price: `${gig.price.toLocaleString()} ${gig.currency}`,
+          delivery: gig.delivery,
+          rating: gig.rating ? gig.rating.toFixed(1) : 'New',
+          owner: gig.owner?.name || 'Freelancer',
+        }));
+      },
     });
   }
 
@@ -47,22 +82,20 @@ export class GigsClientPage {
     }
   }
 
-  setTab(tab: string) { this.activeTab = tab; }
-
-  order(gig: any) {
-    this.orders.addOrder({
-      gigId: gig.id,
-      client: 'Client',
-      message: 'Nouvelle commande',
-      price: gig.price,
-      delivery: gig.delivery,
-      status: 'Pending'
-    });
-    this.toastMessage = `Commande envoyee a ${gig.owner}`;
-    this.showToast = true;
+  setTab(tab: string) {
+    this.activeTab = tab;
   }
 
-  openDetail(gig: any) {
+  order(gig: GigCard) {
+    this.marketplace.orderGig(gig.id, 'New gig order').subscribe({
+      next: () => {
+        this.toastMessage = `Commande envoyee a ${gig.owner}`;
+        this.showToast = true;
+      },
+    });
+  }
+
+  openDetail(gig: GigCard) {
     this.router.navigate(['/client/gig-detail', gig.id]);
   }
 }

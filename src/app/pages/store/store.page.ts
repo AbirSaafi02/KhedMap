@@ -1,18 +1,39 @@
-import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  searchOutline, cartOutline, heartOutline,
-  starOutline, homeOutline, storefrontOutline,
-  chatbubbleOutline, personOutline, briefcaseOutline,
-  addOutline, closeOutline, cloudUploadOutline,
-  checkmarkCircleOutline
+  addOutline,
+  briefcaseOutline,
+  cartOutline,
+  chatbubbleOutline,
+  checkmarkCircleOutline,
+  closeOutline,
+  cloudUploadOutline,
+  heartOutline,
+  homeOutline,
+  personOutline,
+  searchOutline,
+  starOutline,
+  storefrontOutline,
 } from 'ionicons/icons';
 
+import { Auth } from '../../services/auth';
+import { MarketplaceProduct, MarketplaceService } from '../../services/marketplace.service';
+
 type Role = 'freelancer' | 'client';
+
+type ProductCard = {
+  id: string;
+  title: string;
+  category: string;
+  price: string;
+  rating: string;
+  sales: number;
+  seller: string;
+};
 
 @Component({
   selector: 'app-store',
@@ -24,47 +45,42 @@ type Role = 'freelancer' | 'client';
 export class StorePage {
   activeTab = 'store';
   activeCategory = 'All';
+  searchTerm = '';
   showSellModal = false;
   sellSubmitted = false;
   showBuyModal = false;
   buySubmitted = false;
-  selectedProduct: any = null;
+  selectedProduct: ProductCard | null = null;
+  cartCount = 0;
 
-  // New product form
   newProduct = {
     title: '',
     category: 'UI Kits',
     price: '',
-    description: ''
+    description: '',
   };
 
   productCategories = ['UI Kits', 'Templates', 'Logos', 'Photos', 'Videos'];
-
-  categories = ['All', 'Templates', 'UI Kits', 'Logos', 'Photos', 'Videos'];
-
-  products = [
-    { title: 'Mobile UI Kit Pro', category: 'UI Kits', price: '49 DT', rating: '4.9', sales: 120, seller: 'Mayssa' },
-    { title: 'Logo Pack Premium', category: 'Logos', price: '25 DT', rating: '4.8', sales: 85, seller: 'Karim' },
-    { title: 'Landing Page Template', category: 'Templates', price: '35 DT', rating: '5.0', sales: 200, seller: 'Sara' },
-    { title: 'Social Media Pack', category: 'Photos', price: '20 DT', rating: '4.7', sales: 64, seller: 'Amine' },
-    { title: 'Dashboard UI Kit', category: 'UI Kits', price: '60 DT', rating: '4.9', sales: 95, seller: 'Mayssa' },
-    { title: 'Brand Identity Kit', category: 'Logos', price: '45 DT', rating: '4.8', sales: 42, seller: 'Yacine' },
-  ];
-
-  featured = [
-    { title: 'Complete Figma UI System', price: '99 DT', seller: 'Mayssa', rating: '5.0' },
-    { title: 'E-commerce Template Bundle', price: '75 DT', seller: 'Sara', rating: '4.9' },
-  ];
-
+  categories = ['All'];
+  products: ProductCard[] = [];
+  featured: ProductCard[] = [];
   role: Role = 'client';
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly auth: Auth,
+    private readonly marketplace: MarketplaceService,
+  ) {
     this.route.queryParams.subscribe(params => {
       const paramRole = params['role'] as Role | undefined;
+      const currentRole = this.auth.currentUser?.role;
       const storedRole = localStorage.getItem('currentRole') as Role | 'admin' | null;
 
       if (paramRole) {
         this.role = paramRole;
+      } else if (currentRole === 'freelancer' || currentRole === 'client') {
+        this.role = currentRole;
       } else if (storedRole === 'freelancer' || storedRole === 'client') {
         this.role = storedRole;
       } else {
@@ -73,61 +89,127 @@ export class StorePage {
 
       localStorage.setItem('currentRole', this.role);
     });
+
     addIcons({
-      searchOutline, cartOutline, heartOutline,
-      starOutline, homeOutline, storefrontOutline,
-      chatbubbleOutline, personOutline, briefcaseOutline,
-      addOutline, closeOutline, cloudUploadOutline,
-      checkmarkCircleOutline
+      addOutline,
+      briefcaseOutline,
+      cartOutline,
+      chatbubbleOutline,
+      checkmarkCircleOutline,
+      closeOutline,
+      cloudUploadOutline,
+      heartOutline,
+      homeOutline,
+      personOutline,
+      searchOutline,
+      starOutline,
+      storefrontOutline,
+    });
+
+    this.loadProducts();
+    this.marketplace.listOrders().subscribe({
+      next: orders => {
+        this.cartCount = orders.length;
+      },
     });
   }
 
   goTo(page: string) {
     this.router.navigate([page], { queryParams: { role: this.role } });
   }
-  setTab(tab: string) { this.activeTab = tab; }
-  setCategory(cat: string) { this.activeCategory = cat; }
+
+  setTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  setCategory(cat: string) {
+    this.activeCategory = cat;
+  }
 
   get filteredProducts() {
-    if (this.activeCategory === 'All') return this.products;
-    return this.products.filter(p => p.category === this.activeCategory);
+    return this.products.filter(product => {
+      const categoryMatches = this.activeCategory === 'All' || product.category === this.activeCategory;
+      const searchMatches = !this.searchTerm.trim()
+        || `${product.title} ${product.seller}`.toLowerCase().includes(this.searchTerm.trim().toLowerCase());
+      return categoryMatches && searchMatches;
+    });
   }
 
   getCommission(): string {
     if (!this.newProduct.price) return '0 DT';
     const price = parseFloat(this.newProduct.price);
-    return (price * 0.15).toFixed(2) + ' DT';
+    return `${(price * 0.15).toFixed(2)} DT`;
   }
 
   getEarnings(): string {
     if (!this.newProduct.price) return '0 DT';
     const price = parseFloat(this.newProduct.price);
-    return (price * 0.85).toFixed(2) + ' DT';
+    return `${(price * 0.85).toFixed(2)} DT`;
   }
 
-  openBuy(product: any) {
+  openBuy(product: ProductCard) {
     this.selectedProduct = product;
     this.buySubmitted = false;
     this.showBuyModal = true;
   }
 
   confirmBuy() {
-    this.buySubmitted = true;
-    setTimeout(() => {
-      this.showBuyModal = false;
-      this.selectedProduct = null;
-      this.buySubmitted = false;
-    }, 1500);
+    if (!this.selectedProduct) {
+      return;
+    }
+    this.marketplace.buyProduct(this.selectedProduct.id).subscribe({
+      next: () => {
+        this.buySubmitted = true;
+        this.cartCount += 1;
+        setTimeout(() => {
+          this.showBuyModal = false;
+          this.selectedProduct = null;
+          this.buySubmitted = false;
+          this.loadProducts();
+        }, 1500);
+      },
+    });
   }
 
   submitProduct() {
     if (this.newProduct.title && this.newProduct.price) {
-      this.sellSubmitted = true;
-      setTimeout(() => {
-        this.showSellModal = false;
-        this.sellSubmitted = false;
-        this.newProduct = { title: '', category: 'UI Kits', price: '', description: '' };
-      }, 2000);
+      this.marketplace.createProduct({
+        title: this.newProduct.title,
+        category: this.newProduct.category,
+        price: this.newProduct.price,
+        description: this.newProduct.description,
+        currency: 'DT',
+      }).subscribe({
+        next: () => {
+          this.sellSubmitted = true;
+          setTimeout(() => {
+            this.showSellModal = false;
+            this.sellSubmitted = false;
+            this.newProduct = { title: '', category: 'UI Kits', price: '', description: '' };
+            this.loadProducts();
+          }, 2000);
+        },
+      });
     }
+  }
+
+  private loadProducts(): void {
+    this.marketplace.listProducts({ status: 'approved' }).subscribe({
+      next: products => {
+        this.products = products.map((product: MarketplaceProduct) => ({
+          id: product.id,
+          title: product.title,
+          category: product.category,
+          price: `${product.price.toLocaleString()} ${product.currency}`,
+          rating: product.rating ? product.rating.toFixed(1) : 'New',
+          sales: product.sales_count,
+          seller: product.seller?.name || 'Seller',
+        }));
+        this.featured = [...this.products]
+          .sort((left, right) => right.sales - left.sales)
+          .slice(0, 3);
+        this.categories = ['All', ...new Set(this.products.map(product => product.category))];
+      },
+    });
   }
 }

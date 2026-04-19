@@ -1,7 +1,6 @@
 <ion-content>
   <div class="page">
 
-    <!-- Header -->
     <div class="header">
       <div>
         <h1 class="title">My Gigs</h1>
@@ -12,50 +11,46 @@
       </div>
     </div>
 
-    <!-- Stats row -->
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-value">{{ gigs.length }}</span>
         <span class="stat-label">Gigs</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value">25</span>
-        <span class="stat-label">Commandes</span>
+        <span class="stat-value">{{ totalOrders }}</span>
+        <span class="stat-label">Orders</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value">4.9 ★</span>
+        <span class="stat-value">{{ averageRating }} *</span>
         <span class="stat-label">Avg Rating</span>
       </div>
-</div>
+    </div>
 
     <div class="note-card">
       Platform fee: 15% is shown to clients and mirrored in your payouts and admin reports.
     </div>
 
-    <!-- Gigs list -->
     <div class="gigs-list">
       <div class="gig-card" *ngFor="let gig of gigs">
-
         <div class="gig-top">
           <div class="gig-icon"><ion-icon name="briefcase-outline"></ion-icon></div>
           <div class="gig-info">
             <p class="gig-title">{{ gig.title }}</p>
             <span class="gig-category">{{ gig.category }}</span>
           </div>
-          <div class="orders-badge" *ngIf="gig.ordersList?.length">{{ gig.ordersList.length }} new</div>
+          <div class="orders-badge" *ngIf="gig.ordersList.length">{{ gig.ordersList.length }} new</div>
         </div>
 
         <div class="gig-meta">
           <span class="meta">{{ gig.price }}</span>
-          <span class="dot">•</span>
+          <span class="dot">*</span>
           <span class="meta">{{ gig.delivery }}</span>
-          <span class="dot">•</span>
-          <span class="meta">★ {{ gig.rating }}</span>
+          <span class="dot">*</span>
+          <span class="meta">* {{ gig.rating }}</span>
         </div>
 
-        <!-- Orders -->
-        <div class="orders" *ngIf="gig.ordersList?.length">
-          <div class="orders-header">Commandes reçues</div>
+        <div class="orders" *ngIf="gig.ordersList.length">
+          <div class="orders-header">Orders received</div>
           <div class="order-card" *ngFor="let o of gig.ordersList">
             <div class="order-top">
               <div class="client-avatar">{{ o.client[0] }}</div>
@@ -63,31 +58,31 @@
                 <p class="client-name">{{ o.client }}</p>
                 <p class="order-msg">{{ o.message }}</p>
               </div>
-              <span class="status"
-                    [class.pending]="o.status === 'Pending'"
-                    [class.progress]="o.status === 'In Progress'"
-                    [class.done]="o.status === 'Completed'"
-                    [class.refused]="o.status === 'Refused'">
+              <span
+                class="status"
+                [class.pending]="o.status === 'Pending'"
+                [class.progress]="o.status === 'In Progress'"
+                [class.done]="o.status === 'Completed'"
+                [class.refused]="o.status === 'Refused'">
                 {{ o.status }}
               </span>
             </div>
             <div class="order-meta">
               <span>{{ o.price }}</span>
-              <span class="dot">•</span>
+              <span class="dot">*</span>
               <span>{{ o.delivery }}</span>
             </div>
             <div class="order-actions" *ngIf="o.status === 'Pending'">
-              <button class="btn accept" (click)="accept(o)">Accepter</button>
-              <button class="btn refuse" (click)="refuse(o)">Refuser</button>
+              <button class="btn accept" (click)="accept(o)">Accept</button>
+              <button class="btn refuse" (click)="refuse(o)">Refuse</button>
               <button class="btn chat" (click)="openChat(o)">Messages</button>
             </div>
             <div class="order-actions" *ngIf="o.status !== 'Pending'">
-              <button class="btn chat full" (click)="openChat(o)">Continuer les messages</button>
+              <button class="btn chat full" (click)="openChat(o)">Continue chat</button>
             </div>
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="gig-actions">
           <div class="action-btn edit">
             <ion-icon name="create-outline"></ion-icon>
@@ -98,7 +93,6 @@
             <span>Delete</span>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -113,35 +107,28 @@
   (didDismiss)="showToast = false">
 </ion-toast>
 
-<!-- Bottom Nav -->
 <div class="bottom-nav">
-  <div class="nav-item" [class.active]="activeTab === 'home'"
-       (click)="setTab('home'); goTo('/freelancer/home')">
+  <div class="nav-item" [class.active]="activeTab === 'home'" (click)="setTab('home'); goTo('/freelancer/home')">
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
   </div>
-  <div class="nav-item active" [class.active]="activeTab === 'gigs'"
-       (click)="setTab('gigs'); goTo('/freelancer/my-gigs')">
+  <div class="nav-item active" [class.active]="activeTab === 'gigs'" (click)="setTab('gigs'); goTo('/freelancer/my-gigs')">
     <ion-icon name="briefcase-outline"></ion-icon>
     <span>My Gigs</span>
   </div>
-  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
-       (click)="setTab('store'); goTo('/store')">
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'" (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'alerts'"
-       (click)="setTab('alerts'); goTo('/notifications')">
+  <div class="nav-item" [class.active]="activeTab === 'alerts'" (click)="setTab('alerts'); goTo('/notifications')">
     <ion-icon name="notifications-outline"></ion-icon>
     <span>Alerts</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'messages'"
-       (click)="setTab('messages'); goTo('/freelancer/messages')">
+  <div class="nav-item" [class.active]="activeTab === 'messages'" (click)="setTab('messages'); goTo('/freelancer/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
     <span>Messages</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'profile'"
-       (click)="setTab('profile'); goTo('/freelancer/profile')">
+  <div class="nav-item" [class.active]="activeTab === 'profile'" (click)="setTab('profile'); goTo('/freelancer/profile')">
     <ion-icon name="person-outline"></ion-icon>
     <span>Profile</span>
   </div>

@@ -1,15 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
-  homeOutline, chatbubbleOutline, personOutline, 
-  storefrontOutline, notificationsOutline, searchOutline,
-  chevronForwardOutline, briefcaseOutline
+import {
+  briefcaseOutline,
+  chatbubbleOutline,
+  chevronForwardOutline,
+  homeOutline,
+  notificationsOutline,
+  personOutline,
+  searchOutline,
+  storefrontOutline,
 } from 'ionicons/icons';
-import { JobService } from '../../../services/job.service';
+
+import { Auth } from '../../../services/auth';
+import { DashboardService, FreelancerDashboard } from '../../../services/dashboard.service';
 import { Job } from '../../../models/job.model';
+
+type ClientCard = {
+  name: string;
+  job: string;
+};
+
+type Recommendation = {
+  id: string;
+  name: string;
+  bio: string;
+  tags: string[];
+  budget: string;
+};
 
 @Component({
   selector: 'app-home-freelancer',
@@ -18,21 +38,21 @@ import { Job } from '../../../models/job.model';
   standalone: true,
   imports: [CommonModule, IonContent, IonIcon],
 })
-export class HomeFreelancerPage {
+export class HomeFreelancerPage implements OnInit {
   activeTab = 'home';
   userName = 'Mayssa';
   notificationsCount = 3;
   status = { account: 'Pending', gigsPending: 2, unread: 4 };
 
-  clients = [
+  clients: ClientCard[] = [
     { name: 'Wail', job: 'Needs a UI/UX designer full time' },
     { name: 'Ahmed', job: 'Needs a part time video editor' },
   ];
 
-  recommendations = [
-    { name: 'Abir', bio: 'Hiring 2 graphic designers + 1 web dev for a 2-week sprint.', tags: ['Design', 'Web Dev'], budget: '1200 DT' },
-    { name: 'Koussay', bio: 'Need a UI/UX designer for a SaaS onboarding flow.', tags: ['Designer'], budget: '700 DT' },
-    { name: 'Faten', bio: 'Launching a brand, need marketing automation + visuals.', tags: ['Marketing'], budget: '900 DT' },
+  recommendations: Recommendation[] = [
+    { id: 'job-1', name: 'Abir', bio: 'Hiring 2 graphic designers + 1 web dev for a 2-week sprint.', tags: ['Design', 'Web Dev'], budget: '1200 DT' },
+    { id: 'job-2', name: 'Koussay', bio: 'Need a UI/UX designer for a SaaS onboarding flow.', tags: ['Designer'], budget: '700 DT' },
+    { id: 'job-3', name: 'Faten', bio: 'Launching a brand, need marketing automation + visuals.', tags: ['Marketing'], budget: '900 DT' },
   ];
 
   categories = ['All', 'Design', 'Web Dev', 'Video Editor', 'Marketing'];
@@ -40,15 +60,81 @@ export class HomeFreelancerPage {
 
   jobBoard: Job[] = [];
 
-  constructor(private router: Router, private jobs: JobService) {
-    addIcons({ 
-      homeOutline, chatbubbleOutline, personOutline, 
-      storefrontOutline, notificationsOutline, searchOutline,
-      chevronForwardOutline, briefcaseOutline
+  constructor(
+    private readonly router: Router,
+    private readonly dashboard: DashboardService,
+    private readonly auth: Auth,
+  ) {
+    addIcons({
+      briefcaseOutline,
+      chatbubbleOutline,
+      chevronForwardOutline,
+      homeOutline,
+      notificationsOutline,
+      personOutline,
+      searchOutline,
+      storefrontOutline,
     });
+  }
 
-    this.jobs.getJobs().subscribe(list => {
-      this.jobBoard = list.filter(j => j.status !== 'closed');
+  ngOnInit(): void {
+    this.userName = this.auth.currentUser?.name || this.userName;
+
+    this.dashboard.getDashboard<FreelancerDashboard>().subscribe({
+      next: (data: FreelancerDashboard) => {
+        this.userName = this.auth.currentUser?.name || this.userName;
+        this.notificationsCount = data.notifications.length;
+        this.status = {
+          account: String(this.auth.currentUser?.status || 'approved'),
+          gigsPending: data.gigs.filter((item: Record<string, unknown>) => item['status'] === 'pending').length,
+          unread: data.notifications.length,
+        };
+
+        this.jobBoard = data.open_jobs.map((item: Record<string, unknown>) => ({
+          id: String(item['id'] || ''),
+          title: String(item['title'] || 'Job'),
+          status: String(item['status'] || 'open') as Job['status'],
+          posted: 'New',
+          budget: this.formatMoney(Number(item['budget'] || 0), String(item['currency'] || 'DT')),
+          applicants: Number(item['applicant_count'] || 0),
+          shortlisted: Number(item['shortlisted_count'] || 0),
+          notes: String(((item['client'] || {}) as Record<string, unknown>)['name'] || item['description'] || ''),
+        }));
+
+        this.clients = data.open_jobs
+          .map((item: Record<string, unknown>) => {
+            const client = (item['client'] || {}) as Record<string, unknown>;
+            return {
+              name: String(client['name'] || 'Client'),
+              job: `${String(item['category'] || 'General')} · ${this.formatMoney(Number(item['budget'] || 0), String(item['currency'] || 'DT'))}`,
+            };
+          })
+          .filter((item: ClientCard, index: number, list: ClientCard[]) => list.findIndex((other: ClientCard) => other.name === item.name) === index);
+
+        this.recommendations = data.open_jobs.map((item: Record<string, unknown>) => {
+          const client = (item['client'] || {}) as Record<string, unknown>;
+          return {
+            id: String(item['id'] || ''),
+            name: String(client['name'] || 'Client'),
+            bio: String(item['description'] || 'New opportunity waiting for your proposal.'),
+            tags: [String(item['category'] || 'General'), String(item['employment_type'] || 'Freelance')],
+            budget: this.formatMoney(Number(item['budget'] || 0), String(item['currency'] || 'DT')),
+          };
+        });
+
+        const dynamicCategories = this.recommendations.reduce<string[]>((accumulator, item) => {
+          accumulator.push(...item.tags);
+          return accumulator;
+        }, []);
+        this.categories = ['All', ...new Set(dynamicCategories)];
+      },
+      error: () => {
+        this.auth.me().subscribe({
+          next: user => {
+            this.userName = user.name;
+          },
+        });
+      },
     });
   }
 
@@ -66,10 +152,41 @@ export class HomeFreelancerPage {
     }
   }
 
-  openJob() { this.router.navigate(['/freelancer/job-detail']); }
-  openApply() { this.router.navigate(['/freelancer/apply-job']); }
-  openGigComposer() { this.router.navigate(['/freelancer/add-gig']); }
+  openJob(jobId?: string) {
+    if (!jobId) {
+      return;
+    }
+    this.router.navigate(['/freelancer/job-detail', jobId]);
+  }
 
-  setTab(tab: string) { this.activeTab = tab; }
-  setCategory(cat: string) { this.activeCategory = cat; }
+  openApply(jobId?: string) {
+    if (!jobId) {
+      return;
+    }
+    this.router.navigate(['/freelancer/apply-job', jobId]);
+  }
+
+  openGigComposer() {
+    this.router.navigate(['/freelancer/add-gig']);
+  }
+
+  setTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  setCategory(category: string) {
+    this.activeCategory = category;
+  }
+
+  get filteredRecommendations(): Recommendation[] {
+    if (this.activeCategory === 'All') {
+      return this.recommendations;
+    }
+
+    return this.recommendations.filter(item => item.tags.includes(this.activeCategory));
+  }
+
+  private formatMoney(value: number, currency: string): string {
+    return `${value.toLocaleString()} ${currency}`;
+  }
 }

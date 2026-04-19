@@ -18,7 +18,6 @@
       Approve new profiles, gigs, and store items. Platform earnings reflect the 15% fee once orders are released.
     </div>
 
-    <!-- Summary cards -->
     <div class="cards">
       <div class="card">
         <ion-icon name="person-outline"></ion-icon>
@@ -50,75 +49,73 @@
       </div>
     </div>
 
-    <!-- Commission -->
     <div class="commission">
       <div>
-        <p class="kpi-label">Platform earnings today</p>
-        <p class="kpi-value">{{ commission.today }}</p>
+        <p class="kpi-label">Estimated commission</p>
+        <p class="kpi-value">{{ commission.estimated }}</p>
       </div>
       <div>
-        <p class="kpi-label">This month</p>
-        <p class="kpi-value">{{ commission.month }}</p>
+        <p class="kpi-label">Recent users</p>
+        <p class="kpi-value">{{ commission.recentUsers }}</p>
       </div>
       <div>
-        <p class="kpi-label">Payouts queued</p>
-        <p class="kpi-value">{{ commission.pendingPayouts }}</p>
+        <p class="kpi-label">Open reports</p>
+        <p class="kpi-value">{{ commission.openReports }}</p>
       </div>
       <span class="pill">Fee auto-applied to every service</span>
     </div>
 
-    <!-- Pending lists -->
     <div class="section">
       <h2>Freelancers</h2>
-      <div class="list-card" *ngFor="let f of freelancers">
+      <div class="list-card" *ngFor="let freelancer of freelancers">
         <div>
-          <p class="item-title">{{ f.name }}</p>
-          <p class="item-sub">{{ f.field }}</p>
+          <p class="item-title">{{ freelancer.name }}</p>
+          <p class="item-sub">{{ freelancer.field }}</p>
         </div>
         <div class="actions">
-          <button class="approve" (click)="approve(f)">Approve</button>
-          <button class="reject" (click)="reject(f)">Reject</button>
+          <button class="approve" (click)="approve(freelancer)">Approve</button>
+          <button class="reject" (click)="reject(freelancer)">Reject</button>
         </div>
       </div>
     </div>
 
     <div class="section">
       <h2>Gigs</h2>
-      <div class="list-card" *ngFor="let g of gigs">
+      <div class="list-card" *ngFor="let gig of gigs">
         <div>
-          <p class="item-title">{{ g.title }}</p>
-          <p class="item-sub">by {{ g.owner }} · {{ g.price }}</p>
+          <p class="item-title">{{ gig.title }}</p>
+          <p class="item-sub">by {{ gig.owner }} · {{ gig.price }}</p>
         </div>
         <div class="actions">
-          <button class="approve" (click)="approve(g)">Approve</button>
-          <button class="reject" (click)="reject(g)">Reject</button>
+          <button class="approve" (click)="approve(gig)">Approve</button>
+          <button class="reject" (click)="reject(gig)">Reject</button>
         </div>
       </div>
     </div>
 
     <div class="section">
       <h2>Store</h2>
-      <div class="list-card" *ngFor="let p of products">
+      <div class="list-card" *ngFor="let product of products">
         <div>
-          <p class="item-title">{{ p.title }}</p>
-          <p class="item-sub">by {{ p.seller }} · {{ p.price }}</p>
+          <p class="item-title">{{ product.title }}</p>
+          <p class="item-sub">by {{ product.seller }} · {{ product.price }}</p>
         </div>
         <div class="actions">
-          <button class="approve" (click)="approve(p)">Approve</button>
-          <button class="reject" (click)="reject(p)">Reject</button>
+          <button class="approve" (click)="approve(product)">Approve</button>
+          <button class="reject" (click)="reject(product)">Reject</button>
         </div>
       </div>
     </div>
 
     <div class="section">
       <h2>Reports</h2>
-      <div class="list-card" *ngFor="let r of reports">
+      <div class="list-card" *ngFor="let report of reports">
         <div>
-          <p class="item-title">{{ r.about }}</p>
-          <p class="item-sub">by {{ r.from }} · {{ r.reason }}</p>
+          <p class="item-title">{{ report.about }}</p>
+          <p class="item-sub">by {{ report.from }} · {{ report.reason }}</p>
         </div>
         <div class="actions">
-          <button class="reject" (click)="reject(r)">Mark reviewed</button>
+          <button class="reject" (click)="reject(report)">Mark reviewed</button>
         </div>
       </div>
     </div>
@@ -126,7 +123,7 @@
     <div class="section">
       <h2>Categories / Tags</h2>
       <div class="chips">
-        <span class="chip" *ngFor="let c of categories">{{ c }}</span>
+        <span class="chip" *ngFor="let category of categories">{{ category }}</span>
       </div>
     </div>
   </div>
