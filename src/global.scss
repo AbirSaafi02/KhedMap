@@ -35,7 +35,7 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* The app currently ships a light-only design. Keep dark mode disabled to avoid white-on-white Ionic defaults. */
 
 :root {
   --app-radius: 18px;

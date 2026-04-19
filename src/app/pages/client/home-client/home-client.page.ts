@@ -23,6 +23,7 @@ type FreelancerCard = {
   id: string;
   name: string;
   job: string;
+  avatarUrl?: string;
 };
 
 type RecommendationCard = {
@@ -32,6 +33,7 @@ type RecommendationCard = {
   bio: string;
   tags: string[];
   rating: string;
+  avatarUrl?: string;
 };
 
 @Component({
@@ -46,7 +48,7 @@ export class HomeClientPage implements OnInit {
   userName = 'Mustapha';
 
   freelancers: FreelancerCard[] = [
-    { id: 'freelancer-1', name: 'Adam', job: 'UI/UX Designer · 2 years exp' },
+    { id: 'freelancer-1', name: 'Adam', job: 'UI/UX Designer / 2 years exp' },
     { id: 'freelancer-2', name: 'Arwa', job: 'Backend Developer' },
     { id: 'freelancer-3', name: 'Mariem', job: 'Mobile Developer' },
   ];
@@ -89,12 +91,13 @@ export class HomeClientPage implements OnInit {
         this.freelancers = data.freelancers.map((item: Record<string, unknown>) => {
           const specialties = Array.isArray(item['specialties']) ? item['specialties'] as string[] : [];
           const title = String(item['title'] || 'Freelancer');
-          const summary = specialties.length ? specialties.slice(0, 2).join(' · ') : title;
+          const summary = specialties.length ? specialties.slice(0, 2).join(' / ') : title;
 
           return {
             id: String(item['id'] || ''),
             name: String(item['name'] || 'Freelancer'),
             job: summary || title,
+            avatarUrl: String(item['avatar_url'] || ''),
           };
         });
 
@@ -107,6 +110,7 @@ export class HomeClientPage implements OnInit {
             bio: String(item['description'] || 'Available for new work.'),
             tags: [String(item['category'] || 'General')],
             rating: item['rating'] ? String(item['rating']) : 'New',
+            avatarUrl: String(owner['avatar_url'] || ''),
           };
         });
 

@@ -4,13 +4,35 @@ from pymongo.errors import DuplicateKeyError, PyMongoError
 from app.extensions import get_db
 from app.repositories import admin, conversations, gigs, jobs, notifications, orders, products, users
 from app.services.dashboard import build_admin_dashboard, build_client_dashboard, build_freelancer_dashboard
+from app.services.emailing import send_account_status_email, send_pending_account_email
 from app.utils.auth import login_required, login_user, logout_user, role_required
 
 api_bp = Blueprint("api", __name__)
+REGISTRABLE_ROLES = {"freelancer", "client", "admin"}
 
 
 def _payload() -> dict:
     return request.get_json(silent=True) or {}
+
+
+def _normalize_role(value: str) -> str:
+    return value if value in REGISTRABLE_ROLES else "freelancer"
+
+
+def _normalize_specialties(value) -> list[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if isinstance(value, str):
+        return [item.strip() for item in value.split(",") if item.strip()]
+    return []
+
+
+def _account_access_message(status: str) -> str:
+    if status == "pending":
+        return "Your account is pending admin approval."
+    if status == "rejected":
+        return "Your account has been rejected. Please contact an administrator."
+    return "Your account is not allowed to sign in."
 
 
 def _user_map(user_ids: list[str]) -> dict[str, dict]:
@@ -96,9 +118,7 @@ def api_register():
     if not payload.get("name") or not payload.get("email") or not payload.get("password"):
         return jsonify({"error": "name, email, and password are required"}), 400
 
-    role = payload.get("role", "freelancer")
-    if role not in {"freelancer", "client"}:
-        role = "freelancer"
+    role = _normalize_role(payload.get("role", "freelancer"))
 
     try:
         user = users.create_user(
@@ -110,15 +130,28 @@ def api_register():
                 "phone": payload.get("phone", ""),
                 "title": payload.get("title", ""),
                 "bio": payload.get("bio", ""),
-                "specialties": payload.get("specialties", []),
-                "status": payload.get("status", "approved"),
+                "specialties": _normalize_specialties(payload.get("specialties", [])),
+                "avatar_url": payload.get("avatar_url", ""),
+                "status": "pending",
             }
         )
     except DuplicateKeyError:
         return jsonify({"error": "Email already exists"}), 409
 
-    login_user(user)
-    return jsonify({"data": user}), 201
+    send_pending_account_email(user)
+
+    return (
+        jsonify(
+            {
+                "data": {
+                    "user": user,
+                    "requires_approval": True,
+                    "message": "Account created. An admin must approve it before you can sign in.",
+                }
+            }
+        ),
+        201,
+    )
 
 
 @api_bp.post("/auth/login")
@@ -127,6 +160,8 @@ def api_login():
     user = users.authenticate(payload.get("email", ""), payload.get("password", ""))
     if not user:
         return jsonify({"error": "Invalid email or password"}), 401
+    if user.get("status") != "approved":
+        return jsonify({"error": _account_access_message(user.get("status", ""))}), 403
 
     login_user(user)
     return jsonify({"data": user})
@@ -408,6 +443,8 @@ def api_admin_review(item_type: str, item_id: str):
 
     if item_type == "user":
         data = users.update_status(item_id, status)
+        if data:
+            send_account_status_email(data)
     elif item_type == "gig":
         data = gigs.update_status(item_id, status)
     elif item_type == "product":

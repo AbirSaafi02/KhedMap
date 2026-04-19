@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -19,10 +20,11 @@ import { AdminDashboard, DashboardService } from '../../../services/dashboard.se
 type ReviewStatus = 'Pending' | 'Approved' | 'Rejected';
 type ReviewItemType = 'user' | 'gig' | 'product' | 'report';
 
-interface Freelancer {
+interface PendingAccount {
   id: string;
   name: string;
-  field: string;
+  role: string;
+  details: string;
   status: ReviewStatus;
   itemType: ReviewItemType;
 }
@@ -62,9 +64,9 @@ interface Report {
   imports: [IonContent, IonIcon, CommonModule],
 })
 export class AdminDashboardPage implements OnInit {
-  freelancers: Freelancer[] = [
-    { id: 'seed-freelancer-1', name: 'Mayssa', field: 'UI/UX', status: 'Pending', itemType: 'user' },
-    { id: 'seed-freelancer-2', name: 'Adam', field: 'Web Dev', status: 'Pending', itemType: 'user' },
+  pendingAccounts: PendingAccount[] = [
+    { id: 'seed-account-1', name: 'Mayssa', role: 'Freelancer', details: 'UI/UX', status: 'Pending', itemType: 'user' },
+    { id: 'seed-account-2', name: 'Adam', role: 'Client', details: 'Startup hiring', status: 'Pending', itemType: 'user' },
   ];
 
   gigs: Gig[] = [
@@ -87,6 +89,7 @@ export class AdminDashboardPage implements OnInit {
     recentUsers: 0,
     openReports: 0,
   };
+  errorMessage = '';
 
   constructor(
     private readonly dashboard: DashboardService,
@@ -105,23 +108,19 @@ export class AdminDashboardPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dashboard.getAdminOverview().subscribe({
-      next: (data: AdminDashboard) => {
-        this.applyDashboard(data);
-      },
-    });
+    this.loadOverview();
   }
 
-  approve(item: Freelancer | Gig | StoreProduct | Report) {
+  approve(item: PendingAccount | Gig | StoreProduct | Report) {
     this.review(item, 'approved');
   }
 
-  reject(item: Freelancer | Gig | StoreProduct | Report) {
+  reject(item: PendingAccount | Gig | StoreProduct | Report) {
     this.review(item, 'rejected');
   }
 
-  get pendingFreelancersCount(): number {
-    return this.freelancers.filter(item => item.status === 'Pending').length;
+  get pendingAccountsCount(): number {
+    return this.pendingAccounts.filter(item => item.status === 'Pending').length;
   }
 
   get pendingGigsCount(): number {
@@ -145,10 +144,12 @@ export class AdminDashboardPage implements OnInit {
   }
 
   private applyDashboard(data: AdminDashboard): void {
-    this.freelancers = data.pending_accounts.map((item: Record<string, unknown>) => ({
+    this.errorMessage = '';
+    this.pendingAccounts = data.pending_accounts.map((item: Record<string, unknown>) => ({
       id: String(item['id'] || ''),
       name: String(item['name'] || 'Pending account'),
-      field: String(item['title'] || this.joinTags(item['specialties'])),
+      role: this.formatRole(String(item['role'] || 'freelancer')),
+      details: String(item['title'] || this.joinTags(item['specialties'])),
       status: 'Pending',
       itemType: 'user',
     }));
@@ -202,7 +203,7 @@ export class AdminDashboardPage implements OnInit {
     };
   }
 
-  private review(item: Freelancer | Gig | StoreProduct | Report, status: 'approved' | 'rejected'): void {
+  private review(item: PendingAccount | Gig | StoreProduct | Report, status: 'approved' | 'rejected'): void {
     const nextStatus: ReviewStatus = status === 'approved' ? 'Approved' : 'Rejected';
 
     this.dashboard.reviewItem(item.itemType, item.id, status).subscribe({
@@ -213,9 +214,9 @@ export class AdminDashboardPage implements OnInit {
     });
   }
 
-  private removeReviewedItem(item: Freelancer | Gig | StoreProduct | Report): void {
+  private removeReviewedItem(item: PendingAccount | Gig | StoreProduct | Report): void {
     if (item.itemType === 'user') {
-      this.freelancers = this.freelancers.filter(entry => entry.id !== item.id);
+      this.pendingAccounts = this.pendingAccounts.filter(entry => entry.id !== item.id);
       return;
     }
 
@@ -241,6 +242,40 @@ export class AdminDashboardPage implements OnInit {
       return 'General';
     }
 
-    return tags.length ? tags.join(' · ') : 'General';
+    return tags.length ? tags.join(' / ') : 'General';
+  }
+
+  private formatRole(role: string): string {
+    return role ? `${role.charAt(0).toUpperCase()}${role.slice(1)}` : 'User';
+  }
+
+  private loadOverview(useFallback = false): void {
+    const request = useFallback
+      ? this.dashboard.getDashboard<AdminDashboard>()
+      : this.dashboard.getAdminOverview();
+
+    request.subscribe({
+      next: (data: AdminDashboard) => {
+        this.applyDashboard(data);
+      },
+      error: error => {
+        this.handleOverviewError(error, useFallback);
+      },
+    });
+  }
+
+  private handleOverviewError(error: unknown, usedFallback: boolean): void {
+    if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+      this.auth.clearSession();
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (!usedFallback) {
+      this.loadOverview(true);
+      return;
+    }
+
+    this.errorMessage = 'Admin dashboard data could not be loaded right now. Please refresh and try again.';
   }
 }

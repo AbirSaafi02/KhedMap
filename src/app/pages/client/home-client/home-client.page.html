@@ -27,7 +27,10 @@
 
     <div class="freelancer-scroll">
       <div class="freelancer-card" *ngFor="let freelancer of freelancers" (click)="openFreelancer(freelancer.id)">
-        <div class="avatar">{{ freelancer.name[0] }}</div>
+        <div class="avatar">
+          <img *ngIf="freelancer.avatarUrl" [src]="freelancer.avatarUrl" [alt]="freelancer.name" class="avatar-image">
+          <span *ngIf="!freelancer.avatarUrl">{{ freelancer.name[0] }}</span>
+        </div>
         <p class="fname">{{ freelancer.name }}</p>
         <p class="fjob">{{ freelancer.job }}</p>
       </div>
@@ -50,12 +53,15 @@
 
     <div class="rec-list">
       <div class="rec-card" *ngFor="let recommendation of filteredRecommendations" (click)="openFreelancer(recommendation.id)">
-        <div class="rec-avatar">{{ recommendation.name[0] }}</div>
+        <div class="rec-avatar">
+          <img *ngIf="recommendation.avatarUrl" [src]="recommendation.avatarUrl" [alt]="recommendation.name" class="avatar-image">
+          <span *ngIf="!recommendation.avatarUrl">{{ recommendation.name[0] }}</span>
+        </div>
         <div class="rec-info">
           <div class="rec-top">
             <div>
               <span class="rec-name">{{ recommendation.name }}</span>
-              <span class="rec-title"> · {{ recommendation.title }}</span>
+              <span class="rec-title"> / {{ recommendation.title }}</span>
             </div>
             <div class="rating">{{ recommendation.rating }}</div>
           </div>

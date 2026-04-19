@@ -30,12 +30,19 @@ export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
-  role: 'freelancer' | 'client';
+  role: UserRole;
   phone?: string;
   bio?: string;
   resume_url?: string;
+  avatar_url?: string;
   title?: string;
   specialties?: string[];
+}
+
+export interface RegistrationResult {
+  user: AuthUser;
+  requires_approval: boolean;
+  message: string;
 }
 
 @Injectable({
@@ -59,10 +66,8 @@ export class Auth {
     );
   }
 
-  register(payload: RegisterPayload): Observable<AuthUser> {
-    return this.api.post<AuthUser>('/auth/register', payload).pipe(
-      tap(user => this.persistUser(user)),
-    );
+  register(payload: RegisterPayload): Observable<RegistrationResult> {
+    return this.api.post<RegistrationResult>('/auth/register', payload);
   }
 
   me(): Observable<AuthUser> {

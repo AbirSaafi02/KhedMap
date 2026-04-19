@@ -6,7 +6,7 @@
         <h1>Dashboard</h1>
       </div>
       <div class="header-actions">
-        <div class="badge">KhedMap · Admin</div>
+        <div class="badge">KhedMap / Admin</div>
         <button class="logout" (click)="logout()">
           <ion-icon name="log-out-outline"></ion-icon>
           Logout
@@ -18,12 +18,16 @@
       Approve new profiles, gigs, and store items. Platform earnings reflect the 15% fee once orders are released.
     </div>
 
+    <div class="error-banner" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
     <div class="cards">
       <div class="card">
         <ion-icon name="person-outline"></ion-icon>
         <div>
           <p class="label">Accounts pending</p>
-          <p class="value">{{ pendingFreelancersCount }}</p>
+          <p class="value">{{ pendingAccountsCount }}</p>
         </div>
       </div>
       <div class="card">
@@ -66,15 +70,15 @@
     </div>
 
     <div class="section">
-      <h2>Freelancers</h2>
-      <div class="list-card" *ngFor="let freelancer of freelancers">
+      <h2>Accounts</h2>
+      <div class="list-card" *ngFor="let account of pendingAccounts">
         <div>
-          <p class="item-title">{{ freelancer.name }}</p>
-          <p class="item-sub">{{ freelancer.field }}</p>
+          <p class="item-title">{{ account.name }}</p>
+          <p class="item-sub">{{ account.role }} / {{ account.details }}</p>
         </div>
         <div class="actions">
-          <button class="approve" (click)="approve(freelancer)">Approve</button>
-          <button class="reject" (click)="reject(freelancer)">Reject</button>
+          <button class="approve" (click)="approve(account)">Approve</button>
+          <button class="reject" (click)="reject(account)">Reject</button>
         </div>
       </div>
     </div>
@@ -84,7 +88,7 @@
       <div class="list-card" *ngFor="let gig of gigs">
         <div>
           <p class="item-title">{{ gig.title }}</p>
-          <p class="item-sub">by {{ gig.owner }} · {{ gig.price }}</p>
+          <p class="item-sub">by {{ gig.owner }} / {{ gig.price }}</p>
         </div>
         <div class="actions">
           <button class="approve" (click)="approve(gig)">Approve</button>
@@ -98,7 +102,7 @@
       <div class="list-card" *ngFor="let product of products">
         <div>
           <p class="item-title">{{ product.title }}</p>
-          <p class="item-sub">by {{ product.seller }} · {{ product.price }}</p>
+          <p class="item-sub">by {{ product.seller }} / {{ product.price }}</p>
         </div>
         <div class="actions">
           <button class="approve" (click)="approve(product)">Approve</button>
@@ -112,7 +116,7 @@
       <div class="list-card" *ngFor="let report of reports">
         <div>
           <p class="item-title">{{ report.about }}</p>
-          <p class="item-sub">by {{ report.from }} · {{ report.reason }}</p>
+          <p class="item-sub">by {{ report.from }} / {{ report.reason }}</p>
         </div>
         <div class="actions">
           <button class="reject" (click)="reject(report)">Mark reviewed</button>

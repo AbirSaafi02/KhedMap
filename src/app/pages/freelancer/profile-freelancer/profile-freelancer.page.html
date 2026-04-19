@@ -4,7 +4,8 @@
     <!-- Top curved background -->
     <div class="top-bg">
       <div class="avatar-circle">
-        <span>{{ profile.name[0] || 'F' }}</span>
+        <img *ngIf="profile.avatarUrl" [src]="profile.avatarUrl" [alt]="profile.name" class="avatar-image">
+        <span *ngIf="!profile.avatarUrl">{{ profile.name[0] || 'F' }}</span>
       </div>
       <div class="status-chip">{{ profile.status }}</div>
     </div>
@@ -85,8 +86,8 @@
             <ion-icon name="create-outline"></ion-icon>
           </div>
           <div>
-            <p class="action-title">Edit profile</p>
-            <p class="action-sub">Update CV, photo, fields</p>
+            <p class="action-title">Create gig</p>
+            <p class="action-sub">Publish a new service offer</p>
           </div>
         </div>
         <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>

@@ -26,6 +26,10 @@ def create_app() -> Flask:
     def load_current_user() -> None:
         user_id = session.get("user_id")
         g.current_user = users.find_user_by_id(user_id) if user_id else None
+        if g.current_user and g.current_user.get("status") != "approved":
+            session.pop("user_id", None)
+            session.pop("role", None)
+            g.current_user = None
 
     app.register_blueprint(web_bp)
     app.register_blueprint(api_bp, url_prefix="/api")

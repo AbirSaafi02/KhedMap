@@ -40,3 +40,12 @@ class Config:
         ).split(",")
         if origin.strip()
     ]
+    SMTP_HOST = os.getenv("SMTP_HOST", "")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+    SMTP_USE_TLS = os.getenv("SMTP_USE_TLS", "true").lower() in {"1", "true", "yes", "on"}
+    SMTP_TIMEOUT_SEC = int(os.getenv("SMTP_TIMEOUT_SEC", "10"))
+    MAIL_FROM_EMAIL = os.getenv("MAIL_FROM_EMAIL", "noreply@khedmap.local")
+    MAIL_FROM_NAME = os.getenv("MAIL_FROM_NAME", "KhedMap")
+    PUBLIC_LOGIN_URL = os.getenv("PUBLIC_LOGIN_URL", "http://127.0.0.1:8100/login")

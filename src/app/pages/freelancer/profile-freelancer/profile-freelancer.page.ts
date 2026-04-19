@@ -16,7 +16,7 @@ import {
   storefrontOutline,
 } from 'ionicons/icons';
 
-import { Auth } from '../../../services/auth';
+import { Auth, AuthUser } from '../../../services/auth';
 import { DashboardService, FreelancerDashboard } from '../../../services/dashboard.service';
 
 @Component({
@@ -40,6 +40,7 @@ export class ProfileFreelancerPage implements OnInit {
     fields: [] as string[],
     cvUrl: '',
     email: '',
+    avatarUrl: '',
   };
 
   verifications = [
@@ -68,18 +69,11 @@ export class ProfileFreelancerPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.applyUser(this.auth.currentUser);
+
     this.auth.me().subscribe({
       next: user => {
-        this.profile = {
-          ...this.profile,
-          name: user.name,
-          title: user.title || 'Freelancer',
-          bio: user.bio || 'Available for new projects.',
-          status: user.status,
-          fields: user.specialties || [],
-          cvUrl: user.resume_url || '',
-          email: user.email,
-        };
+        this.applyUser(user);
       },
     });
 
@@ -123,5 +117,23 @@ export class ProfileFreelancerPage implements OnInit {
         this.router.navigate(['/login']);
       },
     });
+  }
+
+  private applyUser(user: AuthUser | null): void {
+    if (!user) {
+      return;
+    }
+
+    this.profile = {
+      ...this.profile,
+      name: user.name || this.profile.name,
+      title: user.title || 'Freelancer',
+      bio: user.bio || 'Available for new projects.',
+      status: user.status || this.profile.status,
+      fields: user.specialties || [],
+      cvUrl: user.resume_url || '',
+      email: user.email || '',
+      avatarUrl: user.avatar_url || '',
+    };
   }
 }

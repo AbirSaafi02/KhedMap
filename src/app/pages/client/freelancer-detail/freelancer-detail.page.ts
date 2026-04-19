@@ -25,6 +25,7 @@ export class FreelancerDetailPage {
     jobs: 0,
     bio: 'Freelancer profile',
     tags: [] as string[],
+    avatarUrl: '',
   };
   highlights: string[] = [];
   showToast = false;
@@ -52,6 +53,7 @@ export class FreelancerDetailPage {
             jobs: specialties.length || 1,
             bio: freelancer.bio || 'Available for new projects.',
             tags: specialties.length ? specialties : ['General'],
+            avatarUrl: freelancer.avatar_url || '',
           };
           this.highlights = [
             `${freelancer.name} works in ${this.freelancer.tags.join(', ')}`,

@@ -3,8 +3,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonButton } from '@ionic/angular/standalone';
 
-import { Auth } from '../../services/auth';
-
 @Component({
   selector: 'app-field-select',
   templateUrl: './field-select.page.html',
@@ -22,7 +20,7 @@ export class FieldSelectPage {
   role: string = 'freelancer';
   saving = false;
 
-  constructor(private router: Router, private route: ActivatedRoute, private auth: Auth) {
+  constructor(private router: Router, private route: ActivatedRoute) {
     this.route.queryParams.subscribe(params => {
       this.role = params['role'] || 'freelancer';
     });
@@ -45,14 +43,10 @@ export class FieldSelectPage {
       return;
     }
 
-    this.saving = true;
-    this.auth.updateProfile({ specialties: this.selectedFields }).subscribe({
-      next: user => {
-        this.saving = false;
-        this.router.navigate([this.auth.routeForRole(user.role)]);
-      },
-      error: () => {
-        this.saving = false;
+    this.router.navigate(['/register'], {
+      queryParams: {
+        role: this.role,
+        fields: this.selectedFields.join(','),
       },
     });
   }

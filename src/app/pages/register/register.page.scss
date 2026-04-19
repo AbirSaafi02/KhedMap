@@ -14,48 +14,49 @@ ion-content {
   margin-top: 12px;
 
   .logo {
+    margin: 0;
+    color: var(--khed-primary);
     font-size: 42px;
     font-weight: 900;
-    color: var(--khed-primary);
-    margin: 0;
   }
 
   h2 {
-    font-size: 24px;
-    font-weight: 800;
     margin: 6px 0 2px;
     color: var(--khed-ink);
+    font-size: 24px;
+    font-weight: 800;
   }
 
   .subtitle {
+    margin: 0;
     color: var(--khed-accent);
     font-size: 14px;
-    margin: 0;
   }
 }
 
 .role-toggle {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 10px;
 
   .role-option {
-    background: #fff;
-    border-radius: 14px;
-    padding: 12px;
-    border: 2px solid transparent;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-    font-weight: 700;
-    color: var(--khed-muted);
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-height: 92px;
+    padding: 12px;
+    background: #fff;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    color: var(--khed-muted);
     cursor: pointer;
+    font-weight: 700;
     transition: all 0.2s;
 
     small {
-      font-weight: 500;
       color: #94a3b8;
+      font-weight: 500;
     }
 
     &.active {
@@ -73,10 +74,10 @@ ion-content {
 }
 
 .input-item {
-  --background: white;
+  --background: #fff;
   --border-radius: 14px;
   --padding-start: 16px;
-  --color: #1a1a1a;
+  --color: #111827;
   --placeholder-color: #9ca3af;
   --placeholder-opacity: 1;
   border-radius: 14px;
@@ -88,48 +89,111 @@ ion-input {
   --placeholder-color: #9ca3af;
 }
 
-.inline-input {
+.inline-input,
+.fields-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 12px;
   background: #fff;
   border-radius: 14px;
-  padding: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
 
-  .inline-label {
-    font-weight: 700;
-    color: var(--khed-ink);
-    font-size: 13px;
-  }
+.inline-label {
+  color: var(--khed-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
 
-  input, textarea {
-    border: 1px solid #ececec;
-    border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 14px;
-    outline: none;
-  }
+.inline-input input,
+.inline-input textarea {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+  padding: 10px 12px;
+  color: #111827;
+  font-size: 14px;
+}
 
-  textarea { resize: vertical; }
+.inline-input textarea {
+  resize: vertical;
 }
 
 .upload-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 12px;
   border: 1px dashed #d4d4d4;
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   color: var(--khed-muted);
   cursor: pointer;
 }
 
+.upload-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  small {
+    color: #94a3b8;
+    font-size: 11px;
+  }
+}
+
+.avatar-preview {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.fields-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  strong {
+    color: var(--khed-ink);
+  }
+
+  small {
+    color: #64748b;
+    font-size: 12px;
+  }
+}
+
+.fields-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.field-chip {
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+
+  &.selected {
+    border-color: var(--khed-primary);
+    background: #f0eeff;
+    color: var(--khed-primary);
+  }
+}
+
 .info-card {
-  background: #fff7ed;
   border: 1px solid #ffe1c7;
   border-radius: 14px;
   padding: 12px;
+  background: #fff7ed;
   color: #9a3412;
   font-size: 13px;
   line-height: 1.5;
@@ -139,24 +203,24 @@ ion-input {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
   color: var(--khed-muted);
+  font-size: 13px;
 }
 
 .main-btn {
   --background: var(--khed-primary);
   --border-radius: 14px;
   height: 52px;
+  margin-top: 4px;
   font-size: 18px;
   font-weight: 800;
-  margin-top: 4px;
 }
 
 .status-message {
-  text-align: center;
+  margin: 2px 0 0;
   color: #475569;
   font-size: 13px;
-  margin: 2px 0 0;
+  text-align: center;
 }
 
 .error-message {
@@ -164,9 +228,9 @@ ion-input {
 }
 
 .link {
-  text-align: center;
   color: #1f2937;
   font-size: 14px;
+  text-align: center;
 }
 
 .accent {

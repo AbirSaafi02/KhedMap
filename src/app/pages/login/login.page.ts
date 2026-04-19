@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonButton, IonInput, IonItem, IonIcon } from '@ionic/angular/standalone';
@@ -21,10 +21,21 @@ export class LoginPage {
   showPassword = false;
   selectedRole: 'freelancer' | 'client' | 'admin' = 'freelancer';
   errorMessage = '';
+  infoMessage = '';
   submitting = false;
 
-  constructor(private router: Router, private auth: Auth) {
+  constructor(private router: Router, private auth: Auth, private route: ActivatedRoute) {
     addIcons({ eye, eyeOff });
+
+    this.route.queryParamMap.subscribe(params => {
+      if (params.get('pending') !== '1') {
+        this.infoMessage = '';
+        return;
+      }
+
+      const role = this.formatRole(params.get('role') || 'account');
+      this.infoMessage = `Your ${role} account was created and is waiting for admin approval.`;
+    });
   }
 
   login() {
@@ -52,5 +63,9 @@ export class LoginPage {
 
   goToRegister() {
     this.router.navigate(['/register']);
+  }
+
+  private formatRole(role: string): string {
+    return role ? `${role.charAt(0).toUpperCase()}${role.slice(1)}` : 'Account';
   }
 }

@@ -53,6 +53,16 @@ ion-content {
   box-shadow: 0 6px 14px rgba(0,0,0,0.05);
 }
 
+.error-banner {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
 .card {
   background: #fff;
   border-radius: 14px;

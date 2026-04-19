@@ -11,14 +11,28 @@ from app.services.dashboard import (
     build_client_dashboard,
     build_freelancer_dashboard,
 )
+from app.services.emailing import send_account_status_email, send_pending_account_email
 from app.services.seed import DEMO_PASSWORD
 from app.utils.auth import login_required, login_user, logout_user, role_home_endpoint, role_required
 
 web_bp = Blueprint("web", __name__)
+REGISTRABLE_ROLES = {"freelancer", "client", "admin"}
 
 
-def _split_tags(value: str) -> list[str]:
+def _normalize_role(value: str) -> str:
+    return value if value in REGISTRABLE_ROLES else "freelancer"
+
+
+def _normalize_specialties(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _account_access_message(status: str) -> str:
+    if status == "pending":
+        return "Your account is pending admin approval."
+    if status == "rejected":
+        return "Your account has been rejected. Please contact an administrator."
+    return "Your account is not allowed to sign in."
 
 
 @web_bp.get("/")
@@ -34,9 +48,7 @@ def register():
         return redirect(url_for("web.dashboard"))
 
     if request.method == "POST":
-        role = request.form.get("role", "freelancer")
-        if role not in {"freelancer", "client"}:
-            role = "freelancer"
+        role = _normalize_role(request.form.get("role", "freelancer"))
 
         payload = {
             "name": request.form.get("name", ""),
@@ -46,8 +58,9 @@ def register():
             "phone": request.form.get("phone", ""),
             "title": request.form.get("title", ""),
             "bio": request.form.get("bio", ""),
-            "specialties": _split_tags(request.form.get("specialties", "")),
-            "status": "approved",
+            "specialties": _normalize_specialties(request.form.get("specialties", "")),
+            "avatar_url": request.form.get("avatar_url", ""),
+            "status": "pending",
         }
 
         if not payload["name"] or not payload["email"] or not payload["password"]:
@@ -60,9 +73,9 @@ def register():
             flash("That email already exists.", "error")
             return render_template("auth/register.html", job_categories=JOB_CATEGORIES)
 
-        login_user(user)
-        flash("Account created successfully.", "success")
-        return redirect(url_for("web.dashboard"))
+        send_pending_account_email(user)
+        flash("Account created. An admin must approve it before you can sign in.", "success")
+        return redirect(url_for("web.login"))
 
     return render_template("auth/register.html", job_categories=JOB_CATEGORIES)
 
@@ -79,6 +92,9 @@ def login():
         )
         if not user:
             flash("Invalid email or password.", "error")
+            return render_template("auth/login.html")
+        if user.get("status") != "approved":
+            flash(_account_access_message(user.get("status", "")), "error")
             return render_template("auth/login.html")
 
         login_user(user)
@@ -398,7 +414,9 @@ def create_report():
 def review_item(item_type: str, item_id: str):
     action = request.form.get("action", "approved")
     if item_type == "user":
-        users.update_status(item_id, action)
+        user = users.update_status(item_id, action)
+        if user:
+            send_account_status_email(user)
     elif item_type == "gig":
         gigs.update_status(item_id, action)
     elif item_type == "product":

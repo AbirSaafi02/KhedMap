@@ -127,7 +127,7 @@ def build_freelancer_dashboard(current_user: dict) -> dict:
 
 
 def build_admin_dashboard(current_user: dict) -> dict:
-    pending_accounts = users.list_users_by_status("pending", roles=("freelancer", "client"), limit=8)
+    pending_accounts = users.list_users_by_status("pending", roles=("freelancer", "client", "admin"), limit=8)
     pending_gigs = gigs.list_gigs(status="pending", limit=8)
     pending_products = products.list_products(status="pending", limit=8)
     open_reports = admin.list_reports(status="pending", limit=8)

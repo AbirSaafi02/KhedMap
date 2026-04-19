@@ -24,12 +24,8 @@ export class RoleSelectPage {
   }
 
 choose() {
-    if (this.selectedRole === 'freelancer') {
-      this.router.navigate(['/field-select'], { queryParams: { role: 'freelancer' } });
-    } else if (this.selectedRole === 'client') {
-      this.router.navigate(['/field-select'], { queryParams: { role: 'client' } });
-    } else if (this.selectedRole === 'admin') {
-      this.router.navigate(['/admin/dashboard']);
+    if (this.selectedRole === 'freelancer' || this.selectedRole === 'client' || this.selectedRole === 'admin') {
+      this.router.navigate(['/register'], { queryParams: { role: this.selectedRole } });
     }
   }
 

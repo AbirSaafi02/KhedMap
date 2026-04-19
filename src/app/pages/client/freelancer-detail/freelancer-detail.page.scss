@@ -42,6 +42,13 @@
   font-weight: 900;
 }
 
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
 .identity { flex: 1; }
 .name { margin: 0; font-size: 22px; font-weight: 900; color: #1f2937; }
 .title { margin: 2px 0 8px; color: #6b7280; font-weight: 700; font-size: 13px; }

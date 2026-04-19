@@ -8,7 +8,10 @@
     </div>
 
     <div class="hero card">
-      <div class="avatar">{{ freelancer.name[0] }}</div>
+      <div class="avatar">
+        <img *ngIf="freelancer.avatarUrl" [src]="freelancer.avatarUrl" [alt]="freelancer.name" class="avatar-image">
+        <span *ngIf="!freelancer.avatarUrl">{{ freelancer.name[0] }}</span>
+      </div>
       <div class="identity">
         <h1 class="name">{{ freelancer.name }}</h1>
         <p class="title">{{ freelancer.title }}</p>
