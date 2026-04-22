@@ -6,6 +6,7 @@ import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   addOutline,
+  arrowBackOutline,
   briefcaseOutline,
   cartOutline,
   chatbubbleOutline,
@@ -21,6 +22,7 @@ import {
 } from 'ionicons/icons';
 
 import { Auth } from '../../services/auth';
+import { DashboardService } from '../../services/dashboard.service';
 import { MarketplaceProduct, MarketplaceService } from '../../services/marketplace.service';
 
 type Role = 'freelancer' | 'client';
@@ -29,6 +31,8 @@ type ProductCard = {
   id: string;
   title: string;
   category: string;
+  amount: number;
+  currency: string;
   price: string;
   rating: string;
   sales: number;
@@ -52,6 +56,7 @@ export class StorePage {
   buySubmitted = false;
   selectedProduct: ProductCard | null = null;
   cartCount = 0;
+  unreadMessagesCount = 0;
 
   newProduct = {
     title: '',
@@ -70,6 +75,7 @@ export class StorePage {
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly auth: Auth,
+    private readonly dashboard: DashboardService,
     private readonly marketplace: MarketplaceService,
   ) {
     this.route.queryParams.subscribe(params => {
@@ -88,10 +94,12 @@ export class StorePage {
       }
 
       localStorage.setItem('currentRole', this.role);
+      this.loadUnreadMessages();
     });
 
     addIcons({
       addOutline,
+      arrowBackOutline,
       briefcaseOutline,
       cartOutline,
       chatbubbleOutline,
@@ -171,6 +179,10 @@ export class StorePage {
     });
   }
 
+  goBack() {
+    this.router.navigate([this.role === 'freelancer' ? '/freelancer/home' : '/client/home']);
+  }
+
   submitProduct() {
     if (this.newProduct.title && this.newProduct.price) {
       this.marketplace.createProduct({
@@ -200,6 +212,8 @@ export class StorePage {
           id: product.id,
           title: product.title,
           category: product.category,
+          amount: product.price,
+          currency: product.currency,
           price: `${product.price.toLocaleString()} ${product.currency}`,
           rating: product.rating ? product.rating.toFixed(1) : 'New',
           sales: product.sales_count,
@@ -209,6 +223,33 @@ export class StorePage {
           .sort((left, right) => right.sales - left.sales)
           .slice(0, 3);
         this.categories = ['All', ...new Set(this.products.map(product => product.category))];
+      },
+    });
+  }
+
+  get selectedServiceFee(): string {
+    if (!this.selectedProduct) {
+      return '0 DT';
+    }
+
+    return `${(this.selectedProduct.amount * 0.15).toFixed(2)} ${this.selectedProduct.currency}`;
+  }
+
+  get selectedTotal(): string {
+    if (!this.selectedProduct) {
+      return '0 DT';
+    }
+
+    return `${(this.selectedProduct.amount * 1.15).toFixed(2)} ${this.selectedProduct.currency}`;
+  }
+
+  private loadUnreadMessages(): void {
+    this.dashboard.getDashboard<{ stats?: { unread_messages?: number } }>().subscribe({
+      next: data => {
+        this.unreadMessagesCount = Number(data?.stats?.unread_messages || 0);
+      },
+      error: () => {
+        this.unreadMessagesCount = 0;
       },
     });
   }

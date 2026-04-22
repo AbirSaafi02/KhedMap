@@ -1,7 +1,15 @@
 .page { padding: 32px 20px 60px; background: var(--khed-surface); }
 
-.header h1 { margin: 0; font-size: 26px; font-weight: 900; color: #1a1a1a; }
-.owner { margin: 4px 0 16px; color: #666; font-size: 13px; }
+.header-chip {
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.owner { margin: 0 0 16px 54px; color: #666; font-size: 13px; }
 
 .pill-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .pill {
@@ -31,6 +39,36 @@
   border: 1px solid #ffe1c7;
   background: #fff7ed;
   color: #9a3412;
+}
+
+.fee-breakdown {
+  margin-top: 12px;
+  border-top: 1px solid rgba(154, 52, 18, 0.12);
+  padding-top: 12px;
+}
+
+.fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: #9a3412;
+  font-size: 13px;
+
+  strong {
+    color: #7c2d12;
+  }
+
+  &.total {
+    margin-bottom: 0;
+    padding-top: 4px;
+    font-weight: 800;
+
+    strong {
+      font-size: 15px;
+    }
+  }
 }
 
 .actions { display: flex; gap: 10px; }

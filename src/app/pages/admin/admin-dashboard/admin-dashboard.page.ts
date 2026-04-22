@@ -6,6 +6,7 @@ import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   briefcaseOutline,
+  cashOutline,
   checkmarkOutline,
   closeOutline,
   logOutOutline,
@@ -17,7 +18,6 @@ import {
 import { Auth } from '../../../services/auth';
 import { AdminDashboard, DashboardService } from '../../../services/dashboard.service';
 
-type ReviewStatus = 'Pending' | 'Approved' | 'Rejected';
 type ReviewItemType = 'user' | 'gig' | 'product' | 'report';
 
 interface PendingAccount {
@@ -25,16 +25,14 @@ interface PendingAccount {
   name: string;
   role: string;
   details: string;
-  status: ReviewStatus;
   itemType: ReviewItemType;
 }
 
-interface Gig {
+interface GigReview {
   id: string;
   title: string;
   owner: string;
   price: string;
-  status: ReviewStatus;
   itemType: ReviewItemType;
 }
 
@@ -43,17 +41,44 @@ interface StoreProduct {
   title: string;
   seller: string;
   price: string;
-  status: ReviewStatus;
   itemType: ReviewItemType;
 }
 
-interface Report {
+interface ReportReview {
   id: string;
   from: string;
   about: string;
   reason: string;
-  status: ReviewStatus;
   itemType: ReviewItemType;
+}
+
+interface RecentOrder {
+  id: string;
+  title: string;
+  client: string;
+  seller: string;
+  gross: string;
+  fee: string;
+  payout: string;
+  status: string;
+}
+
+interface RecentUser {
+  id: string;
+  name: string;
+  role: string;
+  title: string;
+  status: string;
+}
+
+interface WalletSummary {
+  balance: string;
+  released: string;
+  pending: string;
+  gross: string;
+  payouts: string;
+  ordersCount: number;
+  activeOrders: number;
 }
 
 @Component({
@@ -64,30 +89,21 @@ interface Report {
   imports: [IonContent, IonIcon, CommonModule],
 })
 export class AdminDashboardPage implements OnInit {
-  pendingAccounts: PendingAccount[] = [
-    { id: 'seed-account-1', name: 'Mayssa', role: 'Freelancer', details: 'UI/UX', status: 'Pending', itemType: 'user' },
-    { id: 'seed-account-2', name: 'Adam', role: 'Client', details: 'Startup hiring', status: 'Pending', itemType: 'user' },
-  ];
-
-  gigs: Gig[] = [
-    { id: 'seed-gig-1', title: 'Mobile UI Design', owner: 'Mayssa', price: '150 DT', status: 'Pending', itemType: 'gig' },
-    { id: 'seed-gig-2', title: 'Brand Identity', owner: 'Sara', price: '200 DT', status: 'Pending', itemType: 'gig' },
-  ];
-
-  products: StoreProduct[] = [
-    { id: 'seed-product-1', title: 'Figma UI Kit', seller: 'Yacine', price: '60 DT', status: 'Pending', itemType: 'product' },
-  ];
-
-  reports: Report[] = [
-    { id: 'seed-report-1', from: 'Client A', about: 'Gig #123', reason: 'Late delivery', status: 'Pending', itemType: 'report' },
-  ];
-
-  categories = ['Design', 'Web Dev', 'Video', 'Marketing'];
-
-  commission = {
-    estimated: '0 DT',
-    recentUsers: 0,
-    openReports: 0,
+  pendingAccounts: PendingAccount[] = [];
+  gigs: GigReview[] = [];
+  products: StoreProduct[] = [];
+  reports: ReportReview[] = [];
+  recentOrders: RecentOrder[] = [];
+  recentUsers: RecentUser[] = [];
+  userMix: Array<{ label: string; count: number }> = [];
+  wallet: WalletSummary = {
+    balance: '0 DT',
+    released: '0 DT',
+    pending: '0 DT',
+    gross: '0 DT',
+    payouts: '0 DT',
+    ordersCount: 0,
+    activeOrders: 0,
   };
   errorMessage = '';
 
@@ -98,6 +114,7 @@ export class AdminDashboardPage implements OnInit {
   ) {
     addIcons({
       briefcaseOutline,
+      cashOutline,
       checkmarkOutline,
       closeOutline,
       logOutOutline,
@@ -111,24 +128,16 @@ export class AdminDashboardPage implements OnInit {
     this.loadOverview();
   }
 
-  approve(item: PendingAccount | Gig | StoreProduct | Report) {
-    this.review(item, 'approved');
-  }
-
-  reject(item: PendingAccount | Gig | StoreProduct | Report) {
-    this.review(item, 'rejected');
-  }
-
   get pendingAccountsCount(): number {
-    return this.pendingAccounts.filter(item => item.status === 'Pending').length;
+    return this.pendingAccounts.length;
   }
 
   get pendingGigsCount(): number {
-    return this.gigs.filter(item => item.status === 'Pending').length;
+    return this.gigs.length;
   }
 
   get pendingProductsCount(): number {
-    return this.products.filter(item => item.status === 'Pending').length;
+    return this.products.length;
   }
 
   logout() {
@@ -143,6 +152,14 @@ export class AdminDashboardPage implements OnInit {
     });
   }
 
+  approve(item: PendingAccount | GigReview | StoreProduct | ReportReview) {
+    this.review(item, 'approved');
+  }
+
+  reject(item: PendingAccount | GigReview | StoreProduct | ReportReview) {
+    this.review(item, 'rejected');
+  }
+
   private applyDashboard(data: AdminDashboard): void {
     this.errorMessage = '';
     this.pendingAccounts = data.pending_accounts.map((item: Record<string, unknown>) => ({
@@ -150,7 +167,6 @@ export class AdminDashboardPage implements OnInit {
       name: String(item['name'] || 'Pending account'),
       role: this.formatRole(String(item['role'] || 'freelancer')),
       details: String(item['title'] || this.joinTags(item['specialties'])),
-      status: 'Pending',
       itemType: 'user',
     }));
 
@@ -161,7 +177,6 @@ export class AdminDashboardPage implements OnInit {
         title: String(item['title'] || 'Gig'),
         owner: String(owner['name'] || 'Freelancer'),
         price: this.formatMoney(Number(item['price'] || 0), String(item['currency'] || 'DT')),
-        status: 'Pending',
         itemType: 'gig',
       };
     });
@@ -173,7 +188,6 @@ export class AdminDashboardPage implements OnInit {
         title: String(item['title'] || 'Product'),
         seller: String(seller['name'] || 'Seller'),
         price: this.formatMoney(Number(item['price'] || 0), String(item['currency'] || 'DT')),
-        status: 'Pending',
         itemType: 'product',
       };
     });
@@ -185,36 +199,58 @@ export class AdminDashboardPage implements OnInit {
         from: String(reporter['name'] || 'Reporter'),
         about: String(item['target_label'] || item['target_type'] || 'Report'),
         reason: String(item['reason'] || 'Needs review'),
-        status: 'Pending',
         itemType: 'report',
       };
     });
 
-    this.categories = [...new Set([
-      ...this.gigs.map(item => item.title.split(' ')[0]),
-      ...this.products.map(item => item.title.split(' ')[0]),
-      'Moderation',
-    ])];
+    this.recentOrders = data.recent_orders.map((item: Record<string, unknown>) => {
+      const client = (item['client'] || {}) as Record<string, unknown>;
+      const seller = (item['seller'] || {}) as Record<string, unknown>;
+      return {
+        id: String(item['id'] || ''),
+        title: String(item['title'] || 'Order'),
+        client: String(client['name'] || 'Client'),
+        seller: String(seller['name'] || 'Seller'),
+        gross: this.formatMoney(Number(item['price'] || 0), String(item['currency'] || 'DT')),
+        fee: this.formatMoney(Number(item['platform_fee'] || 0), String(item['currency'] || 'DT')),
+        payout: this.formatMoney(Number(item['seller_earnings'] || 0), String(item['currency'] || 'DT')),
+        status: String(item['status'] || 'Pending'),
+      };
+    });
 
-    this.commission = {
-      estimated: this.formatMoney(data.stats.estimated_revenue, 'DT'),
-      recentUsers: data.recent_users.length,
-      openReports: data.reports.length,
+    this.recentUsers = data.recent_users.map((item: Record<string, unknown>) => ({
+      id: String(item['id'] || ''),
+      name: String(item['name'] || 'User'),
+      role: this.formatRole(String(item['role'] || 'user')),
+      title: String(item['title'] || 'KhedMap member'),
+      status: String(item['status'] || 'pending'),
+    }));
+
+    this.userMix = Object.entries(data.user_counts || {}).map(([label, count]) => ({
+      label: this.formatRole(label),
+      count,
+    }));
+
+    this.wallet = {
+      balance: this.formatMoney(data.wallet.wallet_balance, 'DT'),
+      released: this.formatMoney(data.wallet.released_balance, 'DT'),
+      pending: this.formatMoney(data.wallet.pending_balance, 'DT'),
+      gross: this.formatMoney(data.wallet.gross_volume, 'DT'),
+      payouts: this.formatMoney(data.wallet.seller_payouts, 'DT'),
+      ordersCount: data.wallet.orders_count,
+      activeOrders: data.wallet.active_orders,
     };
   }
 
-  private review(item: PendingAccount | Gig | StoreProduct | Report, status: 'approved' | 'rejected'): void {
-    const nextStatus: ReviewStatus = status === 'approved' ? 'Approved' : 'Rejected';
-
+  private review(item: PendingAccount | GigReview | StoreProduct | ReportReview, status: 'approved' | 'rejected'): void {
     this.dashboard.reviewItem(item.itemType, item.id, status).subscribe({
       next: () => {
-        item.status = nextStatus;
         this.removeReviewedItem(item);
       },
     });
   }
 
-  private removeReviewedItem(item: PendingAccount | Gig | StoreProduct | Report): void {
+  private removeReviewedItem(item: PendingAccount | GigReview | StoreProduct | ReportReview): void {
     if (item.itemType === 'user') {
       this.pendingAccounts = this.pendingAccounts.filter(entry => entry.id !== item.id);
       return;

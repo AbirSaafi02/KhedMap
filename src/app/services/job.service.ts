@@ -39,6 +39,29 @@ export interface ApplyJobPayload {
   cv_filename?: string;
 }
 
+export type ApplicationStatus = 'pending' | 'accepted' | 'rejected' | 'shortlisted';
+
+export interface JobApplication {
+  id: string;
+  job_id: string;
+  freelancer_id: string;
+  full_name: string;
+  cover_letter: string;
+  cv_filename: string;
+  status: ApplicationStatus;
+  created_at: string;
+  updated_at: string;
+  freelancer?: {
+    id: string;
+    name: string;
+    title?: string;
+    bio?: string;
+    specialties?: string[];
+    avatar_url?: string;
+  };
+  job?: ApiJob;
+}
+
 @Injectable({ providedIn: 'root' })
 export class JobService {
   constructor(private readonly api: Api) {}
@@ -60,5 +83,13 @@ export class JobService {
 
   applyToJob(jobId: string, payload: ApplyJobPayload): Observable<Record<string, unknown>> {
     return this.api.post<Record<string, unknown>>(`/jobs/${jobId}/apply`, payload);
+  }
+
+  listJobApplications(jobId: string): Observable<JobApplication[]> {
+    return this.api.get<JobApplication[]>(`/jobs/${jobId}/applications`);
+  }
+
+  reviewApplication(applicationId: string, status: Exclude<ApplicationStatus, 'pending'>): Observable<JobApplication> {
+    return this.api.patch<JobApplication>(`/applications/${applicationId}`, { status });
   }
 }

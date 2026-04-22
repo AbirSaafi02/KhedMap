@@ -6,7 +6,7 @@
           <ion-icon name="arrow-back-outline"></ion-icon>
         </button>
         <div>
-          <p class="eyebrow">Client · Posted jobs</p>
+          <p class="eyebrow">Client &middot; Posted jobs</p>
           <h1>My jobs</h1>
         </div>
       </div>
@@ -30,9 +30,9 @@
               <span class="badge" [class.open]="job.status === 'open'" [class.interviewing]="job.status === 'interviewing'" [class.closed]="job.status === 'closed'">
                 {{ job.status }}
               </span>
-              <span class="dot">•</span>
+              <span class="dot">&middot;</span>
               <span>{{ job.posted }}</span>
-              <span class="dot">•</span>
+              <span class="dot">&middot;</span>
               <span>{{ job.budget }}</span>
             </p>
             <p class="notes">{{ job.notes }}</p>
@@ -41,11 +41,59 @@
               <span><ion-icon name="checkmark-circle-outline"></ion-icon> {{ job.shortlisted }} shortlisted</span>
             </div>
           </div>
-          <div class="cta">
-            <button class="ghost">View</button>
-            <button class="primary" *ngIf="job.status !== 'closed'">Close job</button>
+        </div>
+
+        <div class="applications" *ngIf="job.applications.length; else emptyApplications">
+          <div class="applications-header">
+            <span>Applicants</span>
+            <strong>{{ job.applications.length }}</strong>
+          </div>
+
+          <div class="application-card" *ngFor="let application of job.applications">
+            <div class="application-top">
+              <div class="avatar">{{ application.freelancerName[0] }}</div>
+              <div class="application-copy">
+                <p class="application-name">{{ application.freelancerName }}</p>
+                <p class="application-meta">{{ application.freelancerTitle }} &middot; {{ application.createdAt }}</p>
+              </div>
+              <span class="application-status" [class.accepted]="application.status === 'accepted'" [class.rejected]="application.status === 'rejected'">
+                {{ application.status }}
+              </span>
+            </div>
+
+            <div class="chips" *ngIf="application.specialties.length">
+              <span class="chip" *ngFor="let specialty of application.specialties">{{ specialty }}</span>
+            </div>
+
+            <p class="cover-letter">{{ application.coverLetter }}</p>
+            <p class="cv-name" *ngIf="application.cvFileName">CV: {{ application.cvFileName }}</p>
+
+            <div class="application-actions">
+              <button
+                class="approve-btn"
+                [disabled]="reviewingId === application.id || application.status === 'accepted'"
+                (click)="reviewApplication(job, application, 'accepted')">
+                Accept
+              </button>
+              <button
+                class="reject-btn"
+                [disabled]="reviewingId === application.id || application.status === 'rejected'"
+                (click)="reviewApplication(job, application, 'rejected')">
+                Reject
+              </button>
+              <button class="message-btn" (click)="messageFreelancer(application)">
+                <ion-icon name="chatbubble-outline"></ion-icon>
+                Message
+              </button>
+            </div>
           </div>
         </div>
+
+        <ng-template #emptyApplications>
+          <div class="empty-applications">
+            No applications yet. As soon as a freelancer applies, you can review and notify them from here.
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>

@@ -1,10 +1,15 @@
 <ion-content>
   <div class="page">
-
-    <div class="header">
-      <div>
-        <h1 class="title">Store</h1>
-        <p class="subtitle">Digital products and assets</p>
+    <div class="page-topbar">
+      <div class="page-topbar-left">
+        <button class="back-circle-btn" (click)="goBack()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div class="page-topbar-copy">
+          <p class="eyebrow">Marketplace store</p>
+          <h1 class="title">Store</h1>
+          <p class="subtitle">Digital products and assets</p>
+        </div>
       </div>
       <div class="header-right">
         <div class="sell-btn" *ngIf="role === 'freelancer'" (click)="showSellModal = true">
@@ -179,12 +184,20 @@
           <strong>{{ selectedProduct.price }}</strong>
         </div>
         <div class="row">
+          <span>KhedMap fee (15%)</span>
+          <strong>{{ selectedServiceFee }}</strong>
+        </div>
+        <div class="row">
           <span>Licence</span>
           <strong>Personal use</strong>
         </div>
         <div class="row">
           <span>Version</span>
           <strong>v1.0</strong>
+        </div>
+        <div class="row total">
+          <span>Total charged</span>
+          <strong>{{ selectedTotal }}</strong>
         </div>
       </div>
 
@@ -210,6 +223,7 @@
   </div>
   <div class="nav-item" (click)="goTo('/freelancer/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
+    <span class="nav-dot" *ngIf="unreadMessagesCount"></span>
     <span>Messages</span>
   </div>
   <div class="nav-item" (click)="goTo('/freelancer/profile')">
@@ -233,6 +247,7 @@
   </div>
   <div class="nav-item" (click)="goTo('/client/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
+    <span class="nav-dot" *ngIf="unreadMessagesCount"></span>
     <span>Messages</span>
   </div>
   <div class="nav-item" (click)="goTo('/client/profile')">

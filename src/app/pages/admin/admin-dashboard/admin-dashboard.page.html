@@ -3,7 +3,8 @@
     <div class="header">
       <div>
         <p class="eyebrow">Admin space</p>
-        <h1>Dashboard</h1>
+        <h1>Marketplace control room</h1>
+        <p class="summary">Approve accounts, manage listings, and track the 15% KhedMap wallet in real time.</p>
       </div>
       <div class="header-actions">
         <div class="badge">KhedMap / Admin</div>
@@ -12,10 +13,6 @@
           Logout
         </button>
       </div>
-    </div>
-
-    <div class="info-banner">
-      Approve new profiles, gigs, and store items. Platform earnings reflect the 15% fee once orders are released.
     </div>
 
     <div class="error-banner" *ngIf="errorMessage">
@@ -47,87 +44,172 @@
       <div class="card">
         <ion-icon name="warning-outline"></ion-icon>
         <div>
-          <p class="label">Reports</p>
+          <p class="label">Open reports</p>
           <p class="value">{{ reports.length }}</p>
         </div>
       </div>
     </div>
 
-    <div class="commission">
-      <div>
-        <p class="kpi-label">Estimated commission</p>
-        <p class="kpi-value">{{ commission.estimated }}</p>
-      </div>
-      <div>
-        <p class="kpi-label">Recent users</p>
-        <p class="kpi-value">{{ commission.recentUsers }}</p>
-      </div>
-      <div>
-        <p class="kpi-label">Open reports</p>
-        <p class="kpi-value">{{ commission.openReports }}</p>
-      </div>
-      <span class="pill">Fee auto-applied to every service</span>
-    </div>
-
-    <div class="section">
-      <h2>Accounts</h2>
-      <div class="list-card" *ngFor="let account of pendingAccounts">
-        <div>
-          <p class="item-title">{{ account.name }}</p>
-          <p class="item-sub">{{ account.role }} / {{ account.details }}</p>
+    <div class="wallet-panel">
+      <div class="wallet-card featured">
+        <div class="wallet-heading">
+          <ion-icon name="cash-outline"></ion-icon>
+          <span>KhedMap wallet</span>
         </div>
-        <div class="actions">
-          <button class="approve" (click)="approve(account)">Approve</button>
-          <button class="reject" (click)="reject(account)">Reject</button>
-        </div>
+        <p class="wallet-value">{{ wallet.balance }}</p>
+        <p class="wallet-subtitle">Total platform fees from active and completed orders</p>
       </div>
-    </div>
-
-    <div class="section">
-      <h2>Gigs</h2>
-      <div class="list-card" *ngFor="let gig of gigs">
-        <div>
-          <p class="item-title">{{ gig.title }}</p>
-          <p class="item-sub">by {{ gig.owner }} / {{ gig.price }}</p>
-        </div>
-        <div class="actions">
-          <button class="approve" (click)="approve(gig)">Approve</button>
-          <button class="reject" (click)="reject(gig)">Reject</button>
-        </div>
+      <div class="wallet-card">
+        <p class="wallet-label">Released</p>
+        <p class="wallet-mini">{{ wallet.released }}</p>
+      </div>
+      <div class="wallet-card">
+        <p class="wallet-label">Pending</p>
+        <p class="wallet-mini">{{ wallet.pending }}</p>
+      </div>
+      <div class="wallet-card">
+        <p class="wallet-label">Gross volume</p>
+        <p class="wallet-mini">{{ wallet.gross }}</p>
+      </div>
+      <div class="wallet-card">
+        <p class="wallet-label">Seller payouts</p>
+        <p class="wallet-mini">{{ wallet.payouts }}</p>
+      </div>
+      <div class="wallet-card">
+        <p class="wallet-label">Orders tracked</p>
+        <p class="wallet-mini">{{ wallet.ordersCount }}</p>
+      </div>
+      <div class="wallet-card">
+        <p class="wallet-label">Active orders</p>
+        <p class="wallet-mini">{{ wallet.activeOrders }}</p>
       </div>
     </div>
 
-    <div class="section">
-      <h2>Store</h2>
-      <div class="list-card" *ngFor="let product of products">
-        <div>
-          <p class="item-title">{{ product.title }}</p>
-          <p class="item-sub">by {{ product.seller }} / {{ product.price }}</p>
+    <div class="content-grid">
+      <div class="column">
+        <div class="section">
+          <div class="section-header">
+            <h2>Account approvals</h2>
+            <span>{{ pendingAccounts.length }}</span>
+          </div>
+          <div class="list-card" *ngFor="let account of pendingAccounts">
+            <div>
+              <p class="item-title">{{ account.name }}</p>
+              <p class="item-sub">{{ account.role }} &middot; {{ account.details }}</p>
+            </div>
+            <div class="actions">
+              <button class="approve" (click)="approve(account)">Approve</button>
+              <button class="reject" (click)="reject(account)">Reject</button>
+            </div>
+          </div>
+          <div class="empty-card" *ngIf="!pendingAccounts.length">No pending accounts right now.</div>
         </div>
-        <div class="actions">
-          <button class="approve" (click)="approve(product)">Approve</button>
-          <button class="reject" (click)="reject(product)">Reject</button>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Gigs to approve</h2>
+            <span>{{ gigs.length }}</span>
+          </div>
+          <div class="list-card" *ngFor="let gig of gigs">
+            <div>
+              <p class="item-title">{{ gig.title }}</p>
+              <p class="item-sub">by {{ gig.owner }} &middot; {{ gig.price }}</p>
+            </div>
+            <div class="actions">
+              <button class="approve" (click)="approve(gig)">Approve</button>
+              <button class="reject" (click)="reject(gig)">Reject</button>
+            </div>
+          </div>
+          <div class="empty-card" *ngIf="!gigs.length">No pending gigs in review.</div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Store items</h2>
+            <span>{{ products.length }}</span>
+          </div>
+          <div class="list-card" *ngFor="let product of products">
+            <div>
+              <p class="item-title">{{ product.title }}</p>
+              <p class="item-sub">by {{ product.seller }} &middot; {{ product.price }}</p>
+            </div>
+            <div class="actions">
+              <button class="approve" (click)="approve(product)">Approve</button>
+              <button class="reject" (click)="reject(product)">Reject</button>
+            </div>
+          </div>
+          <div class="empty-card" *ngIf="!products.length">No pending store submissions.</div>
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <h2>Reports</h2>
-      <div class="list-card" *ngFor="let report of reports">
-        <div>
-          <p class="item-title">{{ report.about }}</p>
-          <p class="item-sub">by {{ report.from }} / {{ report.reason }}</p>
+      <div class="column">
+        <div class="section">
+          <div class="section-header">
+            <h2>Open reports</h2>
+            <span>{{ reports.length }}</span>
+          </div>
+          <div class="list-card" *ngFor="let report of reports">
+            <div>
+              <p class="item-title">{{ report.about }}</p>
+              <p class="item-sub">by {{ report.from }}</p>
+              <p class="item-note">{{ report.reason }}</p>
+            </div>
+            <div class="actions">
+              <button class="approve" (click)="approve(report)">Resolve</button>
+              <button class="reject" (click)="reject(report)">Dismiss</button>
+            </div>
+          </div>
+          <div class="empty-card" *ngIf="!reports.length">No open reports at the moment.</div>
         </div>
-        <div class="actions">
-          <button class="reject" (click)="reject(report)">Mark reviewed</button>
-        </div>
-      </div>
-    </div>
 
-    <div class="section">
-      <h2>Categories / Tags</h2>
-      <div class="chips">
-        <span class="chip" *ngFor="let category of categories">{{ category }}</span>
+        <div class="section">
+          <div class="section-header">
+            <h2>Recent orders</h2>
+            <span>{{ recentOrders.length }}</span>
+          </div>
+          <div class="activity-card" *ngFor="let order of recentOrders">
+            <div class="activity-top">
+              <div>
+                <p class="item-title">{{ order.title }}</p>
+                <p class="item-sub">{{ order.client }} &rarr; {{ order.seller }}</p>
+              </div>
+              <span class="status-pill">{{ order.status }}</span>
+            </div>
+            <div class="metrics-row">
+              <span>Gross {{ order.gross }}</span>
+              <span>Fee {{ order.fee }}</span>
+              <span>Payout {{ order.payout }}</span>
+            </div>
+          </div>
+          <div class="empty-card" *ngIf="!recentOrders.length">No recent orders yet.</div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Recent users</h2>
+            <span>{{ recentUsers.length }}</span>
+          </div>
+          <div class="activity-card" *ngFor="let user of recentUsers">
+            <div class="activity-top">
+              <div>
+                <p class="item-title">{{ user.name }}</p>
+                <p class="item-sub">{{ user.role }} &middot; {{ user.title }}</p>
+              </div>
+              <span class="status-pill" [class.pending]="user.status === 'pending'" [class.rejected]="user.status === 'rejected'">
+                {{ user.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>User mix</h2>
+          </div>
+          <div class="mix-row">
+            <span class="mix-chip" *ngFor="let item of userMix">{{ item.label }}: {{ item.count }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

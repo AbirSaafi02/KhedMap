@@ -132,6 +132,7 @@
   </div>
   <div class="nav-item" [class.active]="activeTab === 'messages'" (click)="setTab('messages'); goTo('/freelancer/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
+    <span class="nav-dot" *ngIf="unreadMessagesCount"></span>
     <span>Messages</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'alerts'" (click)="setTab('alerts'); goTo('/notifications')">

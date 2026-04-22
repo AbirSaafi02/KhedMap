@@ -19,6 +19,7 @@ export interface Conversation {
   last_message: string;
   created_at: string;
   updated_at: string;
+  unread_count: number;
   partner?: MarketplaceUser;
 }
 

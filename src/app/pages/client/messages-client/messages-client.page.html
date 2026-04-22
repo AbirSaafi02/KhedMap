@@ -1,18 +1,23 @@
 <ion-content>
   <div class="page">
-
-    <!-- Header -->
-    <div class="header">
-      <h1 class="title">Messages</h1>
+    <div class="page-topbar">
+      <div class="page-topbar-left">
+        <button class="back-circle-btn" (click)="goBack()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div class="page-topbar-copy">
+          <p class="eyebrow">Client inbox</p>
+          <h1>Messages</h1>
+        </div>
+      </div>
+      <span class="header-chip" *ngIf="unreadMessagesCount">{{ unreadMessagesCount }} new</span>
     </div>
 
-    <!-- Search bar -->
     <div class="search-bar">
       <ion-icon name="search-outline" class="search-icon"></ion-icon>
       <input type="text" placeholder="Search conversations..." />
     </div>
 
-    <!-- Conversations list -->
     <div class="conv-list">
       <div class="conv-item" *ngFor="let c of conversations" (click)="openConversation(c)">
 

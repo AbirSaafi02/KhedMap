@@ -66,6 +66,9 @@ export interface MarketplaceOrder {
   currency: string;
   delivery: string;
   status: OrderStatus;
+  platform_fee_rate: number;
+  platform_fee: number;
+  seller_earnings: number;
   created_at: string;
   updated_at: string;
 }

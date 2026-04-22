@@ -9,6 +9,8 @@ from app.utils.auth import login_required, login_user, logout_user, role_require
 
 api_bp = Blueprint("api", __name__)
 REGISTRABLE_ROLES = {"freelancer", "client", "admin"}
+APPLICATION_REVIEW_STATUSES = {"accepted", "rejected", "shortlisted"}
+ORDER_STATUSES = {"Pending", "In Progress", "Completed", "Refused"}
 
 
 def _payload() -> dict:
@@ -85,6 +87,29 @@ def _decorate_conversations(items: list[dict], current_user_id: str) -> list[dic
             None,
         )
         prepared["partner"] = partner_map.get(partner_id)
+        prepared["unread_count"] = conversations.unread_count(item, current_user_id)
+        decorated.append(prepared)
+    return decorated
+
+
+def _decorate_applications(items: list[dict]) -> list[dict]:
+    freelancer_map = _user_map([item.get("freelancer_id", "") for item in items])
+    job_map = {job["id"]: job for job in jobs.find_jobs_by_ids([item.get("job_id", "") for item in items])}
+    client_map = _user_map([job.get("client_id", "") for job in job_map.values()])
+
+    decorated = []
+    for item in items:
+        prepared = dict(item)
+        prepared["freelancer"] = freelancer_map.get(item.get("freelancer_id"))
+
+        related_job = job_map.get(item.get("job_id"))
+        if related_job:
+            prepared_job = dict(related_job)
+            prepared_job["client"] = client_map.get(related_job.get("client_id"))
+            prepared["job"] = prepared_job
+        else:
+            prepared["job"] = None
+
         decorated.append(prepared)
     return decorated
 
@@ -234,11 +259,69 @@ def api_create_job():
 @api_bp.post("/jobs/<job_id>/apply")
 @role_required("freelancer")
 def api_apply_job(job_id: str):
+    job = jobs.find_job_by_id(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    if job.get("status") == "closed":
+        return jsonify({"error": "This job is closed"}), 409
     if jobs.find_application(job_id, g.current_user["id"]):
         return jsonify({"error": "Application already exists"}), 409
 
     application = jobs.create_application(job_id, g.current_user["id"], _payload())
+    notifications.create_notification(
+        job["client_id"],
+        "New application received",
+        f"{g.current_user['name']} applied to {job['title']}.",
+        kind="application",
+        status="pending",
+    )
     return jsonify({"data": application}), 201
+
+
+@api_bp.get("/jobs/<job_id>/applications")
+@login_required
+def api_job_applications(job_id: str):
+    job = jobs.find_job_by_id(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    if g.current_user["role"] != "admin" and job.get("client_id") != g.current_user["id"]:
+        return jsonify({"error": "Forbidden"}), 403
+
+    applications = jobs.list_applications_for_job(job_id, limit=50)
+    return jsonify({"data": _decorate_applications(applications)})
+
+
+@api_bp.patch("/applications/<application_id>")
+@login_required
+def api_update_application(application_id: str):
+    payload = _payload()
+    status = str(payload.get("status", "")).strip().lower()
+    if status not in APPLICATION_REVIEW_STATUSES:
+        return jsonify({"error": "Unsupported application status"}), 400
+
+    application = jobs.find_application_by_id(application_id)
+    if not application:
+        return jsonify({"error": "Application not found"}), 404
+
+    job = jobs.find_job_by_id(application["job_id"])
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    if g.current_user["role"] != "admin" and job.get("client_id") != g.current_user["id"]:
+        return jsonify({"error": "Forbidden"}), 403
+
+    updated = jobs.update_application_status(application_id, status)
+    if not updated:
+        return jsonify({"error": "Application not found"}), 404
+
+    title_status = "accepted" if status in {"accepted", "shortlisted"} else "rejected"
+    notifications.create_notification(
+        updated["freelancer_id"],
+        f"Application {title_status}",
+        f"Your application for {job['title']} was {title_status} by {g.current_user['name']}.",
+        kind="application",
+        status="approved" if title_status == "accepted" else "rejected",
+    )
+    return jsonify({"data": _decorate_applications([updated])[0]})
 
 
 @api_bp.get("/gigs")
@@ -295,6 +378,13 @@ def api_order_gig(gig_id: str):
         }
     )
     gigs.increment_order_count(gig["id"])
+    notifications.create_notification(
+        gig["freelancer_id"],
+        "New gig order",
+        f"{g.current_user['name']} ordered {gig['title']}.",
+        kind="order",
+        status="pending",
+    )
     return jsonify({"data": order}), 201
 
 
@@ -351,6 +441,13 @@ def api_buy_product(product_id: str):
         }
     )
     products.increment_sales_count(product["id"])
+    notifications.create_notification(
+        product["seller_id"],
+        "New store purchase",
+        f"{g.current_user['name']} bought {product['title']}.",
+        kind="order",
+        status="approved",
+    )
     return jsonify({"data": order}), 201
 
 
@@ -368,9 +465,23 @@ def api_orders():
 @role_required("freelancer")
 def api_update_order(order_id: str):
     payload = _payload()
-    if not payload.get("status"):
+    status = str(payload.get("status", "")).strip()
+    if not status:
         return jsonify({"error": "status is required"}), 400
-    order = orders.update_order_status(order_id, payload["status"])
+    if status not in ORDER_STATUSES:
+        return jsonify({"error": "Unsupported order status"}), 400
+
+    order = orders.update_order_status(order_id, status)
+    if not order:
+        return jsonify({"error": "Order not found"}), 404
+
+    notifications.create_notification(
+        order["client_id"],
+        "Order status updated",
+        f"{order['title']} is now {status}.",
+        kind="order",
+        status="approved" if status == "Completed" else "rejected" if status == "Refused" else "pending",
+    )
     return jsonify({"data": order})
 
 
@@ -385,6 +496,7 @@ def api_conversations():
 @login_required
 def api_conversation_detail(partner_id: str):
     conversation = conversations.get_or_create_conversation(g.current_user["id"], partner_id)
+    conversation = conversations.mark_conversation_read(conversation["id"], g.current_user["id"]) or conversation
     return jsonify({"data": _decorate_conversations([conversation], g.current_user["id"])[0]})
 
 
@@ -397,6 +509,13 @@ def api_send_message(partner_id: str):
 
     conversation = conversations.get_or_create_conversation(g.current_user["id"], partner_id)
     conversation = conversations.append_message(conversation["id"], g.current_user["id"], payload["content"])
+    notifications.create_notification(
+        partner_id,
+        "New message",
+        f"{g.current_user['name']} sent you a message.",
+        kind="message",
+        status="info",
+    )
     return jsonify({"data": _decorate_conversations([conversation], g.current_user["id"])[0]})
 
 
@@ -404,6 +523,13 @@ def api_send_message(partner_id: str):
 @login_required
 def api_notifications():
     return jsonify({"data": notifications.list_notifications_for_user(g.current_user["id"], limit=30)})
+
+
+@api_bp.post("/notifications/mark-read")
+@login_required
+def api_mark_notifications_read():
+    notifications.mark_all_as_read(g.current_user["id"])
+    return jsonify({"data": {"ok": True}})
 
 
 @api_bp.post("/reports")
@@ -445,10 +571,33 @@ def api_admin_review(item_type: str, item_id: str):
         data = users.update_status(item_id, status)
         if data:
             send_account_status_email(data)
+            notifications.create_notification(
+                data["id"],
+                f"Account {status}",
+                f"Your KhedMap account has been {status}.",
+                kind="account",
+                status="approved" if status == "approved" else "rejected",
+            )
     elif item_type == "gig":
         data = gigs.update_status(item_id, status)
+        if data:
+            notifications.create_notification(
+                data["freelancer_id"],
+                f"Gig {status}",
+                f"Your gig \"{data['title']}\" was {status} by the admin team.",
+                kind="gig",
+                status="approved" if status == "approved" else "rejected",
+            )
     elif item_type == "product":
         data = products.update_status(item_id, status)
+        if data:
+            notifications.create_notification(
+                data["seller_id"],
+                f"Store item {status}",
+                f"Your product \"{data['title']}\" was {status} by the admin team.",
+                kind="product",
+                status="approved" if status == "approved" else "rejected",
+            )
     elif item_type == "report":
         data = admin.update_report_status(item_id, status)
     else:

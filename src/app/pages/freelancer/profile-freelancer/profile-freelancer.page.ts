@@ -31,15 +31,17 @@ export class ProfileFreelancerPage implements OnInit {
 
   profile = {
     name: 'Freelancer',
+    roleLabel: 'Freelancer account',
     title: 'Freelancer',
-    bio: 'Freelancer profile',
+    bio: 'Available for new projects.',
     rating: '0.0',
     jobs: '0',
     reviews: '0',
-    status: 'approved',
+    status: 'Approved',
     fields: [] as string[],
     cvUrl: '',
     email: '',
+    phone: '',
     avatarUrl: '',
   };
 
@@ -82,7 +84,10 @@ export class ProfileFreelancerPage implements OnInit {
         this.profile = {
           ...this.profile,
           rating: data.gigs.length
-            ? (data.gigs.reduce((sum, item: Record<string, unknown>) => sum + Number(item['rating'] || 0), 0) / data.gigs.length).toFixed(1)
+            ? (
+                data.gigs.reduce((sum, item: Record<string, unknown>) => sum + Number(item['rating'] || 0), 0) /
+                data.gigs.length
+              ).toFixed(1)
             : '0.0',
           jobs: String(data.orders.length),
           reviews: String(data.applications.length),
@@ -127,13 +132,33 @@ export class ProfileFreelancerPage implements OnInit {
     this.profile = {
       ...this.profile,
       name: user.name || this.profile.name,
-      title: user.title || 'Freelancer',
-      bio: user.bio || 'Available for new projects.',
-      status: user.status || this.profile.status,
-      fields: user.specialties || [],
+      roleLabel: this.describeRole(user.role),
+      title: user.title?.trim() || 'Freelancer',
+      bio: user.bio?.trim() || 'Available for new projects.',
+      status: this.formatStatus(user.status),
+      fields: Array.isArray(user.specialties) ? user.specialties : [],
       cvUrl: user.resume_url || '',
       email: user.email || '',
+      phone: user.phone?.trim() || '',
       avatarUrl: user.avatar_url || '',
     };
+  }
+
+  private describeRole(role: string): string {
+    if (role === 'admin') {
+      return 'Admin account';
+    }
+    if (role === 'client') {
+      return 'Client account';
+    }
+    return 'Freelancer account';
+  }
+
+  private formatStatus(status: string | undefined): string {
+    if (!status) {
+      return 'Approved';
+    }
+
+    return status.charAt(0).toUpperCase() + status.slice(1);
   }
 }

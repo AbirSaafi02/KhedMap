@@ -46,18 +46,12 @@ type RecommendationCard = {
 export class HomeClientPage implements OnInit {
   activeTab = 'home';
   userName = 'Mustapha';
+  notificationsCount = 0;
+  unreadMessagesCount = 0;
 
-  freelancers: FreelancerCard[] = [
-    { id: 'freelancer-1', name: 'Adam', job: 'UI/UX Designer / 2 years exp' },
-    { id: 'freelancer-2', name: 'Arwa', job: 'Backend Developer' },
-    { id: 'freelancer-3', name: 'Mariem', job: 'Mobile Developer' },
-  ];
+  freelancers: FreelancerCard[] = [];
 
-  recommendations: RecommendationCard[] = [
-    { id: 'freelancer-4', name: 'Ala', title: 'UI/UX Designer', bio: 'Passionate about creating intuitive and engaging user experiences', tags: ['Design'], rating: '4.9' },
-    { id: 'freelancer-5', name: 'Moataz', title: 'Translator', bio: 'Professional translator german, spanish and arabic with 3 years exp', tags: ['Translator'], rating: '4.7' },
-    { id: 'freelancer-6', name: 'Sarra', title: 'Developer', bio: 'Full stack developer specialized in mobile and web apps', tags: ['Development'], rating: '4.8' },
-  ];
+  recommendations: RecommendationCard[] = [];
 
   categories = ['All', 'Design', 'Development', 'Marketing'];
   activeCategory = 'All';
@@ -87,6 +81,8 @@ export class HomeClientPage implements OnInit {
     this.dashboard.getDashboard<ClientDashboard>().subscribe({
       next: (data: ClientDashboard) => {
         this.userName = this.auth.currentUser?.name || this.userName;
+        this.notificationsCount = data.notifications.filter((item: Record<string, unknown>) => !item['is_read']).length;
+        this.unreadMessagesCount = Number(data.stats.unread_messages || 0);
 
         this.freelancers = data.freelancers.map((item: Record<string, unknown>) => {
           const specialties = Array.isArray(item['specialties']) ? item['specialties'] as string[] : [];

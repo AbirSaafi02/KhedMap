@@ -9,8 +9,11 @@ export interface ClientDashboard {
     total_applicants: number;
     spend: number;
     unread_notifications: number;
+    unread_messages: number;
+    pending_applications: number;
   };
   jobs: Record<string, unknown>[];
+  applications: Record<string, unknown>[];
   gigs: Record<string, unknown>[];
   products: Record<string, unknown>[];
   freelancers: Record<string, unknown>[];
@@ -27,6 +30,8 @@ export interface FreelancerDashboard {
     submitted_applications: number;
     open_orders: number;
     earnings: number;
+    wallet_balance: number;
+    unread_messages: number;
   };
   open_jobs: Record<string, unknown>[];
   gigs: Record<string, unknown>[];
@@ -47,6 +52,10 @@ export interface AdminDashboard {
     pending_products: number;
     open_reports: number;
     estimated_revenue: number;
+    wallet_balance: number;
+    wallet_pending: number;
+    gross_volume: number;
+    active_orders: number;
   };
   pending_accounts: Record<string, unknown>[];
   pending_gigs: Record<string, unknown>[];
@@ -55,6 +64,17 @@ export interface AdminDashboard {
   recent_orders: Record<string, unknown>[];
   recent_users: Record<string, unknown>[];
   user_counts: Record<string, number>;
+  wallet: {
+    gross_volume: number;
+    wallet_balance: number;
+    released_balance: number;
+    pending_balance: number;
+    seller_payouts: number;
+    orders_count: number;
+    completed_orders: number;
+    active_orders: number;
+    refused_orders: number;
+  };
 }
 
 @Injectable({

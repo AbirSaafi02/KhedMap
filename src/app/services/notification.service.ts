@@ -21,4 +21,8 @@ export class NotificationService {
   listNotifications(): Observable<AppNotification[]> {
     return this.api.get<AppNotification[]>('/notifications');
   }
+
+  markAllAsRead(): Observable<{ ok: boolean }> {
+    return this.api.post<{ ok: boolean }>('/notifications/mark-read');
+  }
 }

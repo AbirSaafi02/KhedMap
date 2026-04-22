@@ -24,6 +24,8 @@ type GigOrder = {
   client: string;
   message: string;
   price: string;
+  platformFee: string;
+  sellerEarnings: string;
   delivery: string;
   status: OrderStatus;
 };
@@ -52,6 +54,7 @@ export class MyGigsPage implements OnInit {
   showToast = false;
   toastMessage = '';
   gigs: Gig[] = [];
+  unreadMessagesCount = 0;
 
   constructor(
     private readonly router: Router,
@@ -118,6 +121,7 @@ export class MyGigsPage implements OnInit {
   private loadDashboard(): void {
     this.dashboard.getDashboard<FreelancerDashboard>().subscribe({
       next: data => {
+        this.unreadMessagesCount = Number(data.stats.unread_messages || 0);
         const gigOrders = data.orders.filter((item: Record<string, unknown>) => item['source_type'] === 'gig');
         this.gigs = data.gigs.map((item: Record<string, unknown>) => ({
           id: String(item['id'] || ''),
@@ -138,6 +142,8 @@ export class MyGigsPage implements OnInit {
                 client: String(client['name'] || 'Client'),
                 message: String(order['message'] || 'New order'),
                 price: `${Number(order['price'] || 0).toLocaleString()} ${String(order['currency'] || 'DT')}`,
+                platformFee: `${Number(order['platform_fee'] || 0).toFixed(2)} ${String(order['currency'] || 'DT')}`,
+                sellerEarnings: `${Number(order['seller_earnings'] || 0).toFixed(2)} ${String(order['currency'] || 'DT')}`,
                 delivery: String(order['delivery'] || '3 days'),
                 status: String(order['status'] || 'Pending') as OrderStatus,
               };

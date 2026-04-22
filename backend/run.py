@@ -4,4 +4,7 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    host = app.config["BACKEND_HOST"]
+    port = app.config["BACKEND_PORT"]
+    print(f"KhedMAP backend listening on http://{host}:{port}")
+    app.run(debug=True, host=host, port=port)

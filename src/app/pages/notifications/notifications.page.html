@@ -1,11 +1,16 @@
 <ion-content>
   <div class="page">
-    <div class="header">
-      <div>
-        <p class="eyebrow">KhedMap alerts</p>
-        <h1>Notifications</h1>
+    <div class="page-topbar">
+      <div class="page-topbar-left">
+        <button class="back-circle-btn" (click)="goHome()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div class="page-topbar-copy">
+          <p class="eyebrow">KhedMap alerts</p>
+          <h1>Notifications</h1>
+        </div>
       </div>
-      <button class="pill-btn" (click)="goHome()">Back to {{ role }} dashboard</button>
+      <span class="header-chip">{{ alerts.length }} items</span>
     </div>
     <div class="alerts">
       <div class="alert-card" *ngFor="let a of alerts">
@@ -25,6 +30,10 @@
         <span class="status" [class.pending]="a.status === 'pending'" [class.approved]="a.status === 'approved'" [class.rejected]="a.status === 'rejected'">
           {{ a.status }}
         </span>
+      </div>
+      <div class="empty-state" *ngIf="!alerts.length">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <p>You are all caught up.</p>
       </div>
     </div>
   </div>

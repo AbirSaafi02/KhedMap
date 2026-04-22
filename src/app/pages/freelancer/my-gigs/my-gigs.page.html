@@ -70,6 +70,10 @@
             <div class="order-meta">
               <span>{{ o.price }}</span>
               <span class="dot">*</span>
+              <span>You earn {{ o.sellerEarnings }}</span>
+              <span class="dot">*</span>
+              <span>Fee {{ o.platformFee }}</span>
+              <span class="dot">*</span>
               <span>{{ o.delivery }}</span>
             </div>
             <div class="order-actions" *ngIf="o.status === 'Pending'">
@@ -126,6 +130,7 @@
   </div>
   <div class="nav-item" [class.active]="activeTab === 'messages'" (click)="setTab('messages'); goTo('/freelancer/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
+    <span class="nav-dot" *ngIf="unreadMessagesCount"></span>
     <span>Messages</span>
   </div>
   <div class="nav-item" [class.active]="activeTab === 'profile'" (click)="setTab('profile'); goTo('/freelancer/profile')">

@@ -6,74 +6,67 @@ ion-content {
   padding: 52px 20px 100px;
 }
 
-.header {
+.title {
+  font-size: 36px;
+  font-weight: 900;
+  color: #1a1a1a;
+  margin: 0 0 2px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+.header-right {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 10px;
 
-  .title {
-    font-size: 36px;
-    font-weight: 900;
-    color: #1a1a1a;
-    margin: 0 0 2px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    color: #888;
-    margin: 0;
-  }
-
-  .header-right {
+  .sell-btn {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
+    background: #5b5bd6;
+    color: white;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(91,91,214,0.3);
 
-    .sell-btn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+    ion-icon { font-size: 18px; }
+  }
+
+  .cart-btn {
+    width: 44px;
+    height: 44px;
+    background: #e07b20;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+
+    ion-icon { font-size: 22px; color: white; }
+
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
       background: #5b5bd6;
-      color: white;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 13px;
+      border-radius: 50%;
+      font-size: 10px;
       font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(91,91,214,0.3);
-
-      ion-icon { font-size: 18px; }
-    }
-
-    .cart-btn {
-      width: 44px;
-      height: 44px;
-      background: #e07b20;
-      border-radius: 12px;
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      cursor: pointer;
-
-      ion-icon { font-size: 22px; color: white; }
-
-      .cart-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        width: 18px;
-        height: 18px;
-        background: #5b5bd6;
-        border-radius: 50%;
-        font-size: 10px;
-        font-weight: bold;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
     }
   }
 }
@@ -260,5 +253,12 @@ ion-content {
     margin: 6px 0;
 
     strong { color: #1a1a1a; }
+
+    &.total {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      font-weight: 800;
+    }
   }
 }

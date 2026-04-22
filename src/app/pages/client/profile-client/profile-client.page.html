@@ -1,149 +1,183 @@
 <ion-content>
   <div class="page">
+    <section class="profile-hero">
+      <div class="hero-backdrop"></div>
 
-    <!-- Top curved background -->
-    <div class="top-bg">
-      <div class="avatar-circle">
-        <span>{{ profile.name[0] || 'C' }}</span>
-      </div>
-    </div>
-
-    <!-- Profile info -->
-    <div class="profile-info">
-      <h1 class="name">{{ profile.name }}</h1>
-      <p class="title">{{ profile.title }}</p>
-
-      <!-- Stats row -->
-      <div class="stats-row">
-        <div class="stat">
-          <span class="stat-value">{{ profile.jobs }}</span>
-          <span class="stat-label">Jobs Posted</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-value">{{ profile.spent }}</span>
-          <span class="stat-label">Total Spent</span>
-        </div>
-      <div class="stat-divider"></div>
-      <div class="stat">
-        <span class="stat-value">{{ profile.reviews }}</span>
-        <span class="stat-label">Reviews</span>
-      </div>
-    </div>
-
-    <div class="status-card">
-      <div>
-        <p class="status-label">Account status</p>
-        <p class="status-value">{{ profile.status }}</p>
-        <p class="status-hint">We will email {{ profile.email }} with account and order updates.</p>
-      </div>
-      <span class="pill">15% platform fee visible at checkout</span>
-    </div>
-  </div>
-
-    <!-- Action buttons -->
-    <div class="actions">
-
-      <div class="action-card" (click)="goTo('/client/posted-jobs')">
-        <div class="action-left">
-          <div class="action-icon purple">
-            <ion-icon name="briefcase-outline"></ion-icon>
-          </div>
+      <div class="hero-card">
+        <div class="hero-topline">
           <div>
-            <p class="action-title">Posted Jobs</p>
-            <p class="action-sub">Manage your job listings</p>
+            <p class="eyebrow">Client profile</p>
+            <p class="role-label">{{ profile.roleLabel }}</p>
+          </div>
+          <span class="status-chip">{{ profile.status }}</span>
+        </div>
+
+        <div class="hero-main">
+          <div class="avatar-frame">
+            <img *ngIf="profile.avatarUrl" [src]="profile.avatarUrl" [alt]="profile.name" class="avatar-image">
+            <span *ngIf="!profile.avatarUrl">{{ profile.name[0] || 'C' }}</span>
+          </div>
+
+          <div class="identity-copy">
+            <h1 class="name">{{ profile.name }}</h1>
+            <p class="title">{{ profile.title }}</p>
+            <p class="bio">{{ profile.bio }}</p>
           </div>
         </div>
-        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
-      </div>
 
-      <div class="action-card" (click)="goTo('/client/profile')">
-        <div class="action-left">
-          <div class="action-icon orange">
-            <ion-icon name="create-outline"></ion-icon>
+        <div class="field-row" *ngIf="profile.fields.length">
+          <span class="field-chip" *ngFor="let field of profile.fields">{{ field }}</span>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span class="stat-value">{{ profile.jobs }}</span>
+            <span class="stat-label">Jobs posted</span>
+          </article>
+
+          <article class="stat-card accent-card">
+            <span class="stat-value">{{ profile.spent }}</span>
+            <span class="stat-label">Total spent</span>
+          </article>
+
+          <article class="stat-card">
+            <span class="stat-value">{{ profile.reviews }}</span>
+            <span class="stat-label">Orders</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="detail-grid">
+      <article class="info-card">
+        <p class="section-kicker">Contact</p>
+        <h2>Profile details</h2>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span>Email</span>
+            <strong>{{ profile.email || 'Not added yet' }}</strong>
           </div>
-          <div>
-            <p class="action-title">Edit Profile</p>
-            <p class="action-sub">Update your information</p>
+
+          <div class="info-row">
+            <span>Phone</span>
+            <strong>{{ profile.phone || 'Not added yet' }}</strong>
+          </div>
+
+          <div class="info-row">
+            <span>Status</span>
+            <strong>{{ profile.status }}</strong>
           </div>
         </div>
-        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </article>
+
+      <article class="info-card emphasis-card">
+        <p class="section-kicker">Hiring setup</p>
+        <h2>Ready to brief and review faster</h2>
+        <p class="info-copy">
+          Your photo, bio, and focus areas are grouped together first so freelancers can understand who they are working with at a glance.
+        </p>
+        <span class="support-pill">Platform fee: 15% shown at checkout</span>
+      </article>
+    </section>
+
+    <section class="actions-section">
+      <div class="section-header">
+        <h2>Quick actions</h2>
       </div>
 
-      <div class="action-card" (click)="openNotifications()">
-        <div class="action-left">
-          <div class="action-icon yellow">
-            <ion-icon name="notifications-outline"></ion-icon>
+      <div class="actions">
+        <div class="action-card" (click)="goTo('/client/posted-jobs')">
+          <div class="action-left">
+            <div class="action-icon purple">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </div>
+            <div>
+              <p class="action-title">Posted jobs</p>
+              <p class="action-sub">Manage your briefs and applicants</p>
+            </div>
           </div>
-          <div>
-            <p class="action-title">Notifications</p>
-            <p class="action-sub">Approvals, payments, store</p>
-          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
         </div>
-        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
-      </div>
 
-      <div class="action-card">
-        <div class="action-left">
-          <div class="action-icon yellow">
-            <ion-icon name="star-outline"></ion-icon>
+        <div class="action-card" (click)="goTo('/client/profile')">
+          <div class="action-left">
+            <div class="action-icon orange">
+              <ion-icon name="create-outline"></ion-icon>
+            </div>
+            <div>
+              <p class="action-title">Profile overview</p>
+              <p class="action-sub">Keep your account details up to date</p>
+            </div>
           </div>
-          <div>
-            <p class="action-title">Reviews</p>
-            <p class="action-sub">See your reviews</p>
-          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
         </div>
-        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
-      </div>
 
-      <!-- Logout button -->
-      <div class="action-card logout-card" (click)="logout()">
-        <div class="action-left">
-          <div class="action-icon red">
-            <ion-icon name="log-out-outline"></ion-icon>
+        <div class="action-card" (click)="openNotifications()">
+          <div class="action-left">
+            <div class="action-icon gold">
+              <ion-icon name="notifications-outline"></ion-icon>
+            </div>
+            <div>
+              <p class="action-title">Notifications</p>
+              <p class="action-sub">Track approvals, payments, and replies</p>
+            </div>
           </div>
-          <div>
-            <p class="action-title logout-text">Logout</p>
-            <p class="action-sub">Sign out of your account</p>
-          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
         </div>
-        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+
+        <div class="action-card">
+          <div class="action-left">
+            <div class="action-icon slate">
+              <ion-icon name="star-outline"></ion-icon>
+            </div>
+            <div>
+              <p class="action-title">Reviews</p>
+              <p class="action-sub">See your marketplace history</p>
+            </div>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+        </div>
+
+        <div class="action-card logout-card" (click)="logout()">
+          <div class="action-left">
+            <div class="action-icon red">
+              <ion-icon name="log-out-outline"></ion-icon>
+            </div>
+            <div>
+              <p class="action-title logout-text">Logout</p>
+              <p class="action-sub">Sign out of your account</p>
+            </div>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+        </div>
       </div>
-
-    </div>
-
+    </section>
   </div>
 </ion-content>
 
-<!-- Bottom Nav -->
 <div class="bottom-nav">
-  <div class="nav-item" [class.active]="activeTab === 'home'"
-       (click)="setTab('home'); goTo('/client/home')">
+  <div class="nav-item" [class.active]="activeTab === 'home'" (click)="setTab('home'); goTo('/client/home')">
     <ion-icon name="home-outline"></ion-icon>
     <span>Home</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'gigs'"
-       (click)="setTab('gigs'); goTo('/client/gigs')">
+  <div class="nav-item" [class.active]="activeTab === 'gigs'" (click)="setTab('gigs'); goTo('/client/gigs')">
     <ion-icon name="briefcase-outline"></ion-icon>
     <span>Gigs</span>
   </div>
-  <div class="nav-item store-btn" [class.active]="activeTab === 'store'"
-       (click)="setTab('store'); goTo('/store')">
+  <div class="nav-item store-btn" [class.active]="activeTab === 'store'" (click)="setTab('store'); goTo('/store')">
     <ion-icon name="storefront-outline"></ion-icon>
     <span>Store</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'alerts'"
-       (click)="setTab('alerts'); goTo('/notifications')">
+  <div class="nav-item" [class.active]="activeTab === 'alerts'" (click)="setTab('alerts'); goTo('/notifications')">
     <ion-icon name="notifications-outline"></ion-icon>
     <span>Alerts</span>
   </div>
-  <div class="nav-item" [class.active]="activeTab === 'messages'"
-       (click)="setTab('messages'); goTo('/client/messages')">
+  <div class="nav-item" [class.active]="activeTab === 'messages'" (click)="setTab('messages'); goTo('/client/messages')">
     <ion-icon name="chatbubble-outline"></ion-icon>
     <span>Messages</span>
   </div>
-  <div class="nav-item active" [class.active]="activeTab === 'profile'"
-       (click)="setTab('profile'); goTo('/client/profile')">
+  <div class="nav-item active" [class.active]="activeTab === 'profile'" (click)="setTab('profile'); goTo('/client/profile')">
     <ion-icon name="person-outline"></ion-icon>
     <span>Profile</span>
   </div>

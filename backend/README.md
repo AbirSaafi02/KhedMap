@@ -60,6 +60,13 @@ backend/
 
 The app seeds demo data automatically when `AUTO_SEED=true` and the database is empty.
 
+## Dev ports
+
+- The backend now defaults to `http://127.0.0.1:5000`.
+- The Angular app defaults to `http://127.0.0.1:8100`.
+- `npm start` and the frontend proxy both read `backend/.env`, so `BACKEND_HOST`, `BACKEND_PORT`, `FRONTEND_HOST`, and `FRONTEND_PORT` stay in sync.
+- If you want different ports, set them once in `backend/.env` instead of editing both frontend and backend files.
+
 ## Demo users
 
 - `admin@khedmap.local`

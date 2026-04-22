@@ -7,7 +7,7 @@ from app.extensions import init_extensions
 from app.repositories import users
 from app.routes.api import api_bp
 from app.routes.web import web_bp
-from app.services.seed import ensure_seed_data
+from app.services.seed import ensure_seed_data, reset_showcase_demo_data
 from app.utils.formatting import friendly_date, format_money
 
 
@@ -44,6 +44,11 @@ def create_app() -> Flask:
     def seed_demo_command() -> None:
         created = ensure_seed_data()
         print("Seeded demo data." if created else "Demo data already present.")
+
+    @app.cli.command("reset-showcase-demo")
+    def reset_showcase_demo_command() -> None:
+        reset_showcase_demo_data()
+        print("Reset showcase demo data.")
 
     if app.config["AUTO_SEED"]:
         with app.app_context():

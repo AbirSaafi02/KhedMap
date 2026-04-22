@@ -8,6 +8,7 @@ from app.utils.serialization import object_id_from_string, serialize_document
 
 JOBS_COLLECTION = "jobs"
 APPLICATIONS_COLLECTION = "applications"
+SHORTLISTED_STATUSES = {"accepted", "shortlisted"}
 
 
 def jobs_collection():
@@ -21,6 +22,7 @@ def applications_collection():
 def ensure_indexes() -> None:
     jobs_collection().create_index([("client_id", ASCENDING), ("status", ASCENDING)])
     jobs_collection().create_index([("created_at", DESCENDING)])
+    applications_collection().create_index([("job_id", ASCENDING), ("status", ASCENDING)])
     applications_collection().create_index(
         [("job_id", ASCENDING), ("freelancer_id", ASCENDING)],
         unique=True,
@@ -87,11 +89,7 @@ def create_application(job_id: str, freelancer_id: str, payload: dict):
         "updated_at": now,
     }
     result = applications_collection().insert_one(document)
-    applicant_count = applications_collection().count_documents({"job_id": job_id})
-    jobs_collection().update_one(
-        {"_id": object_id_from_string(job_id)},
-        {"$set": {"applicant_count": applicant_count, "updated_at": now}},
-    )
+    _refresh_job_counts(job_id)
     return find_application_by_id(result.inserted_id)
 
 
@@ -115,3 +113,67 @@ def list_applications_for_freelancer(freelancer_id: str, limit: int = 20):
         .limit(limit)
     )
     return [serialize_document(document) for document in cursor]
+
+
+def list_applications_for_job(job_id: str, limit: int = 50):
+    cursor = applications_collection().find({"job_id": job_id}).sort("created_at", DESCENDING).limit(limit)
+    return [serialize_document(document) for document in cursor]
+
+
+def list_applications_for_client(client_id: str, limit: int = 50):
+    job_ids = [job["id"] for job in list_jobs(client_id=client_id, limit=200)]
+    if not job_ids:
+        return []
+
+    cursor = (
+        applications_collection()
+        .find({"job_id": {"$in": job_ids}})
+        .sort("created_at", DESCENDING)
+        .limit(limit)
+    )
+    return [serialize_document(document) for document in cursor]
+
+
+def update_application_status(application_id: str, status: str):
+    object_id = object_id_from_string(application_id)
+    if not object_id:
+        return None
+
+    collection_item = applications_collection().find_one({"_id": object_id})
+    if not collection_item:
+        return None
+
+    applications_collection().update_one(
+        {"_id": object_id},
+        {"$set": {"status": status, "updated_at": datetime.now(UTC)}},
+    )
+    _refresh_job_counts(collection_item["job_id"])
+    return find_application_by_id(application_id)
+
+
+def _refresh_job_counts(job_id: str) -> None:
+    now = datetime.now(UTC)
+    applicant_count = applications_collection().count_documents({"job_id": job_id})
+    shortlisted_count = applications_collection().count_documents(
+        {"job_id": job_id, "status": {"$in": list(SHORTLISTED_STATUSES)}}
+    )
+
+    job = jobs_collection().find_one({"_id": object_id_from_string(job_id)})
+    if not job:
+        return
+
+    next_status = job.get("status", "open")
+    if next_status != "closed":
+        next_status = "interviewing" if shortlisted_count else "open"
+
+    jobs_collection().update_one(
+        {"_id": job["_id"]},
+        {
+            "$set": {
+                "applicant_count": applicant_count,
+                "shortlisted_count": shortlisted_count,
+                "status": next_status,
+                "updated_at": now,
+            }
+        },
+    )

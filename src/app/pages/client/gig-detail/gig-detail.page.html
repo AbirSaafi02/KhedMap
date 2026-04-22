@@ -1,9 +1,18 @@
 <ion-content>
   <div class="page">
-    <div class="header">
-      <h1>{{ gig.title }}</h1>
-      <p class="owner">par {{ gig.owner }}</p>
+    <div class="page-topbar">
+      <div class="page-topbar-left">
+        <button class="back-circle-btn" (click)="goBack()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div class="page-topbar-copy">
+          <p class="eyebrow">Gig details</p>
+          <h1>{{ gig.title }}</h1>
+        </div>
+      </div>
+      <span class="header-chip">{{ gig.delivery }}</span>
     </div>
+    <p class="owner">by {{ gig.owner }}</p>
 
     <div class="pill-row">
       <span class="pill"><ion-icon name="cash-outline"></ion-icon> {{ gig.price }}</span>
@@ -19,10 +28,24 @@
     <div class="card info-card">
       <h3>Payment & policy</h3>
       <p>We add a transparent 15% KhedMap service fee at checkout. You will see the final total before paying.</p>
+      <div class="fee-breakdown">
+        <div class="fee-row">
+          <span>Gig price</span>
+          <strong>{{ gig.price }}</strong>
+        </div>
+        <div class="fee-row">
+          <span>KhedMap fee (15%)</span>
+          <strong>{{ serviceFee }}</strong>
+        </div>
+        <div class="fee-row total">
+          <span>Total you pay</span>
+          <strong>{{ totalPrice }}</strong>
+        </div>
+      </div>
     </div>
 
     <div class="actions">
-      <button class="primary" (click)="order()">Commander</button>
+      <button class="primary" (click)="order()">Order now</button>
       <button class="ghost" (click)="message()">
         <ion-icon name="chatbubble-outline"></ion-icon>
         Messages

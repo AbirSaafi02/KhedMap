@@ -5,6 +5,7 @@ import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
+  arrowBackOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
   notificationsOutline,
@@ -44,6 +45,7 @@ export class NotificationsPage implements OnInit {
   ) {
     addIcons({
       alertCircleOutline,
+      arrowBackOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
       notificationsOutline,
@@ -66,6 +68,7 @@ export class NotificationsPage implements OnInit {
           type: item.kind,
           date: this.relativeDate(item.created_at),
         }));
+        this.notifications.markAllAsRead().subscribe();
       },
     });
   }

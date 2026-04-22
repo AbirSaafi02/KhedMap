@@ -21,7 +21,7 @@ export class OnboardingPage {
     },
     {
       title: 'Work Runs Smoothly',
-      description: 'Built‑in briefs, chat, milestones, and payouts keep everyone aligned. Less back-and-forth, more shipped work.',
+      description: 'Built-in briefs, chat, milestones, and payouts keep everyone aligned. Less back-and-forth, more shipped work.',
       btn: 'next'
     },
     {

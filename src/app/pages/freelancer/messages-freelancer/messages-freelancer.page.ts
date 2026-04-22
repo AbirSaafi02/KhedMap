@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  arrowBackOutline,
   briefcaseOutline,
   chatbubbleOutline,
   homeOutline,
@@ -33,9 +34,11 @@ type ConversationCard = {
 export class MessagesFreelancerPage implements OnInit {
   activeTab = 'messages';
   conversations: ConversationCard[] = [];
+  unreadMessagesCount = 0;
 
   constructor(private readonly router: Router, private readonly conversationService: ConversationService) {
     addIcons({
+      arrowBackOutline,
       briefcaseOutline,
       chatbubbleOutline,
       homeOutline,
@@ -49,15 +52,23 @@ export class MessagesFreelancerPage implements OnInit {
   ngOnInit(): void {
     this.conversationService.listConversations().subscribe({
       next: conversations => {
+        this.unreadMessagesCount = conversations.reduce(
+          (total: number, conversation: Conversation) => total + Number(conversation.unread_count || 0),
+          0,
+        );
         this.conversations = conversations.map((conversation: Conversation) => ({
           partnerId: conversation.partner?.id || '',
           name: conversation.partner?.name || 'Conversation',
           last: conversation.last_message || 'No messages yet',
           time: this.relativeTime(conversation.updated_at),
-          unread: false,
+          unread: Number(conversation.unread_count || 0) > 0,
         }));
       },
     });
+  }
+
+  goBack() {
+    this.router.navigate(['/freelancer/home']);
   }
 
   goTo(page: string) {

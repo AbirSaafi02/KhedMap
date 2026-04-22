@@ -41,19 +41,13 @@ type Recommendation = {
 export class HomeFreelancerPage implements OnInit {
   activeTab = 'home';
   userName = 'Mayssa';
-  notificationsCount = 3;
+  notificationsCount = 0;
+  unreadMessagesCount = 0;
   status = { account: 'Pending', gigsPending: 2, unread: 4 };
 
-  clients: ClientCard[] = [
-    { name: 'Wail', job: 'Needs a UI/UX designer full time' },
-    { name: 'Ahmed', job: 'Needs a part time video editor' },
-  ];
+  clients: ClientCard[] = [];
 
-  recommendations: Recommendation[] = [
-    { id: 'job-1', name: 'Abir', bio: 'Hiring 2 graphic designers + 1 web dev for a 2-week sprint.', tags: ['Design', 'Web Dev'], budget: '1200 DT' },
-    { id: 'job-2', name: 'Koussay', bio: 'Need a UI/UX designer for a SaaS onboarding flow.', tags: ['Designer'], budget: '700 DT' },
-    { id: 'job-3', name: 'Faten', bio: 'Launching a brand, need marketing automation + visuals.', tags: ['Marketing'], budget: '900 DT' },
-  ];
+  recommendations: Recommendation[] = [];
 
   categories = ['All', 'Design', 'Web Dev', 'Video Editor', 'Marketing'];
   activeCategory = 'All';
@@ -83,11 +77,12 @@ export class HomeFreelancerPage implements OnInit {
     this.dashboard.getDashboard<FreelancerDashboard>().subscribe({
       next: (data: FreelancerDashboard) => {
         this.userName = this.auth.currentUser?.name || this.userName;
-        this.notificationsCount = data.notifications.length;
+        this.notificationsCount = data.notifications.filter((item: Record<string, unknown>) => !item['is_read']).length;
+        this.unreadMessagesCount = Number(data.stats.unread_messages || 0);
         this.status = {
-          account: String(this.auth.currentUser?.status || 'approved'),
+          account: this.formatStatus(this.auth.currentUser?.status || 'approved'),
           gigsPending: data.gigs.filter((item: Record<string, unknown>) => item['status'] === 'pending').length,
-          unread: data.notifications.length,
+          unread: this.unreadMessagesCount,
         };
 
         this.jobBoard = data.open_jobs.map((item: Record<string, unknown>) => ({
@@ -106,7 +101,7 @@ export class HomeFreelancerPage implements OnInit {
             const client = (item['client'] || {}) as Record<string, unknown>;
             return {
               name: String(client['name'] || 'Client'),
-              job: `${String(item['category'] || 'General')} · ${this.formatMoney(Number(item['budget'] || 0), String(item['currency'] || 'DT'))}`,
+              job: `${String(item['category'] || 'General')} | ${this.formatMoney(Number(item['budget'] || 0), String(item['currency'] || 'DT'))}`,
             };
           })
           .filter((item: ClientCard, index: number, list: ClientCard[]) => list.findIndex((other: ClientCard) => other.name === item.name) === index);
@@ -188,5 +183,9 @@ export class HomeFreelancerPage implements OnInit {
 
   private formatMoney(value: number, currency: string): string {
     return `${value.toLocaleString()} ${currency}`;
+  }
+
+  private formatStatus(status: string): string {
+    return status ? `${status.charAt(0).toUpperCase()}${status.slice(1)}` : 'Approved';
   }
 }

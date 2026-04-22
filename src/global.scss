@@ -172,6 +172,7 @@ body, ion-content {
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  position: relative;
   border-radius: 12px;
   padding: 4px;
   cursor: pointer;
@@ -210,6 +211,61 @@ body, ion-content {
 .bottom-nav .nav-item.store-btn.active ion-icon,
 .bottom-nav .nav-item.store-btn.active span {
   color: var(--khed-accent);
+}
+
+.bottom-nav .nav-dot {
+  position: absolute;
+  top: 2px;
+  right: calc(50% - 14px);
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.32);
+}
+
+.page-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.page-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-circle-btn {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--khed-ink);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+}
+
+.page-topbar-copy .eyebrow {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.page-topbar-copy h1 {
+  margin: 2px 0 0;
+  color: var(--khed-ink);
+  font-size: 28px;
+  font-weight: 900;
 }
 
 .modal-overlay {

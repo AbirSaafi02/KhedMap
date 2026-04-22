@@ -16,7 +16,7 @@ import {
   storefrontOutline,
 } from 'ionicons/icons';
 
-import { Auth } from '../../../services/auth';
+import { Auth, AuthUser } from '../../../services/auth';
 import { ClientDashboard, DashboardService } from '../../../services/dashboard.service';
 
 @Component({
@@ -31,12 +31,17 @@ export class ProfileClientPage implements OnInit {
 
   profile = {
     name: 'Client',
-    title: 'Client',
+    roleLabel: 'Client account',
+    title: 'Project lead',
+    bio: 'Organize briefs, approvals, and hiring updates from one clean profile.',
     jobs: '0',
     spent: '0 DT',
     reviews: '0',
-    status: 'approved',
+    status: 'Approved',
     email: '',
+    phone: '',
+    avatarUrl: '',
+    fields: [] as string[],
   };
 
   constructor(
@@ -59,15 +64,11 @@ export class ProfileClientPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.applyUser(this.auth.currentUser);
+
     this.auth.me().subscribe({
       next: user => {
-        this.profile = {
-          ...this.profile,
-          name: user.name,
-          title: `${user.role} · ${user.title || 'Client'}`,
-          status: user.status,
-          email: user.email,
-        };
+        this.applyUser(user);
       },
     });
 
@@ -109,5 +110,42 @@ export class ProfileClientPage implements OnInit {
         this.router.navigate(['/login']);
       },
     });
+  }
+
+  private applyUser(user: AuthUser | null): void {
+    if (!user) {
+      return;
+    }
+
+    this.profile = {
+      ...this.profile,
+      name: user.name || this.profile.name,
+      roleLabel: this.describeRole(user.role),
+      title: user.title?.trim() || 'Project lead',
+      bio: user.bio?.trim() || 'Organize briefs, approvals, and hiring updates from one clean profile.',
+      status: this.formatStatus(user.status),
+      email: user.email || '',
+      phone: user.phone?.trim() || '',
+      avatarUrl: user.avatar_url || '',
+      fields: Array.isArray(user.specialties) ? user.specialties : [],
+    };
+  }
+
+  private describeRole(role: string): string {
+    if (role === 'admin') {
+      return 'Admin account';
+    }
+    if (role === 'freelancer') {
+      return 'Freelancer account';
+    }
+    return 'Client account';
+  }
+
+  private formatStatus(status: string | undefined): string {
+    if (!status) {
+      return 'Approved';
+    }
+
+    return status.charAt(0).toUpperCase() + status.slice(1);
   }
 }
