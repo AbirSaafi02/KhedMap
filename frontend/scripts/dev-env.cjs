@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const backendEnvPath = path.join(__dirname, "..", "backend", ".env");
+const backendEnvPath = path.join(__dirname, "..", "..", "backend", ".env");
 
 function loadEnvFile(filePath = backendEnvPath) {
   if (!fs.existsSync(filePath)) {
